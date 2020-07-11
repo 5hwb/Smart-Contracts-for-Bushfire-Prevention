@@ -22,8 +22,8 @@ contract NetworkFormation {
   
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, address addr, uint energyLevel) public {
-    address[] memory thingo;
-    SensorNode memory node = SensorNode(id, addr, energyLevel, 1, false, address(this), thingo);
+    address[] memory thingo; // a dummy address list
+    SensorNode memory node = SensorNode(id, addr, energyLevel, 1, false, address(this), thingo, thingo);
     nodes.push(node);
   }
   
@@ -42,18 +42,21 @@ contract NetworkFormation {
     // todo
   }
   
-  // Elect the next cluster head for this layer.
-  function electClusterHead(address sensorNode) public {
+  // Elect the next cluster heads for the next layer.
+  // NOTE: this may not compile but the basic logic is good
+  function electClusterHeads(address sensorNode) public {
+    
+    SensorNode currClusterHead = getNode(sensorNode); // placeholder until I do it
+    
     // sort the sensor nodes that sent join requests by energy level in descending order
-    // NOTE: this may not compile but the basic logic is good
-    SensorNode[] memory nodesWithJoinRequests;
-    nodesWithJoinRequests.push(/*all the nodes with join requests*/);
+    // TODO: find out how to sort by energy level!
+    SensorNode[] memory nodesWithJoinRequests = currClusterHead.joinRequestNodes;
     nodesWithJoinRequests.sort();
     
     uint probability = 65; // 65% chance of being elected?
     
     // TODO: find out how to calculate floor operation in Solidity
-    numOfClusterHeads = floor((probability / 100) * numOfJoinRequests);
+    numOfClusterHeads = floor((probability / 100) * numOfJoinRequests); // N_CH
     
     // Select the cluster heads
     uint memory numOfElectedClusterHeads = 0;
