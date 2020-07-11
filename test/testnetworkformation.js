@@ -4,6 +4,7 @@
 // * https://ethereum.stackexchange.com/questions/48627/how-to-catch-revert-error-in-truffle-test-javascript#48629
 
 const NetworkFormation = artifacts.require("NetworkFormation");
+const QuickSort = artifacts.require("QuickSort");
 const truffleAssert = require('truffle-assertions');
 
 contract("NetworkFormation test", async accounts => {
@@ -28,11 +29,12 @@ contract("NetworkFormation test", async accounts => {
   it("should sort an array", async () => {
     //let numCandidates = await instance.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
+    let sortInstance = await QuickSort.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];
     // sort to [2, 2, 3, 6, 9, 29, 73]
-    let sortedThingo = await instance.sort.call(thingo);
-    //console.log("sortedThingo = ");
-    //console.log(sortedThingo);
+    let sortedThingo = await sortInstance.sort.call(thingo);
+    console.log("sortedThingo = ");
+    console.log(sortedThingo);
     assert.equal(sortedThingo[0], 2);
     assert.equal(sortedThingo[1], 2);
     assert.equal(sortedThingo[2], 3);
