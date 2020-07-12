@@ -29,8 +29,6 @@ contract TestNetworkFormation {
     
     // sort to [53, 62, 71, 89]
     Structs.SensorNode[] memory sortedThingo = networkFormation.getSortedNodes();
-    //console.log("sortedThingo = ");
-    //console.log(sortedThingo);
     Assert.equal(sortedThingo[0].energyLevel, 53, "Sorting error");
     Assert.equal(sortedThingo[1].energyLevel, 62, "Sorting error");
     Assert.equal(sortedThingo[2].energyLevel, 71, "Sorting error");

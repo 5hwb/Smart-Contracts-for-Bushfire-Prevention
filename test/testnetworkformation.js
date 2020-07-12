@@ -26,7 +26,7 @@ contract("NetworkFormation test", async accounts => {
   /***********************************************
    * TEST - Sorting
    ***********************************************/
-  it("should sort an array", async () => {
+  it("should sort an int array", async () => {
     //let numCandidates = await instance.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
     let sortInstance = await QuickSort.deployed();
