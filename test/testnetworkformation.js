@@ -44,5 +44,26 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(sortedThingo[6], 73);
   });
   
+  /***********************************************
+   * TEST - Sorting backwards
+   ***********************************************/
+  it("should sort an int array backwards", async () => {
+    //let numCandidates = await instance.numCandidates();
+    //assert.equal(numVoters.toNumber(), 0);
+    let sortInstance = await QuickSort.deployed();
+    let thingo = [9, 2, 73, 3, 6, 2, 29];
+    // sort to [73, 29, 9, 6, 3, 2, 2]
+    let sortedThingo = await sortInstance.sortRev.call(thingo);
+    //console.log("sortedThingo = ");
+    //console.log(sortedThingo);
+    assert.equal(sortedThingo[0], 73);
+    assert.equal(sortedThingo[1], 29);
+    assert.equal(sortedThingo[2], 9);
+    assert.equal(sortedThingo[3], 6);
+    assert.equal(sortedThingo[4], 3);
+    assert.equal(sortedThingo[5], 2);
+    assert.equal(sortedThingo[6], 2);
+  });
+  
 
 });
