@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: MIT
 // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
-pragma solidity ^0.5.16;
+pragma solidity ^0.6.10;
 
 contract QuickSort {
     
