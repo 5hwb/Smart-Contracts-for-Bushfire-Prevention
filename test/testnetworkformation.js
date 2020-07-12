@@ -33,8 +33,8 @@ contract("NetworkFormation test", async accounts => {
     let thingo = [9, 2, 73, 3, 6, 2, 29];
     // sort to [2, 2, 3, 6, 9, 29, 73]
     let sortedThingo = await sortInstance.sort.call(thingo);
-    console.log("sortedThingo = ");
-    console.log(sortedThingo);
+    //console.log("sortedThingo = ");
+    //console.log(sortedThingo);
     assert.equal(sortedThingo[0], 2);
     assert.equal(sortedThingo[1], 2);
     assert.equal(sortedThingo[2], 3);
