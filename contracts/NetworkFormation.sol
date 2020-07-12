@@ -86,7 +86,7 @@ contract NetworkFormation {
   // TODO: implement the GCA algorithm as described in Lee et al. (2011)
   
   
-  // Sort function for integer arrays.
+  // Sort function for SensorNode arrays.
   // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
   function sort(Structs.SensorNode[] memory data) public returns(Structs.SensorNode[] memory) {
      quickSort(data, int(0), int(data.length - 1));
