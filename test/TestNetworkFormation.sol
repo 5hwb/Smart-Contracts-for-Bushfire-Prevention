@@ -27,12 +27,12 @@ contract TestNetworkFormation {
     networkFormation.addNode(3, 0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF, 53);
     networkFormation.addNode(4, 0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF, 62);
     
-    // sort to [53, 62, 71, 89]
+    // sort to [89, 71, 62, 53]
     Structs.SensorNode[] memory sortedThingo = networkFormation.getSortedNodes();
-    Assert.equal(sortedThingo[0].energyLevel, 53, "Sorting error");
-    Assert.equal(sortedThingo[1].energyLevel, 62, "Sorting error");
-    Assert.equal(sortedThingo[2].energyLevel, 71, "Sorting error");
-    Assert.equal(sortedThingo[3].energyLevel, 89, "Sorting error");
+    Assert.equal(sortedThingo[0].energyLevel, 89, "Sorting error");
+    Assert.equal(sortedThingo[1].energyLevel, 71, "Sorting error");
+    Assert.equal(sortedThingo[2].energyLevel, 62, "Sorting error");
+    Assert.equal(sortedThingo[3].energyLevel, 53, "Sorting error");
   }
 
   
