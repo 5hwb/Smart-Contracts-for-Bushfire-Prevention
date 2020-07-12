@@ -20,7 +20,7 @@ contract TestNetworkFormation {
   /***********************************************
    * TEST - Sorting
    ***********************************************/
-   // Testing the getSortedNode() function
+   // Testing the getSortedNodes() function
    function testSortNodes() public {
     networkFormation.addNode(1, 0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF, 89);
     networkFormation.addNode(2, 0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF, 71);
@@ -28,7 +28,7 @@ contract TestNetworkFormation {
     networkFormation.addNode(4, 0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF, 62);
     
     // sort to [53, 62, 71, 89]
-    Structs.SensorNode[] memory sortedThingo = networkFormation.getSortedNode();
+    Structs.SensorNode[] memory sortedThingo = networkFormation.getSortedNodes();
     //console.log("sortedThingo = ");
     //console.log(sortedThingo);
     Assert.equal(sortedThingo[0].energyLevel, 53, "Sorting error");

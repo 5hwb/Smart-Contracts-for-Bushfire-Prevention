@@ -35,7 +35,7 @@ contract NetworkFormation {
     // todo
   }
   
-  function getSortedNode() public returns(Structs.SensorNode[] memory) {
+  function getSortedNodes() public returns(Structs.SensorNode[] memory) {
     return sort(nodes);
   }
   
