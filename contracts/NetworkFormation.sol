@@ -12,14 +12,25 @@ contract NetworkFormation {
   
   // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
   Structs.SensorNode[] public nodes;
+  uint public numOfNodes;
   
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, address addr, uint energyLevel) public {
     address[] memory thingo; // a dummy address list
     Structs.SensorNode memory node = Structs.SensorNode(id, addr, energyLevel, 1, false, address(this), thingo, thingo);
     nodes.push(node);
+    numOfNodes++;
   }
   
+  // Get the node with the given address
+  function getNode(address sensorNode) view public returns(Structs.SensorNode memory) {
+    for (uint i = 0; i < numOfNodes; i++) {
+      if (nodes[i].nodeAddress == sensorNode) {
+        return nodes[i];
+      }
+    }
+  }
+
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon() public {
     // todo
@@ -39,15 +50,15 @@ contract NetworkFormation {
   function getSortedNodes() public returns(Structs.SensorNode[] memory) {
     return sort(nodes);
   }
-  
+    
   // Elect the next cluster heads for the next layer.
   // NOTE: this may not compile but the basic logic is good
   function electClusterHeads(address sensorNode) public {
   
-    // Structs.SensorNode currClusterHead = getNode(sensorNode); // placeholder until I do it
-    // 
+    // Get the sensor node with the given address
+    Structs.SensorNode memory currClusterHead = getNode(sensorNode);
+    
     // // sort the sensor nodes that sent join requests by energy level in descending order
-    // // TODO: find out how to sort by energy level!
     // Structs.SensorNode[] memory nodesWithJoinRequests = sort(currClusterHead.joinRequestNodes);
     // 
     // uint probability = 65; // 65% chance of being elected?

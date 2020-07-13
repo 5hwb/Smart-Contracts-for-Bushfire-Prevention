@@ -22,7 +22,7 @@ contract TestNetworkFormation {
    ***********************************************/
    // Testing the getSortedNodes() function
    // note: address is just a placeholder
-   function testSortNodes() public {
+  function testSortNodes() public {
     networkFormation.addNode(1, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 89);
     networkFormation.addNode(2, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 71);
     networkFormation.addNode(3, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 53);
@@ -46,6 +46,17 @@ contract TestNetworkFormation {
     Assert.equal(sortedThingo[7].energyLevel, 62, "Sorting error");
     Assert.equal(sortedThingo[8].energyLevel, 53, "Sorting error");
     Assert.equal(sortedThingo[9].energyLevel, 52, "Sorting error");
+  }
+
+  /***********************************************
+   * TEST - Getting existing nodes
+   ***********************************************/
+  function testGetNode() public {
+    address dummyAddr = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
+    networkFormation.addNode(100, dummyAddr, 50);
+
+    Structs.SensorNode memory node = networkFormation.getNode(dummyAddr);
+    Assert.equal(node.nodeAddress, dummyAddr, "Retrieval error");
   }
 
   
