@@ -69,5 +69,13 @@ contract TestNetworkFormation {
     Assert.equal(node101.energyLevel, 35, "Retrieval error");
   }
 
-  
+  /***********************************************
+   * TEST - Floor division in Solidity
+   ***********************************************/
+  function testFloor() public {
+    uint result1 = uint(12) / 5; // 2.4
+    Assert.equal(result1, 2, "Division is not floor?");
+    uint result2 = uint(15) / 4; // 3.75
+    Assert.equal(result2, 3, "Division is not floor?");
+  }
 }
