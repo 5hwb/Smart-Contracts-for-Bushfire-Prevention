@@ -23,16 +23,17 @@ contract TestNetworkFormation {
    // Testing the getSortedNodes() function
    // note: address is just a placeholder
   function testSortNodes() public {
-    networkFormation.addNode(1, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 89);
-    networkFormation.addNode(2, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 71);
-    networkFormation.addNode(3, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 53);
-    networkFormation.addNode(4, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 62);
-    networkFormation.addNode(5, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 90);
-    networkFormation.addNode(6, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 75);
-    networkFormation.addNode(7, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 62);
-    networkFormation.addNode(8, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 52);
-    networkFormation.addNode(9, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 95);
-    networkFormation.addNode(10, 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1, 85);
+    address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
+    networkFormation.addNode(1, dummyAddr, 89);
+    networkFormation.addNode(2, dummyAddr, 71);
+    networkFormation.addNode(3, dummyAddr, 53);
+    networkFormation.addNode(4, dummyAddr, 62);
+    networkFormation.addNode(5, dummyAddr, 90);
+    networkFormation.addNode(6, dummyAddr, 75);
+    networkFormation.addNode(7, dummyAddr, 62);
+    networkFormation.addNode(8, dummyAddr, 52);
+    networkFormation.addNode(9, dummyAddr, 95);
+    networkFormation.addNode(10, dummyAddr, 85);
     
     // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
     Structs.SensorNode[] memory sortedThingo = networkFormation.getSortedNodes();
@@ -52,11 +53,20 @@ contract TestNetworkFormation {
    * TEST - Getting existing nodes
    ***********************************************/
   function testGetNode() public {
-    address dummyAddr = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
-    networkFormation.addNode(100, dummyAddr, 50);
+    address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
+    address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
+    networkFormation.addNode(100, dummyAddr1, 50);
+    networkFormation.addNode(101, dummyAddr2, 35);
 
-    Structs.SensorNode memory node = networkFormation.getNode(dummyAddr);
-    Assert.equal(node.nodeAddress, dummyAddr, "Retrieval error");
+    Structs.SensorNode memory node100 = networkFormation.getNode(dummyAddr1);
+    Assert.equal(node100.nodeID, 100, "Retrieval error");
+    Assert.equal(node100.nodeAddress, dummyAddr1, "Retrieval error");
+    Assert.equal(node100.energyLevel, 50, "Retrieval error");
+
+    Structs.SensorNode memory node101 = networkFormation.getNode(dummyAddr2);
+    Assert.equal(node101.nodeID, 101, "Retrieval error");
+    Assert.equal(node101.nodeAddress, dummyAddr2, "Retrieval error");
+    Assert.equal(node101.energyLevel, 35, "Retrieval error");
   }
 
   
