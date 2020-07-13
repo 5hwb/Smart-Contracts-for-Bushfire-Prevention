@@ -30,6 +30,16 @@ contract NetworkFormation {
       }
     }
   }
+  
+  // Convert a list of addresses into their matching sensor nodes
+  function addrsToSensorNodes(address[] memory listOfNodes) view public returns(Structs.SensorNode[] memory) {
+    Structs.SensorNode[] memory result = new Structs.SensorNode[](listOfNodes.length); 
+    for (uint i = 0; i < listOfNodes.length; i++) {
+      result[i] = getNode(listOfNodes[i]);
+    }
+    
+    return result;
+  }
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon() public {
@@ -58,11 +68,11 @@ contract NetworkFormation {
     // Get the sensor node with the given address
     Structs.SensorNode memory currClusterHead = getNode(sensorNode);
     
-    // // sort the sensor nodes that sent join requests by energy level in descending order
-    // Structs.SensorNode[] memory nodesWithJoinRequests = sort(currClusterHead.joinRequestNodes);
-    // 
-    // uint probability = 65; // 65% chance of being elected?
-    // 
+    // sort the sensor nodes that sent join requests by energy level in descending order
+    Structs.SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.joinRequestNodes));
+    
+    uint probability = 65; // 65% chance of being elected?
+    
     // // TODO: find out how to calculate floor operation in Solidity
     // numOfClusterHeads = floor((probability / 100) * numOfJoinRequests); // N_CH
     // 
