@@ -16,7 +16,16 @@ contract NetworkFormation {
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, address addr, uint energyLevel) public {
     address[] memory thingo; // a dummy address list
-    Structs.SensorNode memory node = Structs.SensorNode(id, addr, energyLevel, 1, false, address(this), thingo, thingo, 0);
+    Structs.SensorNode memory node = Structs.SensorNode(
+      id, addr, energyLevel, // nodeID, nodeAddress, energyLevel 
+      1, // numOfOneHopClusterHeads
+      false, // isClusterHead
+      false, //isMemberNode
+      address(this), // parentNode (DUMMY PLACEMENT FOR NOW)
+      thingo, // childNodes (DUMMY PLACEMENT FOR NOW)
+      thingo, // joinRequestNodes (DUMMY PLACEMENT FOR NOW)
+      0 // numOfJoinRequests
+    );
     nodes.push(node);
     numOfNodes++;
   }

@@ -8,6 +8,7 @@ library Structs {
     uint energyLevel;             // give it when initialising
     uint numOfOneHopClusterHeads; // init to 1
     bool isClusterHead;           // init to false
+    bool isMemberNode;           // init to false
     
     address parentNode;   // parent (cluster head) of this node
     address[] childNodes; // children of this node (if cluster head)
