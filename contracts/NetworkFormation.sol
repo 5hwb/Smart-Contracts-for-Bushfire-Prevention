@@ -8,7 +8,6 @@ import "./Structs.sol";
 contract NetworkFormation {
   
   uint numOfClusterHeads; // N_CH
-  uint numOfJoinRequests; // N_T
   
   // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
   Structs.SensorNode[] public nodes;
@@ -17,7 +16,7 @@ contract NetworkFormation {
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, address addr, uint energyLevel) public {
     address[] memory thingo; // a dummy address list
-    Structs.SensorNode memory node = Structs.SensorNode(id, addr, energyLevel, 1, false, address(this), thingo, thingo);
+    Structs.SensorNode memory node = Structs.SensorNode(id, addr, energyLevel, 1, false, address(this), thingo, thingo, 0);
     nodes.push(node);
     numOfNodes++;
   }
@@ -73,9 +72,10 @@ contract NetworkFormation {
     
     uint probability = 65; // 65% chance of being elected?
     
-    // // TODO: find out how to calculate floor operation in Solidity
-    // numOfClusterHeads = floor((probability / 100) * numOfJoinRequests); // N_CH
-    // 
+    // TODO: find out how to calculate floor operation in Solidity
+    // // N_CH
+    // numOfClusterHeads = floor((probability / 100) * currClusterHead.numOfJoinRequests); 
+    
     // // Select the cluster heads
     // uint memory numOfElectedClusterHeads = 0;
     // address[] chosenClusterHeads;

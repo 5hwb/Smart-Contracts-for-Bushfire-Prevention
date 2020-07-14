@@ -12,5 +12,6 @@ library Structs {
     address parentNode;   // parent (cluster head) of this node
     address[] childNodes; // children of this node (if cluster head)
     address[] joinRequestNodes; // nodes that have sent join requests to this node
+    uint numOfJoinRequests; // N_T
   }
 }
