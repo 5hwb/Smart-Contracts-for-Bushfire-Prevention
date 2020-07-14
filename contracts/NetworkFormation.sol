@@ -69,39 +69,36 @@ contract NetworkFormation {
     
     // sort the sensor nodes that sent join requests by energy level in descending order
     Structs.SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.joinRequestNodes));
-    
+
+    // N_CH calculation:
+    // (probability * numOfJoinRequests * 100) / 10000
+    // where probability is an integer representing a percentage (0 < probability <= 100)
+    // and numOfJoinRequests >= 1
     uint probability = 65; // 65% chance of being elected?
+    numOfClusterHeads = (probability * 
+        (currClusterHead.numOfJoinRequests*100)) / 10000; 
     
-    // TODO: find out how to calculate floor operation in Solidity
-    // // N_CH
-    // numOfClusterHeads = floor((probability / 100) * currClusterHead.numOfJoinRequests); 
+    // Select the cluster heads from the ndoes with join requests
+    uint numOfElectedClusterHeads = 0;
+    for (uint i = 0; i < nodesWithJoinRequests.length; i++) {
+      // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
+      if (numOfClusterHeads > 1) {
     
-    // // Select the cluster heads
-    // uint memory numOfElectedClusterHeads = 0;
-    // address[] chosenClusterHeads;
-    // for (uint i = 0; i < nodesWithJoinRequests.length; i++) {
-    //   // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
-    //   if (numOfClusterHeads > 1) {
-    // 
-    //     // Get only the top N_CH nodes
-    //     if (numOfElectedClusterHeads < numOfClusterHeads) {
-    //       chosenClusterHeads.push(nodesWithJoinRequests[i]);
-    //       numOfClusterHeadsToElect++;
-    //     }
-    //   }
-    //   // If only 1 cluster head: Select the node with the highest energy level as a cluster head.
-    //   else {
-    //     chosenClusterHeads.push(nodesWithJoinRequests[i]);
-    //   }
-    // }
-    // 
-    // // Register the cluster heads
-    // for (uint i = 0; i < numOfClusterHeads; i++) {
-    //   registerAsClusterHead(chosenClusterHeads[i]);
-    // }
-  
+        // Get only the top N_CH nodes
+        if (numOfElectedClusterHeads < numOfClusterHeads) {
+          // Register the cluster heads
+          registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
+          numOfElectedClusterHeads++;
+        }
+      }
+      // If only 1 cluster head: Select the node with the highest energy level as a cluster head.
+      else {
+        // Register the cluster heads
+        registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
+      }
+    }
+      
     // Register the member nodes for this layer
-    // TODO
   }
   
   // TODO: implement the GCA algorithm as described in Lee et al. (2011)
