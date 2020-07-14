@@ -77,5 +77,21 @@ contract TestNetworkFormation {
     Assert.equal(result1, 2, "Division is not floor?");
     uint result2 = uint(15) / 4; // 3.75
     Assert.equal(result2, 3, "Division is not floor?");
+    
+    // N_CH calculation experiment:
+    // (probability * numOfJoinRequests * 100) / 10000
+    // where probability is an integer representing a percentage (0 < probability <= 100)
+    // and numOfJoinRequests >= 1
+    uint probability = 65;
+    uint numOfClusterHeads = (probability * (5*100)) / 10000; 
+    Assert.equal(numOfClusterHeads, 3, "Division is not floor?");
+    numOfClusterHeads = (probability * (4*100)) / 10000; 
+    Assert.equal(numOfClusterHeads, 2, "Division is not floor?");
+    numOfClusterHeads = (probability * (3*100)) / 10000; 
+    Assert.equal(numOfClusterHeads, 1, "Division is not floor?");
+    numOfClusterHeads = (probability * (2*100)) / 10000; 
+    Assert.equal(numOfClusterHeads, 1, "Division is not floor?");
+    numOfClusterHeads = (probability * (1*100)) / 10000; 
+    Assert.equal(numOfClusterHeads, 0, "Division is not floor?");
   }
 }
