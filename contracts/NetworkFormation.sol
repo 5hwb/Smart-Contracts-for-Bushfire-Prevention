@@ -64,6 +64,11 @@ contract NetworkFormation {
     // todo
   }
   
+  // Register the given node as a member node of the given cluster head.
+  function registerAsMemberNode(address clusterHead, address sensorNode) public {
+    // todo
+  }
+  
   // Get the sorted nodes 
   function getSortedNodes() public returns(Structs.SensorNode[] memory) {
     return sort(nodes);
@@ -71,7 +76,7 @@ contract NetworkFormation {
     
   // Elect the next cluster heads for the next layer.
   // NOTE: this may not compile but the basic logic is good
-  function electClusterHeads(address sensorNode) public {
+  function electClusterHeads(address clusterHead, address sensorNode) public {
   
     // Get the sensor node with the given address
     Structs.SensorNode memory currClusterHead = getNode(sensorNode);
@@ -87,23 +92,16 @@ contract NetworkFormation {
     numOfClusterHeads = (probability * 
         (currClusterHead.numOfJoinRequests*100)) / 10000; 
     
-    // Select the cluster heads from the ndoes with join requests
+    // Select the cluster heads from the nodes with join requests
     uint numOfElectedClusterHeads = 0;
     for (uint i = 0; i < nodesWithJoinRequests.length; i++) {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
-      if (numOfClusterHeads > 1) {
-    
-        // Get only the top N_CH nodes
-        if (numOfElectedClusterHeads < numOfClusterHeads) {
-          // Register the cluster heads
-          registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
-          numOfElectedClusterHeads++;
-        }
-      }
-      // If only 1 cluster head: Select the node with the highest energy level as a cluster head.
-      else {
+      if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
         registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
+        numOfElectedClusterHeads++;
+      } else {
+        registerAsMemberNode(clusterHead, nodesWithJoinRequests[i].nodeAddress);
       }
     }
       
