@@ -24,16 +24,18 @@ contract TestNetworkFormation {
    // note: address is just a placeholder
   function testSortNodes() public {
     address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
-    contAddr.addNode(1, dummyAddr, 89);
-    contAddr.addNode(2, dummyAddr, 71);
-    contAddr.addNode(3, dummyAddr, 53);
-    contAddr.addNode(4, dummyAddr, 62);
-    contAddr.addNode(5, dummyAddr, 90);
-    contAddr.addNode(6, dummyAddr, 75);
-    contAddr.addNode(7, dummyAddr, 62);
-    contAddr.addNode(8, dummyAddr, 52);
-    contAddr.addNode(9, dummyAddr, 95);
-    contAddr.addNode(10, dummyAddr, 85);
+    address[] memory dummyAddrs = new address[](1);
+    dummyAddrs[0] = dummyAddr;
+    contAddr.addNode(1, dummyAddr, 89, dummyAddrs);
+    contAddr.addNode(2, dummyAddr, 71, dummyAddrs);
+    contAddr.addNode(3, dummyAddr, 53, dummyAddrs);
+    contAddr.addNode(4, dummyAddr, 62, dummyAddrs);
+    contAddr.addNode(5, dummyAddr, 90, dummyAddrs);
+    contAddr.addNode(6, dummyAddr, 75, dummyAddrs);
+    contAddr.addNode(7, dummyAddr, 62, dummyAddrs);
+    contAddr.addNode(8, dummyAddr, 52, dummyAddrs);
+    contAddr.addNode(9, dummyAddr, 95, dummyAddrs);
+    contAddr.addNode(10, dummyAddr, 85, dummyAddrs);
     
     // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
     Structs.SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
@@ -56,8 +58,12 @@ contract TestNetworkFormation {
    address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
 
   function testGetNode() public {
-    contAddr.addNode(100, dummyAddr1, 50);
-    contAddr.addNode(101, dummyAddr2, 35);
+    address[] memory dummyAddrs1 = new address[](1);
+    dummyAddrs1[0] = dummyAddr2;
+    address[] memory dummyAddrs2 = new address[](1);
+    dummyAddrs2[0] = dummyAddr1;
+    contAddr.addNode(100, dummyAddr1, 50, dummyAddrs1);
+    contAddr.addNode(101, dummyAddr2, 35, dummyAddrs2);
 
     Structs.SensorNode memory node100 = contAddr.getNode(dummyAddr1);
     Assert.equal(node100.nodeID, 100, "Retrieval error");

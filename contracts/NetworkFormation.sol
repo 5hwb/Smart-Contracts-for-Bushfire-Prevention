@@ -14,7 +14,7 @@ contract NetworkFormation {
   uint public numOfNodes;
   
   // Add a node to the list of all sensor nodes.
-  function addNode(uint id, address addr, uint energyLevel) public {
+  function addNode(uint id, address addr, uint energyLevel, address[] memory withinRangeNodes) public {
     address[] memory thingo; // a dummy address list
     Structs.SensorNode memory node = Structs.SensorNode(
       id, addr, energyLevel, // nodeID, nodeAddress, energyLevel 
@@ -24,7 +24,8 @@ contract NetworkFormation {
       address(this), // parentNode (DUMMY PLACEMENT FOR NOW)
       thingo, // childNodes (DUMMY PLACEMENT FOR NOW)
       thingo, // joinRequestNodes (DUMMY PLACEMENT FOR NOW)
-      0 // numOfJoinRequests
+      0, // numOfJoinRequests
+      withinRangeNodes // withinRangeNodes
     );
     nodes.push(node);
     numOfNodes++;

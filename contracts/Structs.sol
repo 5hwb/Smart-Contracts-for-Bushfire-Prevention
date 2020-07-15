@@ -14,5 +14,6 @@ library Structs {
     address[] childNodes; // children of this node (if cluster head)
     address[] joinRequestNodes; // nodes that have sent join requests to this node
     uint numOfJoinRequests; // N_T
+    address[] withinRangeNodes; // nodes that are within transmission distance to this node
   }
 }
