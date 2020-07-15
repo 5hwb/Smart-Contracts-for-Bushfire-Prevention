@@ -60,13 +60,20 @@ contract NetworkFormation {
   }
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
-  function sendBeacon() public {
-    // todo
+  function sendBeacon(address clusterHead) public {
+    uint nodeIndex = getNodeIndex(clusterHead);
+    assert(nodes[nodeIndex].isClusterHead == true);
+    assert(nodes[nodeIndex].withinRangeNodes.length >= 1);
+    
+    // for (uint i = 0; i < nodes[nodeIndex].withinRangeNodes.length; i++) {
+    // 
+    // }
+    // TODO FINISH
   }
   
   // Send a join request to cluster head.
   function sendJoinRequest(address sensorNode, address clusterHead) public {
-    // todo
+    // TODO FINISH
   }
   
   // Register the given node as a cluster head.
