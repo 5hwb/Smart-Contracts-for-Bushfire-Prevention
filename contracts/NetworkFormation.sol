@@ -30,6 +30,15 @@ contract NetworkFormation {
     numOfNodes++;
   }
   
+  // Get the index of the node with the given address
+  function getNodeIndex(address sensorNode) view public returns(uint) {
+    for (uint i = 0; i < numOfNodes; i++) {
+      if (nodes[i].nodeAddress == sensorNode) {
+        return i;
+      }
+    }
+  }
+  
   // Get the node with the given address
   function getNode(address sensorNode) view public returns(Structs.SensorNode memory) {
     for (uint i = 0; i < numOfNodes; i++) {
@@ -61,12 +70,18 @@ contract NetworkFormation {
   
   // Register the given node as a cluster head.
   function registerAsClusterHead(address sensorNode) public {
-    // todo
+    uint nodeIndex = getNodeIndex(sensorNode);
+    assert(nodes[nodeIndex].isClusterHead == false);
+    assert(nodes[nodeIndex].isMemberNode == false);
+    nodes[nodeIndex].isClusterHead = true;
   }
   
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(address clusterHead, address sensorNode) public {
-    // todo
+    uint nodeIndex = getNodeIndex(sensorNode);
+    assert(nodes[nodeIndex].isClusterHead == false);
+    assert(nodes[nodeIndex].isMemberNode == false);
+    nodes[nodeIndex].isMemberNode = true;
   }
   
   // Get the sorted nodes 
