@@ -61,19 +61,30 @@ contract NetworkFormation {
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(address clusterHead) public {
-    uint nodeIndex = getNodeIndex(clusterHead);
-    assert(nodes[nodeIndex].isClusterHead == true);
-    assert(nodes[nodeIndex].withinRangeNodes.length >= 1);
+    uint chIndex = getNodeIndex(clusterHead);
+    assert(nodes[chIndex].isClusterHead == true);
+    assert(nodes[chIndex].withinRangeNodes.length >= 1);
     
-    // for (uint i = 0; i < nodes[nodeIndex].withinRangeNodes.length; i++) {
-    // 
-    // }
+    for (uint i = 0; i < nodes[chIndex].withinRangeNodes.length; i++) {
+      // Send the beacon!
+      // TODO find out how to do callback function (or equivalent)
+      // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
+    }
     // TODO FINISH
   }
   
   // Send a join request to cluster head.
   function sendJoinRequest(address sensorNode, address clusterHead) public {
     // TODO FINISH
+    uint nodeIndex = getNodeIndex(clusterHead);
+    uint chIndex = getNodeIndex(clusterHead);
+    
+    // Add this node to cluster head's list of nodes that sent join requests
+    Structs.SensorNode storage cHeadNode = nodes[chIndex];
+    assert(cHeadNode.joinRequestNodes.length == 0);
+    
+    cHeadNode.joinRequestNodes.push(nodes[nodeIndex]);
+    cHeadNode.numOfJoinRequests++;
   }
   
   // Register the given node as a cluster head.
@@ -123,12 +134,12 @@ contract NetworkFormation {
         // Register the cluster heads
         registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
         numOfElectedClusterHeads++;
-      } else {
+      }
+      // If all cluster heads have been elected, register the member nodes for this layer
+      else {
         registerAsMemberNode(clusterHead, nodesWithJoinRequests[i].nodeAddress);
       }
     }
-      
-    // Register the member nodes for this layer
   }
   
   // TODO: implement the GCA algorithm as described in Lee et al. (2011)
