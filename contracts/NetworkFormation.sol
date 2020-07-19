@@ -3,6 +3,7 @@ pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
 import "./Structs.sol";
+import "./SensorNode.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 
 contract NetworkFormation {
@@ -10,7 +11,7 @@ contract NetworkFormation {
   uint numOfClusterHeads; // N_CH
   
   // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
-  Structs.SensorNode[] public nodes;
+  SensorNode[] public nodes;
   uint public numOfNodes;
   
   // Add a node to the list of all sensor nodes.
@@ -18,17 +19,7 @@ contract NetworkFormation {
   // https://ethereum.stackexchange.com/questions/52532/how-to-create-a-multiple-contract-with-multiple-instance
   function addNode(uint id, address addr, uint energyLevel, address[] memory withinRangeNodes) public {
     address[] memory thingo; // a dummy address list
-    Structs.SensorNode memory node = Structs.SensorNode(
-      id, addr, energyLevel, // nodeID, nodeAddress, energyLevel 
-      1, // numOfOneHopClusterHeads
-      false, // isClusterHead
-      false, //isMemberNode
-      address(this), // parentNode (DUMMY PLACEMENT FOR NOW)
-      thingo, // childNodes (DUMMY PLACEMENT FOR NOW)
-      thingo, // joinRequestNodes (DUMMY PLACEMENT FOR NOW)
-      0, // numOfJoinRequests
-      withinRangeNodes // withinRangeNodes
-    );
+    SensorNode node = new SensorNode(id, addr, energyLevel);
     nodes.push(node);
     numOfNodes++;
   }
@@ -36,24 +27,24 @@ contract NetworkFormation {
   // Get the index of the node with the given address
   function getNodeIndex(address sensorNode) view public returns(uint) {
     for (uint i = 0; i < numOfNodes; i++) {
-      if (nodes[i].nodeAddress == sensorNode) {
+      if (nodes[i].nodeAddress() == sensorNode) {
         return i;
       }
     }
   }
   
   // Get the node with the given address
-  function getNode(address sensorNode) view public returns(Structs.SensorNode memory) {
+  function getNode(address sensorNode) view public returns(SensorNode) {
     for (uint i = 0; i < numOfNodes; i++) {
-      if (nodes[i].nodeAddress == sensorNode) {
+      if (nodes[i].nodeAddress() == sensorNode) {
         return nodes[i];
       }
     }
   }
   
   // Convert a list of addresses into their matching sensor nodes
-  function addrsToSensorNodes(address[] memory listOfNodes) view public returns(Structs.SensorNode[] memory) {
-    Structs.SensorNode[] memory result = new Structs.SensorNode[](listOfNodes.length); 
+  function addrsToSensorNodes(address[] memory listOfNodes) view public returns(SensorNode[] memory) {
+    SensorNode[] memory result = new SensorNode[](listOfNodes.length); 
     for (uint i = 0; i < listOfNodes.length; i++) {
       result[i] = getNode(listOfNodes[i]);
     }
@@ -64,10 +55,10 @@ contract NetworkFormation {
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(address clusterHead) public {
     uint chIndex = getNodeIndex(clusterHead);
-    assert(nodes[chIndex].isClusterHead == true);
-    assert(nodes[chIndex].withinRangeNodes.length >= 1);
+    assert(nodes[chIndex].isClusterHead() == true);
+    assert(nodes[chIndex].numOfWithinRangeNodes() >= 1);
     
-    for (uint i = 0; i < nodes[chIndex].withinRangeNodes.length; i++) {
+    for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
       // Send the beacon!
       // TODO find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
@@ -82,7 +73,7 @@ contract NetworkFormation {
     uint chIndex = getNodeIndex(clusterHead);
     
     // // Add this node to cluster head's list of nodes that sent join requests
-    // Structs.SensorNode storage cHeadNode = nodes[chIndex];
+    // SensorNode storage cHeadNode = nodes[chIndex];
     // assert(cHeadNode.nodeID != 0);
     // 
     // cHeadNode.joinRequestNodes.push(nodes[nodeIndex]);
@@ -92,21 +83,21 @@ contract NetworkFormation {
   // Register the given node as a cluster head.
   function registerAsClusterHead(address sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
-    assert(nodes[nodeIndex].isClusterHead == false);
-    assert(nodes[nodeIndex].isMemberNode == false);
-    nodes[nodeIndex].isClusterHead = true;
+    assert(nodes[nodeIndex].isClusterHead() == false);
+    assert(nodes[nodeIndex].isMemberNode() == false);
+    nodes[nodeIndex].isClusterHead() = true;
   }
   
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(address clusterHead, address sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
-    assert(nodes[nodeIndex].isClusterHead == false);
-    assert(nodes[nodeIndex].isMemberNode == false);
-    nodes[nodeIndex].isMemberNode = true;
+    assert(nodes[nodeIndex].isClusterHead() == false);
+    assert(nodes[nodeIndex].isMemberNode() == false);
+    nodes[nodeIndex].isMemberNode() = true;
   }
   
   // Get the sorted nodes 
-  function getSortedNodes() public returns(Structs.SensorNode[] memory) {
+  function getSortedNodes() public returns(SensorNode[] memory) {
     return sort(nodes);
   }
     
@@ -115,10 +106,10 @@ contract NetworkFormation {
   function electClusterHeads(address clusterHead, address sensorNode) public {
   
     // Get the sensor node with the given address
-    Structs.SensorNode memory currClusterHead = getNode(sensorNode);
+    SensorNode currClusterHead = getNode(sensorNode);
     
     // sort the sensor nodes that sent join requests by energy level in descending order
-    Structs.SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.joinRequestNodes));
+    SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.joinRequestNodes));
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000
@@ -149,12 +140,12 @@ contract NetworkFormation {
   
   // Sort function for SensorNode arrays that sorts by energy level in descending order.
   // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
-  function sort(Structs.SensorNode[] memory data) public returns(Structs.SensorNode[] memory) {
+  function sort(SensorNode[] memory data) public returns(SensorNode[] memory) {
      quickSort(data, int(0), int(data.length - 1));
      return data;
   }
   
-  function quickSort(Structs.SensorNode[] memory arr, int left, int right) internal {
+  function quickSort(SensorNode[] memory arr, int left, int right) internal {
       int i = left;
       int j = right;
       if(i==j) return;
