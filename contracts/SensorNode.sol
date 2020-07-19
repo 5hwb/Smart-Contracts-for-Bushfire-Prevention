@@ -22,13 +22,26 @@ contract SensorNode {
     energyLevel = _energyLevel;
   }
   
+  function setEnergyLevel(uint level) public {
+    energyLevel = level;
+  }
+  
   function setAsClusterHead() public {
-    //assert();
+    assert(isMemberNode == false);
     isClusterHead = true;
+  }
+  
+  function setAsMemberNode() public {
+    assert(isClusterHead == false);
+    isMemberNode = true;
   }
   
   function numOfChildNodes() public view returns (uint) {
     return childNodes.length;
+  }
+  
+  function getJoinRequestNodes() public view returns (address[] memory) {
+    return joinRequestNodes;
   }
   
   function numOfWithinRangeNodes() public view returns (uint) {

@@ -85,7 +85,7 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(sensorNode);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
-    nodes[nodeIndex].isClusterHead() = true;
+    nodes[nodeIndex].setAsClusterHead();
   }
   
   // Register the given node as a member node of the given cluster head.
@@ -93,7 +93,7 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(sensorNode);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
-    nodes[nodeIndex].isMemberNode() = true;
+    nodes[nodeIndex].setAsMemberNode();
   }
   
   // Get the sorted nodes 
@@ -109,7 +109,7 @@ contract NetworkFormation {
     SensorNode currClusterHead = getNode(sensorNode);
     
     // sort the sensor nodes that sent join requests by energy level in descending order
-    SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.joinRequestNodes));
+    SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.getJoinRequestNodes()));
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000
@@ -117,7 +117,7 @@ contract NetworkFormation {
     // and numOfJoinRequests >= 1
     uint probability = 65; // 65% chance of being elected?
     numOfClusterHeads = (probability * 
-        (currClusterHead.numOfJoinRequests*100)) / 10000; 
+        (currClusterHead.numOfJoinRequests()*100)) / 10000; 
     
     // Select the cluster heads from the nodes with join requests
     uint numOfElectedClusterHeads = 0;
@@ -125,12 +125,12 @@ contract NetworkFormation {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
       if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
-        registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress);
+        registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress());
         numOfElectedClusterHeads++;
       }
       // If all cluster heads have been elected, register the member nodes for this layer
       else {
-        registerAsMemberNode(clusterHead, nodesWithJoinRequests[i].nodeAddress);
+        registerAsMemberNode(clusterHead, nodesWithJoinRequests[i].nodeAddress());
       }
     }
   }
@@ -149,12 +149,15 @@ contract NetworkFormation {
       int i = left;
       int j = right;
       if(i==j) return;
-      uint pivot = arr[uint(left + (right - left) / 2)].energyLevel;
+      uint pivot = arr[uint(left + (right - left) / 2)].energyLevel();
       while (i <= j) {
-          while (arr[uint(i)].energyLevel > pivot) i++;
-          while (pivot > arr[uint(j)].energyLevel) j--;
+          while (arr[uint(i)].energyLevel() > pivot) i++;
+          while (pivot > arr[uint(j)].energyLevel()) j--;
           if (i <= j) {
-              (arr[uint(i)].energyLevel, arr[uint(j)].energyLevel) = (arr[uint(j)].energyLevel, arr[uint(i)].energyLevel);
+              //(arr[uint(i)].energyLevel(), arr[uint(j)].energyLevel()) = (arr[uint(j)].energyLevel(), arr[uint(i)].energyLevel());
+              uint temp = arr[uint(i)].energyLevel();
+              arr[uint(i)].setEnergyLevel(arr[uint(j)].energyLevel());
+              arr[uint(j)].setEnergyLevel(temp);
               i++;
               j--;
           }
