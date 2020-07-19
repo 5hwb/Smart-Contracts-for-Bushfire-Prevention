@@ -14,6 +14,8 @@ contract NetworkFormation {
   uint public numOfNodes;
   
   // Add a node to the list of all sensor nodes.
+  // TODO: convert the SensorNode struct to a full-fledged contract, withinRangeNodes// find out how to initiate multiple instances of that contract (1 for each node).
+  // https://ethereum.stackexchange.com/questions/52532/how-to-create-a-multiple-contract-with-multiple-instance
   function addNode(uint id, address addr, uint energyLevel, address[] memory withinRangeNodes) public {
     address[] memory thingo; // a dummy address list
     Structs.SensorNode memory node = Structs.SensorNode(
@@ -79,12 +81,12 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(clusterHead);
     uint chIndex = getNodeIndex(clusterHead);
     
-    // Add this node to cluster head's list of nodes that sent join requests
-    Structs.SensorNode storage cHeadNode = nodes[chIndex];
-    assert(cHeadNode.joinRequestNodes.length == 0);
-    
-    cHeadNode.joinRequestNodes.push(nodes[nodeIndex]);
-    cHeadNode.numOfJoinRequests++;
+    // // Add this node to cluster head's list of nodes that sent join requests
+    // Structs.SensorNode storage cHeadNode = nodes[chIndex];
+    // assert(cHeadNode.nodeID != 0);
+    // 
+    // cHeadNode.joinRequestNodes.push(nodes[nodeIndex]);
+    // cHeadNode.numOfJoinRequests++;
   }
   
   // Register the given node as a cluster head.
