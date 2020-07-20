@@ -12,11 +12,11 @@ contract NetworkFormation {
   
   // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
   SensorNode[] public nodes;
-  uint public numOfNodes;
+  
+  uint public numOfNodes; // Number of nodes in this network
+  uint public numOfLevels; // How many levels the network is consisted of
   
   // Add a node to the list of all sensor nodes.
-  // TODO: convert the SensorNode struct to a full-fledged contract, withinRangeNodes// find out how to initiate multiple instances of that contract (1 for each node).
-  // https://ethereum.stackexchange.com/questions/52532/how-to-create-a-multiple-contract-with-multiple-instance
   function addNode(uint id, address addr, uint energyLevel, address[] memory withinRangeNodes) public {
     address[] memory thingo; // a dummy address list
     SensorNode node = new SensorNode(id, addr, energyLevel);
@@ -59,11 +59,15 @@ contract NetworkFormation {
     assert(nodes[chIndex].numOfWithinRangeNodes() >= 1);
     
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
+      SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
       // Send the beacon!
+      // (for now, simulate it by setting the network level integer) 
+      numOfLevels++;
+      currNode.setNetworkLevel(numOfLevels);
+      
       // TODO find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
     }
-    // TODO FINISH
   }
   
   // Send a join request to cluster head.
