@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.10;
 
+// TODO remove!
 library Structs {
   struct SensorNode {
     uint nodeID;                  // ID of the node

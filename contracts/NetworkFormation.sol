@@ -68,16 +68,13 @@ contract NetworkFormation {
   
   // Send a join request to cluster head.
   function sendJoinRequest(address sensorNode, address clusterHead) public {
-    // TODO FINISH
-    uint nodeIndex = getNodeIndex(clusterHead);
+    uint nodeIndex = getNodeIndex(sensorNode);
     uint chIndex = getNodeIndex(clusterHead);
     
-    // // Add this node to cluster head's list of nodes that sent join requests
-    // SensorNode storage cHeadNode = nodes[chIndex];
-    // assert(cHeadNode.nodeID != 0);
-    // 
-    // cHeadNode.joinRequestNodes.push(nodes[nodeIndex]);
-    // cHeadNode.numOfJoinRequests++;
+    // Add this node to cluster head's list of nodes that sent join requests
+    SensorNode cHeadNode = nodes[chIndex];
+    assert(cHeadNode.nodeID() != 0); // make sure the cluster head node exists
+    cHeadNode.addJoinRequestNode(nodes[nodeIndex].nodeAddress());
   }
   
   // Register the given node as a cluster head.

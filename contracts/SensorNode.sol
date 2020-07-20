@@ -36,6 +36,11 @@ contract SensorNode {
     isMemberNode = true;
   }
   
+  function addJoinRequestNode(address addr) public {
+    joinRequestNodes.push(addr);
+    numOfJoinRequests++;
+  }
+  
   function numOfChildNodes() public view returns (uint) {
     return childNodes.length;
   }
