@@ -16,6 +16,9 @@ contract NetworkFormation {
   uint public numOfNodes; // Number of nodes in this network
   uint public numOfLevels; // How many levels the network is consisted of
   
+  // Events
+  event AddedNode(uint nodeID);
+  
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, address addr, uint energyLevel, address[] memory _withinRangeNodes) public {
     SensorNode node = new SensorNode(id, addr, energyLevel);
@@ -26,6 +29,7 @@ contract NetworkFormation {
     
     nodes.push(node);
     numOfNodes++;
+    emit AddedNode(id);
   }
   
   // Get the index of the node with the given address
