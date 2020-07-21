@@ -17,9 +17,13 @@ contract NetworkFormation {
   uint public numOfLevels; // How many levels the network is consisted of
   
   // Add a node to the list of all sensor nodes.
-  function addNode(uint id, address addr, uint energyLevel, address[] memory withinRangeNodes) public {
-    address[] memory thingo; // a dummy address list
+  function addNode(uint id, address addr, uint energyLevel, address[] memory _withinRangeNodes) public {
     SensorNode node = new SensorNode(id, addr, energyLevel);
+    
+    for (uint i = 0; i < _withinRangeNodes.length; i++) {
+      node.addWithinRangeNode(_withinRangeNodes[i]);
+    }
+    
     nodes.push(node);
     numOfNodes++;
   }
@@ -92,9 +96,12 @@ contract NetworkFormation {
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(address clusterHead, address sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
+
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
+
     nodes[nodeIndex].setAsMemberNode();
+    nodes[nodeIndex].setParentNode(clusterHead);
   }
   
   // Get the sorted nodes 

@@ -46,10 +46,20 @@ contract SensorNode {
     isMemberNode = true;
   }
   
+  function setParentNode(address addr) public {
+    parentNode = addr;
+  }
+  
   function addJoinRequestNode(address addr) public {
     joinRequestNodes.push(addr);
     numOfJoinRequests++;
   }
+
+  // STRANGE BUG: this function causes the sort test case to FAIL!
+  function addWithinRangeNode(address addr) public {
+    withinRangeNodes.push(addr);
+  }
+  
   
   ////////////////////////////////////////
   // childNodes GETTER FUNCTIONS
@@ -70,10 +80,6 @@ contract SensorNode {
   ////////////////////////////////////////
   // withinRangeNodes GETTER FUNCTIONS
   ////////////////////////////////////////
-  
-  function addWithinRangeNode(address addr) public {
-    withinRangeNodes.push(addr);
-  }
   
   function getWithinRangeNodes() public view returns (address[] memory) {
     return withinRangeNodes;
