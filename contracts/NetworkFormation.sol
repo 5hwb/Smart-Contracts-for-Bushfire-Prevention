@@ -20,7 +20,7 @@ contract NetworkFormation {
   event AddedNode(uint nodeID);
   
   // Add a node to the list of all sensor nodes.
-  function addNode(uint id, address addr, uint energyLevel, address[] memory _withinRangeNodes) public {
+  function addNode(uint id, uint addr, uint energyLevel, uint[] memory _withinRangeNodes) public {
     SensorNode node = new SensorNode(id, addr, energyLevel);
     
     for (uint i = 0; i < _withinRangeNodes.length; i++) {
@@ -33,7 +33,7 @@ contract NetworkFormation {
   }
   
   // Get the index of the node with the given address
-  function getNodeIndex(address sensorNode) view public returns(uint) {
+  function getNodeIndex(uint sensorNode) view public returns(uint) {
     for (uint i = 0; i < numOfNodes; i++) {
       if (nodes[i].nodeAddress() == sensorNode) {
         return i;
@@ -42,7 +42,7 @@ contract NetworkFormation {
   }
   
   // Get the node with the given address
-  function getNode(address sensorNode) view public returns(SensorNode) {
+  function getNode(uint sensorNode) view public returns(SensorNode) {
     for (uint i = 0; i < numOfNodes; i++) {
       if (nodes[i].nodeAddress() == sensorNode) {
         return nodes[i];
@@ -51,7 +51,7 @@ contract NetworkFormation {
   }
   
   // Convert a list of addresses into their matching sensor nodes
-  function addrsToSensorNodes(address[] memory listOfNodes) view public returns(SensorNode[] memory) {
+  function addrsToSensorNodes(uint[] memory listOfNodes) view public returns(SensorNode[] memory) {
     SensorNode[] memory result = new SensorNode[](listOfNodes.length); 
     for (uint i = 0; i < listOfNodes.length; i++) {
       result[i] = getNode(listOfNodes[i]);
@@ -61,7 +61,7 @@ contract NetworkFormation {
   }
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
-  function sendBeacon(address clusterHead) public {
+  function sendBeacon(uint clusterHead) public {
     uint chIndex = getNodeIndex(clusterHead);
     assert(nodes[chIndex].isClusterHead() == true);
     assert(nodes[chIndex].numOfWithinRangeNodes() >= 1);
@@ -79,7 +79,7 @@ contract NetworkFormation {
   }
   
   // Send a join request to cluster head.
-  function sendJoinRequest(address sensorNode, address clusterHead) public {
+  function sendJoinRequest(uint sensorNode, uint clusterHead) public {
     uint nodeIndex = getNodeIndex(sensorNode);
     uint chIndex = getNodeIndex(clusterHead);
     
@@ -90,7 +90,7 @@ contract NetworkFormation {
   }
   
   // Register the given node as a cluster head.
-  function registerAsClusterHead(address sensorNode) public {
+  function registerAsClusterHead(uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
@@ -98,7 +98,7 @@ contract NetworkFormation {
   }
   
   // Register the given node as a member node of the given cluster head.
-  function registerAsMemberNode(address clusterHead, address sensorNode) public {
+  function registerAsMemberNode(uint clusterHead, uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
 
     assert(nodes[nodeIndex].isClusterHead() == false);
@@ -115,7 +115,7 @@ contract NetworkFormation {
     
   // Elect the next cluster heads for the next layer.
   // NOTE: this may not compile but the basic logic is good
-  function electClusterHeads(address clusterHead, address sensorNode) public {
+  function electClusterHeads(uint clusterHead, uint sensorNode) public {
   
     // Get the sensor node with the given address
     SensorNode currClusterHead = getNode(sensorNode);

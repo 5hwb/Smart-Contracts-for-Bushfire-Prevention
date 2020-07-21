@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 contract SensorNode {
   uint public nodeID;         // ID of the node
-  address public nodeAddress; // Ethereum address of the node
+  uint256 public nodeAddress; // Address of the node
   // TODO eventually: Make the energy level based on the battery current and voltage available 
   uint public energyLevel;    // give it when initialising.
   uint public networkLevel;          // Tree level this node is located at
@@ -12,13 +12,13 @@ contract SensorNode {
   bool public isClusterHead;           // init to false
   bool public isMemberNode;            // init to false
   
-  address public parentNode;         // parent (cluster head) of this node
-  address[] public childNodes;       // children of this node (if cluster head)
-  address[] public joinRequestNodes; // nodes that have sent join requests to this node
+  uint256 public parentNode;         // parent (cluster head) of this node
+  uint256[] public childNodes;       // children of this node (if cluster head)
+  uint256[] public joinRequestNodes; // nodes that have sent join requests to this node
   uint public numOfJoinRequests;     // N_T
-  address[] public withinRangeNodes; // nodes that are within transmission distance to this node
+  uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
-  constructor(uint _id, address _addr, uint _energyLevel) public {
+  constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
     nodeAddress = _addr;
     energyLevel = _energyLevel;
@@ -46,17 +46,21 @@ contract SensorNode {
     isMemberNode = true;
   }
   
-  function setParentNode(address addr) public {
+  function setParentNode(uint256 addr) public {
     parentNode = addr;
   }
   
-  function addJoinRequestNode(address addr) public {
+  function addJoinRequestNode(uint256 addr) public {
     joinRequestNodes.push(addr);
     numOfJoinRequests++;
   }
 
-  // STRANGE BUG: this function causes the sort test case to FAIL!
-  function addWithinRangeNode(address addr) public {
+  // TODO: find out the CAUSE of this
+  // STRANGE BUG: adding this function causes the sort test case to FAIL!
+  // ALSO: in testSortNodes() in TestNetworkFormation.sol,
+  // commenting out the last 2 addNode() calls gets rid of the error!
+  // ALSO: changing all address types from 'address' to 'uint256' fixes the problem.
+  function addWithinRangeNode(uint256 addr) public {
     withinRangeNodes.push(addr);
   }
   
@@ -73,7 +77,7 @@ contract SensorNode {
   // joinRequestNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
-  function getJoinRequestNodes() public view returns (address[] memory) {
+  function getJoinRequestNodes() public view returns (uint256[] memory) {
     return joinRequestNodes;
   }
   
@@ -81,7 +85,7 @@ contract SensorNode {
   // withinRangeNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
-  function getWithinRangeNodes() public view returns (address[] memory) {
+  function getWithinRangeNodes() public view returns (uint256[] memory) {
     return withinRangeNodes;
   }
   

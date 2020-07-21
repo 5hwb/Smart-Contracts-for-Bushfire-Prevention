@@ -17,15 +17,15 @@ contract TestNetworkFormation {
   // Address of this contract
   address contractAddress = address(this);
 
-
   /***********************************************
    * TEST - Sorting
    ***********************************************/
    // Testing the getSortedNodes() function
    // note: address is just a placeholder
-  function testSortNodes() public {
-    address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
-    address[] memory dummyAddrs = new address[](1);
+   //address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
+   uint256 dummyAddr = 888999777;
+   function testSortNodes() public {
+    uint[] memory dummyAddrs = new uint[](1);
     dummyAddrs[0] = dummyAddr;
     contAddr.addNode(1, dummyAddr, 89, dummyAddrs);
     contAddr.addNode(2, dummyAddr, 71, dummyAddrs);
@@ -38,7 +38,7 @@ contract TestNetworkFormation {
     contAddr.addNode(9, dummyAddr, 95, dummyAddrs);
     contAddr.addNode(10, dummyAddr, 85, dummyAddrs);
     
-    // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
+    // // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
     SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
     Assert.equal(sortedThingo[0].energyLevel(), 95, "Sorting error");
     Assert.equal(sortedThingo[1].energyLevel(), 90, "Sorting error");
@@ -55,13 +55,15 @@ contract TestNetworkFormation {
   /***********************************************
    * TEST - Getting existing nodes
    ***********************************************/
-   address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
-   address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
+   //address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
+   //address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
+   uint256 dummyAddr1 = 111222333;
+   uint256 dummyAddr2 = 333444555;
 
   function testGetNode() public {
-    address[] memory dummyAddrs1 = new address[](1);
+    uint[] memory dummyAddrs1 = new uint[](1);
     dummyAddrs1[0] = dummyAddr2;
-    address[] memory dummyAddrs2 = new address[](1);
+    uint[] memory dummyAddrs2 = new uint[](1);
     dummyAddrs2[0] = dummyAddr1;
     contAddr.addNode(100, dummyAddr1, 50, dummyAddrs1);
     contAddr.addNode(101, dummyAddr2, 35, dummyAddrs2);
