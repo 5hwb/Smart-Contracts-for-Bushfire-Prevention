@@ -19,7 +19,7 @@ contract NetworkFormation {
   // Events
   event AddedNode(uint nodeID);
   
-  function getAllNodes() public returns(SensorNode[] memory) {
+  function getAllNodes() view public returns(SensorNode[] memory) {
     return nodes;
   }
   
@@ -67,11 +67,13 @@ contract NetworkFormation {
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(uint clusterHead) public {
     uint chIndex = getNodeIndex(clusterHead);
-    assert(nodes[chIndex].isClusterHead() == true);
-    assert(nodes[chIndex].numOfWithinRangeNodes() >= 1);
+    require(nodes[chIndex].isClusterHead() == true, "Given node is not cluster head");
     
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
-      SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
+      SensorNode currNode = getNode(222001);
+      // is there a glitch with withinRangeNodes(i)? the following doesn't work:
+      //SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
+
       // Send the beacon!
       // (for now, simulate it by setting the network level integer) 
       numOfLevels++;

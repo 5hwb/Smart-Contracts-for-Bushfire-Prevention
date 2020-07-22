@@ -51,6 +51,45 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(firstNodeAddr, 111000);
     assert.equal(firstNodeEnergyLevel, 56);
   });
+
+  it("should send beacon", async () => {
+    // Add the 'sink node'
+    await instance.addNode(0, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+
+    // Add neighbouring nodes
+    await instance.addNode(1, 222001, 35, [111000, 222002]);
+    await instance.addNode(2, 222002, 66, [111000, 222001, 222003]);
+    await instance.addNode(3, 222003, 53, [111000, 222002, 222004]);
+    await instance.addNode(4, 222004, 82, [111000, 222003, 222005]);
+    await instance.addNode(5, 222005, 65, [111000, 222004]);
+    
+    // Set sink node as the 1st cluster head
+    await instance.registerAsClusterHead(111000);
+    
+    // Send beacon from cluster head
+    await instance.sendBeacon(111000);
+
+    let node1Addr = await instance.getNode(222001);
+    let node2Addr = await instance.getNode(222002);
+    let node3Addr = await instance.getNode(222003);
+    let node4Addr = await instance.getNode(222004);
+    let node5Addr = await instance.getNode(222005);
+    console.log("node1Addr = ");
+    console.log(node1Addr);
+    
+    let node1 = await SensorNode.at(node1Addr);
+    let node2 = await SensorNode.at(node2Addr);
+    let node3 = await SensorNode.at(node3Addr);
+    let node4 = await SensorNode.at(node4Addr);
+    let node5 = await SensorNode.at(node5Addr);
+    
+    console.log(await node1.networkLevel.call());
+    console.log(await node2.networkLevel.call());
+    console.log(await node3.networkLevel.call());
+    console.log(await node4.networkLevel.call());
+    console.log(await node5.networkLevel.call());
+  });
+
   
   /***********************************************
    * TEST - Sorting
@@ -94,5 +133,9 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(sortedThingo[6], 2);
   });
   
+
+  it("this be dummy test", async () => {
+    assert.equal(true, 1);
+  });
 
 });

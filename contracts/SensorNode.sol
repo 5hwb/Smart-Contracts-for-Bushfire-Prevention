@@ -22,6 +22,7 @@ contract SensorNode {
     nodeID = _id;
     nodeAddress = _addr;
     energyLevel = _energyLevel;
+    networkLevel = 0; // invalid value for now
   }
   
   ////////////////////////////////////////
