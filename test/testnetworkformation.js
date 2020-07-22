@@ -80,11 +80,11 @@ contract("NetworkFormation test", async accounts => {
     let node4 = await SensorNode.at(await instance.getNode(222004));
     let node5 = await SensorNode.at(await instance.getNode(222005));
     
-    console.log(await node1.networkLevel.call());
-    console.log(await node2.networkLevel.call());
-    console.log(await node3.networkLevel.call());
-    console.log(await node4.networkLevel.call());
-    console.log(await node5.networkLevel.call());
+    assert.equal(await node1.networkLevel.call(), 1);
+    assert.equal(await node2.networkLevel.call(), 1);
+    assert.equal(await node3.networkLevel.call(), 1);
+    assert.equal(await node4.networkLevel.call(), 1);
+    assert.equal(await node5.networkLevel.call(), 1);
   });
 
   
