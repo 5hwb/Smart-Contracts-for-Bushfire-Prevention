@@ -68,7 +68,8 @@ contract("NetworkFormation test", async accounts => {
 
     // Set its network level to be 0 (because sink node!)
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
-    await sinkNode.setNetworkLevel.call(0);
+    await sinkNode.setNetworkLevel(0);
+    //console.log(await sinkNode.networkLevel.call());
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);
