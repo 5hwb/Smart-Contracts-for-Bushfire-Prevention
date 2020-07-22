@@ -34,8 +34,8 @@ contract("NetworkFormation test", async accounts => {
   
   it("should add SensorNode instances", async () => {
     // Add a SensorNode
-    let dummyAddr = [111001, 111002];
-    await instance.addNode(1, 111000, 56, dummyAddr);
+    let dummyAddr = [1001, 1002];
+    await instance.addNode(1, 1000, 56, dummyAddr);
 
     // Get list of all SensorNode instances (just their addresses)
     let allNodes = await instance.getAllNodes.call();
@@ -48,23 +48,28 @@ contract("NetworkFormation test", async accounts => {
     let firstNodeAddr = await firstNode.nodeAddress.call();
     let firstNodeEnergyLevel = await firstNode.energyLevel.call();
     assert.equal(firstNodeID, 1);
-    assert.equal(firstNodeAddr, 111000);
+    assert.equal(firstNodeAddr, 1000);
     assert.equal(firstNodeEnergyLevel, 56);
   });
 
   it("should send beacon", async () => {
     // Add the 'sink node'
-    await instance.addNode(0, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+    await instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
     // Add neighbouring nodes
-    await instance.addNode(1, 222001, 35, [111000, 222002]);
-    await instance.addNode(2, 222002, 66, [111000, 222001, 222003]);
-    await instance.addNode(3, 222003, 53, [111000, 222002, 222004]);
-    await instance.addNode(4, 222004, 82, [111000, 222003, 222005]);
-    await instance.addNode(5, 222005, 65, [111000, 222004]);
+    await instance.addNode(11, 222001, 35, [111000, 222002]);
+    await instance.addNode(12, 222002, 66, [111000, 222001, 222003]);
+    await instance.addNode(13, 222003, 53, [111000, 222002, 222004]);
+    await instance.addNode(14, 222004, 82, [111000, 222003, 222005]);
+    await instance.addNode(15, 222005, 65, [111000, 222004]);
     
     // Set sink node as the 1st cluster head
     await instance.registerAsClusterHead(111000);
+
+    // Set its network level to be 0 (because sink node!)
+    let sinkNodeAddr = await instance.getNode(111000);
+    let sinkNode = await SensorNode.at(sinkNodeAddr);
+    await sinkNode.setNetworkLevel.call(0);
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);
