@@ -122,10 +122,10 @@ contract NetworkFormation {
     
   // Elect the next cluster heads for the next layer.
   // NOTE: this may not compile but the basic logic is good
-  function electClusterHeads(uint clusterHead, uint sensorNode) public {
+  function electClusterHeads(uint currClusterHeadAddr) public {
   
     // Get the sensor node with the given address
-    SensorNode currClusterHead = getNode(sensorNode);
+    SensorNode currClusterHead = getNode(currClusterHeadAddr);
     
     // sort the sensor nodes that sent join requests by energy level in descending order
     SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.getJoinRequestNodes()));
@@ -149,7 +149,7 @@ contract NetworkFormation {
       }
       // If all cluster heads have been elected, register the member nodes for this layer
       else {
-        registerAsMemberNode(clusterHead, nodesWithJoinRequests[i].nodeAddress());
+        registerAsMemberNode(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
       }
     }
   }

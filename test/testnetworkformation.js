@@ -81,6 +81,7 @@ contract("NetworkFormation test", async accounts => {
     let node4 = await SensorNode.at(await instance.getNode(222004));
     let node5 = await SensorNode.at(await instance.getNode(222005));
     
+    // Ensure network level is correct
     assert.equal(await node1.networkLevel.call(), 1);
     assert.equal(await node2.networkLevel.call(), 1);
     assert.equal(await node3.networkLevel.call(), 1);
@@ -88,6 +89,49 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(await node5.networkLevel.call(), 1);
   });
 
+  it("should send join requests", async () => {
+    // Make all nodes within range send a join request
+    let sinkNode = await SensorNode.at(await instance.getNode(111000));
+    let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
+    for (var i = 0; i < withinRangeNodes.length; i++) {
+      let nodeAddr = withinRangeNodes[i].words[0]; // need to convert it from a BN.js object to an integer
+      let sNode = await SensorNode.at(await instance.getNode(nodeAddr));
+      await instance.sendJoinRequest(nodeAddr, 111000);
+    }
+
+    // Ensure the node addresses were added to list of join request nodes
+    let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
+    assert.equal(joinRequestNodes[0].words[0], 222001);
+    assert.equal(joinRequestNodes[1].words[0], 222002);
+    assert.equal(joinRequestNodes[2].words[0], 222003);
+    assert.equal(joinRequestNodes[3].words[0], 222004);
+    assert.equal(joinRequestNodes[4].words[0], 222005);
+  });
+
+  it("should elect cluster heads", async () => {
+    await instance.electClusterHeads(111000);
+
+    // Get the prospective child nodes
+    let node1 = await SensorNode.at(await instance.getNode(222001));
+    let node2 = await SensorNode.at(await instance.getNode(222002));
+    let node3 = await SensorNode.at(await instance.getNode(222003));
+    let node4 = await SensorNode.at(await instance.getNode(222004));
+    let node5 = await SensorNode.at(await instance.getNode(222005));
+    
+    // TODO: find out if sort is actually working?
+    console.log("isClusterHead:");
+    console.log(await node1.isClusterHead.call());
+    console.log(await node2.isClusterHead.call());
+    console.log(await node3.isClusterHead.call());
+    console.log(await node4.isClusterHead.call());
+    console.log(await node5.isClusterHead.call());
+    console.log("isMemberNode:");
+    console.log(await node1.isMemberNode.call());
+    console.log(await node2.isMemberNode.call());
+    console.log(await node3.isMemberNode.call());
+    console.log(await node4.isMemberNode.call());
+    console.log(await node5.isMemberNode.call());
+  });
   
   /***********************************************
    * TEST - Sorting
