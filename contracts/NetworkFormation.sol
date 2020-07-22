@@ -68,16 +68,17 @@ contract NetworkFormation {
   function sendBeacon(uint clusterHead) public {
     uint chIndex = getNodeIndex(clusterHead);
     require(nodes[chIndex].isClusterHead() == true, "Given node is not cluster head");
+
+    // Get network level of this cluster head to calculate next level
+    uint nextNetLevel = nodes[chIndex].networkLevel();
+    nextNetLevel++;
     
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
-      SensorNode currNode = getNode(222001);
-      // is there a glitch with withinRangeNodes(i)? the following doesn't work:
-      //SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
+      SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
 
       // Send the beacon!
       // (for now, simulate it by setting the network level integer) 
-      numOfLevels++;
-      currNode.setNetworkLevel(numOfLevels);
+      currNode.setNetworkLevel(nextNetLevel);
       
       // TODO find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
