@@ -3,9 +3,15 @@
 // * https://kalis.me/assert-reverts-solidity-smart-contract-test-truffle/
 // * https://ethereum.stackexchange.com/questions/48627/how-to-catch-revert-error-in-truffle-test-javascript#48629
 
+// Contract abstractions provided by Truffle
+// (web3.eth.Contract instances?)
 const NetworkFormation = artifacts.require("NetworkFormation");
 const QuickSort = artifacts.require("QuickSort");
+
+// Required for some test cases
 const truffleAssert = require('truffle-assertions');
+
+const sensorNodeABI = [{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"},{"internalType":"uint256","name":"_addr","type":"uint256"},{"internalType":"uint256","name":"_energyLevel","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"addr","type":"uint256"}],"name":"addJoinRequestNode","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"addr","type":"uint256"}],"name":"addWithinRangeNode","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"childNodes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"energyLevel","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getJoinRequestNodes","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getWithinRangeNodes","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"isClusterHead","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"isMemberNode","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"joinRequestNodes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"networkLevel","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"nodeAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"nodeID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"numOfChildNodes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"numOfJoinRequests","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"numOfOneHopClusterHeads","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"numOfWithinRangeNodes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"parentNode","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"setAsClusterHead","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"setAsMemberNode","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"eLevel","type":"uint256"}],"name":"setEnergyLevel","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"nLevel","type":"uint256"}],"name":"setNetworkLevel","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"addr","type":"uint256"}],"name":"setParentNode","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"withinRangeNodes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}];
 
 contract("NetworkFormation test", async accounts => {
   let instance;
@@ -20,7 +26,30 @@ contract("NetworkFormation test", async accounts => {
   it("should initialise everything correctly", async () => {
     //let numCandidates = await instance.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
-    
+    let numOfNodes = await instance.numOfNodes();
+    assert.equal(numOfNodes, 0);
+    let numOfLevels = await instance.numOfLevels();
+    assert.equal(numOfLevels, 0);
+
+    let allNodes = await instance.getAllNodes.call();
+    console.log("allNodes = ");
+    console.log(allNodes);
+        
+    let dummyAddr = [111001, 111002];
+    await instance.addNode(1, 111000, 56, dummyAddr);
+    allNodes = await instance.getAllNodes.call();
+    console.log("allNodes = ");
+    console.log(allNodes);
+
+    let firstNode = new web3.eth.Contract(sensorNodeABI, allNodes[0]);    
+    //console.log("firstNode = ");
+    //console.log(firstNode);
+    let firstNodeID = firstNode.methods.nodeID.call();
+    let firstNodeAddr = firstNode.methods.nodeAddress.call();
+    let firstNodeEnergyLevel = firstNode.methods.energyLevel.call();
+    console.log(firstNodeID);
+    console.log(firstNodeAddr);
+    console.log(firstNodeEnergyLevel);
   });
   
   /***********************************************

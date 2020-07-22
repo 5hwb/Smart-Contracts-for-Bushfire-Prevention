@@ -19,6 +19,10 @@ contract NetworkFormation {
   // Events
   event AddedNode(uint nodeID);
   
+  function getAllNodes() public returns(SensorNode[] memory) {
+    return nodes;
+  }
+  
   // Add a node to the list of all sensor nodes.
   function addNode(uint id, uint addr, uint energyLevel, uint[] memory _withinRangeNodes) public {
     SensorNode node = new SensorNode(id, addr, energyLevel);
