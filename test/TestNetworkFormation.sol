@@ -23,8 +23,8 @@ contract TestNetworkFormation {
    // Testing the getSortedNodes() function
    // note: address is just a placeholder
    //address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
-   uint256 dummyAddr = 888999777;
-   function testSortNodes() public {
+  uint256 dummyAddr = 888999777;
+  function testSortNodes() public {
     uint[] memory dummyAddrs = new uint[](1);
     dummyAddrs[0] = dummyAddr;
     contAddr.addNode(1, dummyAddr, 89, dummyAddrs);
@@ -55,10 +55,10 @@ contract TestNetworkFormation {
   /***********************************************
    * TEST - Getting existing nodes
    ***********************************************/
-   //address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
-   //address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
-   uint256 dummyAddr1 = 111222333;
-   uint256 dummyAddr2 = 333444555;
+  //address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
+  //address dummyAddr2 = 0xBbAD3a6D4489dfe77070DED06DB7a198CCD1D3A2;
+  uint256 dummyAddr1 = 111222333;
+  uint256 dummyAddr2 = 333444555;
 
   function testGetNode() public {
     uint[] memory dummyAddrs1 = new uint[](1);
