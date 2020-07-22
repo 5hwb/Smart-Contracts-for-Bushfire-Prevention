@@ -67,26 +67,18 @@ contract("NetworkFormation test", async accounts => {
     await instance.registerAsClusterHead(111000);
 
     // Set its network level to be 0 (because sink node!)
-    let sinkNodeAddr = await instance.getNode(111000);
-    let sinkNode = await SensorNode.at(sinkNodeAddr);
+    let sinkNode = await SensorNode.at(await instance.getNode(111000));
     await sinkNode.setNetworkLevel.call(0);
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);
 
-    let node1Addr = await instance.getNode(222001);
-    let node2Addr = await instance.getNode(222002);
-    let node3Addr = await instance.getNode(222003);
-    let node4Addr = await instance.getNode(222004);
-    let node5Addr = await instance.getNode(222005);
-    console.log("node1Addr = ");
-    console.log(node1Addr);
-    
-    let node1 = await SensorNode.at(node1Addr);
-    let node2 = await SensorNode.at(node2Addr);
-    let node3 = await SensorNode.at(node3Addr);
-    let node4 = await SensorNode.at(node4Addr);
-    let node5 = await SensorNode.at(node5Addr);
+    // Get the prospective child nodes
+    let node1 = await SensorNode.at(await instance.getNode(222001));
+    let node2 = await SensorNode.at(await instance.getNode(222002));
+    let node3 = await SensorNode.at(await instance.getNode(222003));
+    let node4 = await SensorNode.at(await instance.getNode(222004));
+    let node5 = await SensorNode.at(await instance.getNode(222005));
     
     console.log(await node1.networkLevel.call());
     console.log(await node2.networkLevel.call());
