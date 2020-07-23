@@ -155,8 +155,7 @@ contract NetworkFormation {
     return sort(nodes);
   }
     
-  // Elect the next cluster heads for the next layer.
-  // NOTE: this may not compile but the basic logic is good
+  // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011).
   function electClusterHeads(uint currClusterHeadAddr) public {
   
     // Get the sensor node with the given address
@@ -187,10 +186,7 @@ contract NetworkFormation {
         registerAsMemberNode(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
       }
     }
-  }
-  
-  // TODO: implement the GCA algorithm as described in Lee et al. (2011)
-  
+  }  
   
   // Sort function for SensorNode arrays that sorts by energy level in descending order.
   // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
@@ -209,6 +205,8 @@ contract NetworkFormation {
           while (pivot > arr[uint(j)].energyLevel()) j--;
           if (i <= j) {
               //(arr[uint(i)].energyLevel(), arr[uint(j)].energyLevel()) = (arr[uint(j)].energyLevel(), arr[uint(i)].energyLevel());
+              // TODO fix the incorrect sorting - it SWAPS ONLY the energy levels
+              // but NOT the SensorNode instances!
               uint temp = arr[uint(i)].energyLevel();
               arr[uint(i)].setEnergyLevel(arr[uint(j)].energyLevel());
               arr[uint(j)].setEnergyLevel(temp);
