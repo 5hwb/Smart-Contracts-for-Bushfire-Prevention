@@ -17,10 +17,20 @@ contract NetworkFormation {
   uint public numOfLevels; // How many levels the network is consisted of
   
   // Events
-  event AddedNode(uint nodeID);
+  event AddedNode(uint nodeID, uint256 addr, uint energyLevel, uint networkLevel, bool isClusterHead, bool isMemberNode);
   
+  // Get array of all SensorNode instances.
   function getAllNodes() view public returns(SensorNode[] memory) {
     return nodes;
+  }
+  
+  // Get array of addresses of all SensorNode instances.
+  function getAllNodeAddresses() view public returns(uint[] memory) {
+    uint[] memory nodeAddresses = new uint[](numOfNodes);
+    for (uint i = 0; i < numOfNodes; i++) {
+      nodeAddresses[i] = nodes[i].nodeAddress();
+    }
+    return nodeAddresses;
   }
   
   // Add a node to the list of all sensor nodes.
@@ -33,7 +43,7 @@ contract NetworkFormation {
     
     nodes.push(node);
     numOfNodes++;
-    emit AddedNode(id);
+    emit AddedNode(id, addr, energyLevel, node.networkLevel(), node.isClusterHead(), node.isMemberNode());
   }
   
   // Get the index of the node with the given address
@@ -50,6 +60,20 @@ contract NetworkFormation {
     for (uint i = 0; i < numOfNodes; i++) {
       if (nodes[i].nodeAddress() == sensorNode) {
         return nodes[i];
+      }
+    }
+  }
+  
+  // returns node information
+  function getNodeInfo(uint sensorNodeAddr) public view returns (
+    uint, uint256,
+    uint, uint,
+    bool, bool) {
+    for (uint i = 0; i < numOfNodes; i++) {
+      if (nodes[i].nodeAddress() == sensorNodeAddr) {
+        return (nodes[i].nodeID(), nodes[i].nodeAddress(),
+            nodes[i].energyLevel(), nodes[i].networkLevel(),
+            nodes[i].isClusterHead(), nodes[i].isMemberNode());
       }
     }
   }

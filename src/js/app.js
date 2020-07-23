@@ -50,24 +50,65 @@ App = {
   initContract: function() {
     console.log("FLOW: initContract()");
 
-    // change 'Voting' to the name of the future contract
-    $.getJSON('Voting.json', function(data) {
+    // change 'NetworkFormation' to the name of the future contract
+    $.getJSON('NetworkFormation.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with @truffle/contract
       var ContractArtifact = data;
-      App.contracts.Voting = TruffleContract(ContractArtifact);
+      App.contracts.NetworkFormation = TruffleContract(ContractArtifact);
 
       // Set the provider for the contract
-      App.contracts.Voting.setProvider(App.web3Provider);
+      App.contracts.NetworkFormation.setProvider(App.web3Provider);
 
       // Use our contract to initialise the data of this page
       return App.initialiseData();
     });
   },
   
+  /* Adds data by inserting directly into the HTML with the following:
+  <div>
+    <h2>Node 10 with address 111000</h2>
+    <p>Energy level: 22</p>
+    <p>Network level: 22</p>
+    <p>isClusterHead: true</p>
+    <p>isMemberNode: true</p>
+  </div>
+  */
   initialiseData: function() {
     console.log("FLOW: initialiseData()");
     
-    App.contracts.Voting.deployed().then(function(instance) {
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.numOfNodes().then(function(numOfNodes) {
+        
+        if (numOfNodes == 0) {
+          // Add the sink node (1 of many to come)
+          instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]).then(function(result) {
+            console.log("FLOW: adding 1st node"); 
+            $(".sensornode-box").append(`<div><h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2><p>Energy level: ${result.logs[0].args.energyLevel}</p><p>Network level: ${result.logs[0].args.networkLevel}</p><p>isClusterHead: ${result.logs[0].args.isClusterHead}</p><p>isMemberNode: ${result.logs[0].args.isMemberNode}</p></div>`);
+          }).catch(function(err) { 
+            console.error("add 1st node ERROR! " + err.message);
+          });
+          
+        } else {
+          instance.getAllNodeAddresses().then(function(result) {
+            for (var i = 0; i < numOfNodes; i++) {
+              console.log(i);
+              console.log(result[i]);
+              // TODO load all nodes!
+              // gets candidates and displays them
+              instance.getNodeInfo(result[i]).then(function(data) {
+                $(".sensornode-box").append(`<div><h2>Node ${data[0]} with address ${data[1]}</h2><p>Energy level: ${data[2]}</p><p>Network level: ${data[3]}</p><p>isClusterHead: ${data[4]}</p><p>isMemberNode: ${data[5]}</p></div>`)
+              }).catch(function(err) {
+                console.error("getting node ERROR! " + err.message)
+              });
+            }
+          }).catch(function(err) {
+            console.error("get all nodes ERROR! " + err.message);
+          });
+        }
+        
+      }).catch(function(err) {
+        console.error("numOfNodes ERROR! " + err.message)
+      });
       
     }).catch(function(err) { 
       console.error("ERROR! " + err.message)
@@ -89,7 +130,7 @@ App = {
     
     /*
     // Call the smart contract function
-    App.contracts.Voting.deployed().then(function(instance) {
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.voterHasVoted(uid).then(function(result) {
         var resultString = (result == true) ? "You have voted already!" : "You have not voted yet.";
         $(".msg2").html("<p>" + resultString + "</p>");
