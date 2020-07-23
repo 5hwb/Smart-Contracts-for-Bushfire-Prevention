@@ -144,10 +144,8 @@ App = {
   
   
   // Carry out the process to elect cluster heads
-  electClusterHeads: function() {
+  registerAsClusterHead: function() {
     console.log("FLOW: electClusterHeads()");
-
-    
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.registerAsClusterHead(111000).then(function(result) {
@@ -155,30 +153,51 @@ App = {
       }).catch(function(err) {
         console.error("registerAsClusterHead ERROR! " + err.message)
       });
-      
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+    });
+  },
+  
+  sendBeacon: function() {
+    console.log("FLOW: sendBeacon()");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.sendBeacon(111000).then(function(result) {
         console.log("FLOW: sendBeacon()");
       }).catch(function(err) {
         console.error("sendBeacon ERROR! " + err.message)
       });
-
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+    });
+  },
+  
+  sendJoinRequests: function() {
+    console.log("FLOW: sendJoinRequests()");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.sendJoinRequests(111000).then(function(result) {
         console.log("FLOW: sendJoinRequests()");
       }).catch(function(err) {
         console.error("sendJoinRequests ERROR! " + err.message)
       });
-      
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+    });
+  },
+  
+  electClusterHeads: function() {
+    console.log("FLOW: electClusterHeads()");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.electClusterHeads(111000).then(function(result) {
         console.log("FLOW: electClusterHeads()");
       }).catch(function(err) {
         console.error("electClusterHeads ERROR! " + err.message)
       });
-      
-      
     }).catch(function(err) {
       console.error("NetworkFormation.deployed() ERROR! " + err.message)
     });
-    
   },
   
   // function for testing only
