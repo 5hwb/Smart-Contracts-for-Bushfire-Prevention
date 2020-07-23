@@ -143,6 +143,44 @@ App = {
   },
   
   
+  // Carry out the process to elect cluster heads
+  electClusterHeads: function() {
+    console.log("FLOW: electClusterHeads()");
+
+    
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.registerAsClusterHead(111000).then(function(result) {
+        console.log("FLOW: registerAsClusterHead()");
+      }).catch(function(err) {
+        console.error("registerAsClusterHead ERROR! " + err.message)
+      });
+      
+      instance.sendBeacon(111000).then(function(result) {
+        console.log("FLOW: sendBeacon()");
+      }).catch(function(err) {
+        console.error("sendBeacon ERROR! " + err.message)
+      });
+
+      instance.sendJoinRequests(111000).then(function(result) {
+        console.log("FLOW: sendJoinRequests()");
+      }).catch(function(err) {
+        console.error("sendJoinRequests ERROR! " + err.message)
+      });
+      
+      instance.electClusterHeads(111000).then(function(result) {
+        console.log("FLOW: electClusterHeads()");
+      }).catch(function(err) {
+        console.error("electClusterHeads ERROR! " + err.message)
+      });
+      
+      
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+    });
+    
+  },
+  
   // function for testing only
   testo: function() {
     console.log("FLOW: testo()");
