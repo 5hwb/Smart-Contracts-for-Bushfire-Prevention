@@ -120,6 +120,17 @@ contract NetworkFormation {
     cHeadNode.addJoinRequestNode(nodes[nodeIndex].nodeAddress());
   }
   
+  // Go thru all nodes to see if they need to send join request to the given cluster head.
+  function sendJoinRequests(uint clusterHeadAddr) public {
+    for (uint i = 0; i < numOfNodes; i++) {
+      // For now: Send join request iff the network level has been changed
+      // to a value other than 0
+      if (nodes[i].networkLevel() > 0) {
+        sendJoinRequest(nodes[i].nodeAddress(), clusterHeadAddr);
+      }
+    }
+  }
+  
   // Register the given node as a cluster head.
   function registerAsClusterHead(uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);

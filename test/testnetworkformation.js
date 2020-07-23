@@ -91,13 +91,14 @@ contract("NetworkFormation test", async accounts => {
 
   it("should send join requests", async () => {
     // Make all nodes within range send a join request
+    await instance.sendJoinRequests(111000);
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
-    let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
+    /*let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
     for (var i = 0; i < withinRangeNodes.length; i++) {
       let nodeAddr = withinRangeNodes[i].words[0]; // need to convert it from a BN.js object to an integer
       let sNode = await SensorNode.at(await instance.getNode(nodeAddr));
       await instance.sendJoinRequest(nodeAddr, 111000);
-    }
+    }*/
 
     // Ensure the node addresses were added to list of join request nodes
     let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
