@@ -88,6 +88,33 @@ App = {
             console.error("add 1st node ERROR! " + err.message);
           });
           
+          // Add the child nodes
+          instance.addNode(11, 222001, 35, [111000, 222002]).then(function(result) {
+            console.log("FLOW: adding more nodes"); 
+          }).catch(function(err) { 
+            console.error("add more nodes ERROR! " + err.message);
+          });
+          instance.addNode(12, 222002, 66, [111000, 222001, 222003]).then(function(result) {
+            console.log("FLOW: adding more nodes"); 
+          }).catch(function(err) { 
+            console.error("add more nodes ERROR! " + err.message);
+          });
+          instance.addNode(13, 222003, 53, [111000, 222002, 222004]).then(function(result) {
+            console.log("FLOW: adding more nodes"); 
+          }).catch(function(err) { 
+            console.error("add more nodes ERROR! " + err.message);
+          });
+          instance.addNode(14, 222004, 82, [111000, 222003, 222005]).then(function(result) {
+            console.log("FLOW: adding more nodes"); 
+          }).catch(function(err) { 
+            console.error("add more nodes ERROR! " + err.message);
+          });
+          instance.addNode(15, 222005, 65, [111000, 222004]).then(function(result) {
+            console.log("FLOW: adding more nodes"); 
+          }).catch(function(err) { 
+            console.error("add more nodes ERROR! " + err.message);
+          });
+          
         } else {
           instance.getAllNodeAddresses().then(function(result) {
             for (var i = 0; i < numOfNodes; i++) {
