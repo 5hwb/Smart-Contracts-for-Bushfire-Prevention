@@ -204,13 +204,19 @@ App = {
   testo: function() {
     console.log("FLOW: testo()");
 
-    var uid = $("#id-input").val(); // getting user inputted id
+    // Get user input
+    var nodeID = $("#id-input-id").val();
+    var nodeAddr = $("#id-input-addr").val();
+    var nodeELevel = $("#id-input-elevel").val();
+
+    $(".msg").html("<p>nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+"</p>");
+
 
     // Application Logic 
-    if (uid == "") {
-      $(".msg").html("<p>Please enter id.</p>");
-      return;
-    }
+    // if (uid == "") {
+    //   $(".msg").html("<p>Please enter id.</p>");
+    //   return;
+    // }
     
     /*
     // Call the smart contract function
