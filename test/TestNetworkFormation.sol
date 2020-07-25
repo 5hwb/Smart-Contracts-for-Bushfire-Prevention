@@ -27,19 +27,20 @@ contract TestNetworkFormation {
   function testSortNodes() public {
     uint[] memory dummyAddrs = new uint[](1);
     dummyAddrs[0] = dummyAddr;
-    contAddr.addNode(1, dummyAddr, 89, dummyAddrs);
-    contAddr.addNode(2, dummyAddr, 71, dummyAddrs);
-    contAddr.addNode(3, dummyAddr, 53, dummyAddrs);
-    contAddr.addNode(4, dummyAddr, 62, dummyAddrs);
-    contAddr.addNode(5, dummyAddr, 90, dummyAddrs);
-    contAddr.addNode(6, dummyAddr, 75, dummyAddrs);
-    contAddr.addNode(7, dummyAddr, 62, dummyAddrs);
-    contAddr.addNode(8, dummyAddr, 52, dummyAddrs);
-    contAddr.addNode(9, dummyAddr, 95, dummyAddrs);
-    contAddr.addNode(10, dummyAddr, 85, dummyAddrs);
+    contAddr.addNode(1, dummyAddr, 89, dummyAddrs);  // 2
+    contAddr.addNode(2, dummyAddr, 71, dummyAddrs);  // 5
+    contAddr.addNode(3, dummyAddr, 53, dummyAddrs);  // 8
+    contAddr.addNode(4, dummyAddr, 62, dummyAddrs);  // 6/7
+    contAddr.addNode(5, dummyAddr, 90, dummyAddrs);  // 1
+    contAddr.addNode(6, dummyAddr, 75, dummyAddrs);  // 4
+    contAddr.addNode(7, dummyAddr, 62, dummyAddrs);  // 6/7
+    contAddr.addNode(8, dummyAddr, 52, dummyAddrs);  // 9
+    contAddr.addNode(9, dummyAddr, 95, dummyAddrs);  // 0
+    contAddr.addNode(10, dummyAddr, 85, dummyAddrs); // 3
     
-    // // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
+    // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
     SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
+    // Check that nodes have been sorted by their energy levels in descending order
     Assert.equal(sortedThingo[0].energyLevel(), 95, "Sorting error");
     Assert.equal(sortedThingo[1].energyLevel(), 90, "Sorting error");
     Assert.equal(sortedThingo[2].energyLevel(), 89, "Sorting error");
@@ -50,6 +51,17 @@ contract TestNetworkFormation {
     Assert.equal(sortedThingo[7].energyLevel(), 62, "Sorting error");
     Assert.equal(sortedThingo[8].energyLevel(), 53, "Sorting error");
     Assert.equal(sortedThingo[9].energyLevel(), 52, "Sorting error");
+    // Another check to ensure the IDs are correct
+    Assert.equal(sortedThingo[0].nodeID(),  9, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[1].nodeID(),  5, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[2].nodeID(),  1, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[3].nodeID(), 10, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[4].nodeID(),  6, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[5].nodeID(),  2, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[6].nodeID(),  4, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[7].nodeID(),  7, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[8].nodeID(),  3, "Sorting error - wrong ID");
+    Assert.equal(sortedThingo[9].nodeID(),  8, "Sorting error - wrong ID");
   }
 
   /***********************************************

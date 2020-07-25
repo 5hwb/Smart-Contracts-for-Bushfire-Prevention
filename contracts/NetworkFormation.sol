@@ -207,9 +207,9 @@ contract NetworkFormation {
               //(arr[uint(i)].energyLevel(), arr[uint(j)].energyLevel()) = (arr[uint(j)].energyLevel(), arr[uint(i)].energyLevel());
               // TODO fix the incorrect sorting - it SWAPS ONLY the energy levels
               // but NOT the SensorNode instances!
-              uint temp = arr[uint(i)].energyLevel();
-              arr[uint(i)].setEnergyLevel(arr[uint(j)].energyLevel());
-              arr[uint(j)].setEnergyLevel(temp);
+              SensorNode temp = arr[uint(i)];
+              arr[uint(i)] = arr[uint(j)];
+              arr[uint(j)] = temp;
               i++;
               j--;
           }
