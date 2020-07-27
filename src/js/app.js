@@ -204,13 +204,20 @@ App = {
   testo: function() {
     console.log("FLOW: testo()");
 
-    // Get user input
+    // Get integer user input
     var nodeID = $("#id-input-id").val();
     var nodeAddr = $("#id-input-addr").val();
     var nodeELevel = $("#id-input-elevel").val();
 
-    $(".msg").html("<p>nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+"</p>");
+    // Get array user input
+    var nodeWRNodes = $("#id-input-wrnodes").val()
+        .split(",").map(function (str) {  return parseInt(str); });
 
+    $(".msg").html("<p>nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodeWRNodes="+nodeWRNodes+"</p>");
+
+    console.log(nodeWRNodes[0]);
+    console.log(nodeWRNodes[1]);
+    
 
     // Application Logic 
     // if (uid == "") {
@@ -218,17 +225,15 @@ App = {
     //   return;
     // }
     
-    /*
+    
     // Call the smart contract function
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.voterHasVoted(uid).then(function(result) {
-        var resultString = (result == true) ? "You have voted already!" : "You have not voted yet.";
-        $(".msg2").html("<p>" + resultString + "</p>");
+      instance.addNode(nodeID, nodeAddr, nodeELevel, nodeWRNodes).then(function(result) {
+        $(".msg").html("<p>Node added successfully.</p>");
       })
     }).catch(function(err) {
-      console.error("voterHasVoted ERROR! " + err.message)
+      console.error("addNode ERROR! " + err.message)
     });
-    */
   }
 };
 
