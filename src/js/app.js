@@ -120,10 +120,22 @@ App = {
             for (var i = 0; i < numOfNodes; i++) {
               console.log(i);
               console.log(result[i]);
-              // TODO load all nodes!
-              // gets candidates and displays them
+              // gets all nodes and displays them
               instance.getNodeInfo(result[i]).then(function(data) {
-                $(".sensornode-box").append(`<div><h2>Node ${data[0]} with address ${data[1]}</h2><p>Energy level: ${data[2]}</p><p>Network level: ${data[3]}</p><p>isClusterHead: ${data[4]}</p><p>isMemberNode: ${data[5]}</p></div>`)
+                // Add colour coding to node background.
+                // Cyan = cluster head.
+                // Yellow = member node.
+                // Red = unassigned node.
+                var isClusterHead = data[4];
+                var isMemberNode = data[5];
+                var colour = (isClusterHead) ? "lightcyan" :
+                    (isMemberNode) ? "lightyellow" : 
+                    "lightcoral";
+                $(".sensornode-box").append(`<div style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
+                  <p>Energy level: ${data[2]}</p>
+                  <p>Network level: ${data[3]}</p>
+                  <p>isClusterHead: ${data[4]}</p>
+                  <p>isMemberNode: ${data[5]}</p></div>`)
               }).catch(function(err) {
                 console.error("getting node ERROR! " + err.message)
               });
