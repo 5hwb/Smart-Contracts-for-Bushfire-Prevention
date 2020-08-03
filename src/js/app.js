@@ -131,7 +131,7 @@ App = {
                 var colour = (isClusterHead) ? "lightcyan" :
                     (isMemberNode) ? "lightyellow" : 
                     "lightcoral";
-                $(".sensornode-box").append(`<div style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
+                $(".sensornode-box").append(`<div id="node-description" style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>
