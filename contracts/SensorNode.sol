@@ -56,16 +56,10 @@ contract SensorNode {
     numOfJoinRequests++;
   }
 
-  // TODO: find out the CAUSE of this
-  // STRANGE BUG: adding this function causes the sort test case to FAIL!
-  // ALSO: in testSortNodes() in TestNetworkFormation.sol,
-  // commenting out the last 2 addNode() calls gets rid of the error!
-  // ALSO: changing all address types from 'address' to 'uint256' fixes the problem.
   function addWithinRangeNode(uint256 addr) public {
     withinRangeNodes.push(addr);
   }
-  
-  
+    
   ////////////////////////////////////////
   // childNodes GETTER FUNCTIONS
   ////////////////////////////////////////
