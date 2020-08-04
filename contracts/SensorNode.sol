@@ -18,6 +18,10 @@ contract SensorNode {
   uint public numOfJoinRequests;     // N_T
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
+  // Simulate the sensor reading process
+  // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
+  // uint256[] private sensorReadings;
+  
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
     nodeAddress = _addr;
@@ -25,6 +29,19 @@ contract SensorNode {
     networkLevel = 0; // invalid value for now
   }
   
+  ////////////////////////////////////////
+  // Simulate receiving input from sensors!
+  ////////////////////////////////////////
+  
+  // function forwardSensorInput(uint256[] memory sReadings) public {
+  //   // Add incoming sensor readings to this node's list of sensor readings
+  //   for (uint i = 0; i < sReadings.length; i++) {
+  //     sensorReadings.push(sReadings[i]);
+  //   }
+  // 
+  //   // Call this 
+  // }
+    
   ////////////////////////////////////////
   // SETTER FUNCTIONS
   ////////////////////////////////////////
