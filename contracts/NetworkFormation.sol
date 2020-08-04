@@ -142,12 +142,13 @@ contract NetworkFormation {
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(uint clusterHead, uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
+    uint cHeadIndex = getNodeIndex(clusterHead);
 
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
 
     nodes[nodeIndex].setAsMemberNode();
-    nodes[nodeIndex].setParentNode(clusterHead);
+    nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
   }
   
   // Get the sorted nodes 

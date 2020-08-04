@@ -12,7 +12,7 @@ contract SensorNode {
   bool public isClusterHead;           // init to false
   bool public isMemberNode;            // init to false
   
-  uint256 public parentNode;         // parent (cluster head) of this node
+  SensorNode public parentNode;         // parent (cluster head) of this node
   uint256[] public childNodes;       // children of this node (if cluster head)
   uint256[] public joinRequestNodes; // nodes that have sent join requests to this node
   uint public numOfJoinRequests;     // N_T
@@ -20,7 +20,7 @@ contract SensorNode {
   
   // Simulate the sensor reading process
   // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
-  // uint256[] private sensorReadings;
+  //uint256[] private sensorReadings;
   
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
@@ -33,10 +33,10 @@ contract SensorNode {
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
   
-  // function forwardSensorInput(uint256[] memory sReadings) public {
+  // function readSensorInput(uint256 sReading) public {
   //   // Add incoming sensor readings to this node's list of sensor readings
   //   for (uint i = 0; i < sReadings.length; i++) {
-  //     sensorReadings.push(sReadings[i]);
+  //     sensorReadings.push(sReading);
   //   }
   // 
   //   // Call this 
@@ -64,7 +64,7 @@ contract SensorNode {
     isMemberNode = true;
   }
   
-  function setParentNode(uint256 addr) public {
+  function setParentNode(SensorNode addr) public {
     parentNode = addr;
   }
   
