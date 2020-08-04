@@ -20,6 +20,7 @@ contract TestNetworkFormation {
   /***********************************************
    * TEST - Sorting
    ***********************************************/
+   // PROBLEM: this function fails if I add another function to SensorNode contract! WHY?
    // Testing the getSortedNodes() function
    // note: address is just a placeholder
    //address dummyAddr = 0xdcAD3A6D3569DF655070DEd06CB7A1b2CCd1D3a1;
@@ -37,6 +38,9 @@ contract TestNetworkFormation {
     contAddr.addNode(8, dummyAddr, 52, dummyAddrs);  // 9
     contAddr.addNode(9, dummyAddr, 95, dummyAddrs);  // 0
     contAddr.addNode(10, dummyAddr, 85, dummyAddrs); // 3
+    // NOTE: when adding this extra node, the thing completely fails!
+    // Same old 'Error: Returned error: VM Exception while processing transaction: revert' error again. 
+    //contAddr.addNode(11, dummyAddr, 10, dummyAddrs); // 10
     
     // sort to [95, 90, 89, 85, 75, 71, 62, 62, 53, 52]
     SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
@@ -51,6 +55,7 @@ contract TestNetworkFormation {
     Assert.equal(sortedThingo[7].energyLevel(), 62, "Sorting error");
     Assert.equal(sortedThingo[8].energyLevel(), 53, "Sorting error");
     Assert.equal(sortedThingo[9].energyLevel(), 52, "Sorting error");
+    //Assert.equal(sortedThingo[10].energyLevel(), 10, "Sorting error");
     // Another check to ensure the IDs are correct
     Assert.equal(sortedThingo[0].nodeID(),  9, "Sorting error - wrong ID");
     Assert.equal(sortedThingo[1].nodeID(),  5, "Sorting error - wrong ID");
@@ -62,6 +67,7 @@ contract TestNetworkFormation {
     Assert.equal(sortedThingo[7].nodeID(),  7, "Sorting error - wrong ID");
     Assert.equal(sortedThingo[8].nodeID(),  3, "Sorting error - wrong ID");
     Assert.equal(sortedThingo[9].nodeID(),  8, "Sorting error - wrong ID");
+    //Assert.equal(sortedThingo[10].nodeID(),  11, "Sorting error - wrong ID");
   }
 
   /***********************************************
