@@ -117,7 +117,7 @@ contract NetworkFormation {
     // Add this node to cluster head's list of nodes that sent join requests
     SensorNode cHeadNode = nodes[chIndex];
     assert(cHeadNode.nodeID() != 0); // make sure the cluster head node exists
-    cHeadNode.addJoinRequestNode(nodes[nodeIndex].nodeAddress());
+    cHeadNode.addJoinRequestNode(nodes[nodeIndex]);
   }
   
   // Go thru all nodes to see if they need to send join request to the given cluster head.
@@ -163,7 +163,7 @@ contract NetworkFormation {
     SensorNode currClusterHead = getNode(currClusterHeadAddr);
     
     // sort the sensor nodes that sent join requests by energy level in descending order
-    SensorNode[] memory nodesWithJoinRequests = sort(addrsToSensorNodes(currClusterHead.getJoinRequestNodes()));
+    SensorNode[] memory nodesWithJoinRequests = sort(currClusterHead.getJoinRequestNodes());
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000

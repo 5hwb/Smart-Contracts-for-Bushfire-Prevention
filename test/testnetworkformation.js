@@ -102,11 +102,16 @@ contract("NetworkFormation test", async accounts => {
 
     // Ensure the node addresses were added to list of join request nodes
     let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
-    assert.equal(joinRequestNodes[0].words[0], 222001);
-    assert.equal(joinRequestNodes[1].words[0], 222002);
-    assert.equal(joinRequestNodes[2].words[0], 222003);
-    assert.equal(joinRequestNodes[3].words[0], 222004);
-    assert.equal(joinRequestNodes[4].words[0], 222005);
+    let node0 = await SensorNode.at(joinRequestNodes[0]);
+    let node1 = await SensorNode.at(joinRequestNodes[1]);
+    let node2 = await SensorNode.at(joinRequestNodes[2]);
+    let node3 = await SensorNode.at(joinRequestNodes[3]);
+    let node4 = await SensorNode.at(joinRequestNodes[4]);
+    assert.equal(await node0.nodeAddress.call(), 222001);
+    assert.equal(await node1.nodeAddress.call(), 222002);
+    assert.equal(await node2.nodeAddress.call(), 222003);
+    assert.equal(await node3.nodeAddress.call(), 222004);
+    assert.equal(await node4.nodeAddress.call(), 222005);
   });
 
   it("should elect cluster heads", async () => {

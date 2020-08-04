@@ -13,8 +13,8 @@ contract SensorNode {
   bool public isMemberNode;            // init to false
   
   SensorNode public parentNode;         // parent (cluster head) of this node
-  uint256[] public childNodes;       // children of this node (if cluster head)
-  uint256[] public joinRequestNodes; // nodes that have sent join requests to this node
+  SensorNode[] public childNodes;       // children of this node (if cluster head)
+  SensorNode[] public joinRequestNodes; // nodes that have sent join requests to this node
   uint public numOfJoinRequests;     // N_T
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
@@ -68,7 +68,7 @@ contract SensorNode {
     parentNode = addr;
   }
   
-  function addJoinRequestNode(uint256 addr) public {
+  function addJoinRequestNode(SensorNode addr) public {
     joinRequestNodes.push(addr);
     numOfJoinRequests++;
   }
@@ -89,7 +89,7 @@ contract SensorNode {
   // joinRequestNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
-  function getJoinRequestNodes() public view returns (uint256[] memory) {
+  function getJoinRequestNodes() public view returns (SensorNode[] memory) {
     return joinRequestNodes;
   }
   
