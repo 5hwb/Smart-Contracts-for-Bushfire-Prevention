@@ -119,19 +119,17 @@ contract("NetworkFormation test", async accounts => {
     let node4 = await SensorNode.at(await instance.getNode(222004));
     let node5 = await SensorNode.at(await instance.getNode(222005));
     
-    // TODO: find out if sort is actually working?
-    console.log("isClusterHead:");
-    console.log(await node1.isClusterHead.call());
-    console.log(await node2.isClusterHead.call());
-    console.log(await node3.isClusterHead.call());
-    console.log(await node4.isClusterHead.call());
-    console.log(await node5.isClusterHead.call());
-    console.log("isMemberNode:");
-    console.log(await node1.isMemberNode.call());
-    console.log(await node2.isMemberNode.call());
-    console.log(await node3.isMemberNode.call());
-    console.log(await node4.isMemberNode.call());
-    console.log(await node5.isMemberNode.call());
+    assert.equal(await node1.isClusterHead.call(), false);
+    assert.equal(await node2.isClusterHead.call(), true);
+    assert.equal(await node3.isClusterHead.call(), false);
+    assert.equal(await node4.isClusterHead.call(), true);
+    assert.equal(await node5.isClusterHead.call(), true);
+    
+    assert.equal(await node1.isMemberNode.call(), true);
+    assert.equal(await node2.isMemberNode.call(), false);
+    assert.equal(await node3.isMemberNode.call(), true);
+    assert.equal(await node4.isMemberNode.call(), false);
+    assert.equal(await node5.isMemberNode.call(), false);
   });
   
   /***********************************************
