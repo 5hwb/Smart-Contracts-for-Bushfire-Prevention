@@ -132,18 +132,20 @@ contract NetworkFormation {
   }
   
   // Register the given node as a cluster head.
-  function registerAsClusterHead(uint sensorNode) public {
+  function registerAsClusterHead(uint clusterHead, uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
+    uint cHeadIndex = getNodeIndex(clusterHead);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
+    
     nodes[nodeIndex].setAsClusterHead();
+    nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
   }
   
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(uint clusterHead, uint sensorNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
     uint cHeadIndex = getNodeIndex(clusterHead);
-
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
 
@@ -179,7 +181,7 @@ contract NetworkFormation {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
       if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
-        registerAsClusterHead(nodesWithJoinRequests[i].nodeAddress());
+        registerAsClusterHead(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
         numOfElectedClusterHeads++;
       }
       // If all cluster heads have been elected, register the member nodes for this layer

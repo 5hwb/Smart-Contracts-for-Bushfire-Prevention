@@ -64,12 +64,13 @@ contract("NetworkFormation test", async accounts => {
     await instance.addNode(15, 222005, 65, [111000, 222004]);
     
     // Set sink node as the 1st cluster head
-    await instance.registerAsClusterHead(111000);
+    await instance.registerAsClusterHead(0, 111000);
 
     // Set its network level to be 0 (because sink node!)
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
     await sinkNode.setNetworkLevel(0);
-    //console.log(await sinkNode.networkLevel.call());
+    console.log("parentNode = ");
+    console.log(await sinkNode.parentNode.call());
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);

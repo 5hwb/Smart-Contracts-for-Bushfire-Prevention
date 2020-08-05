@@ -81,7 +81,7 @@ contract TestNetworkFormation {
     // Register dummyAddr1 node as cluster head
     Assert.equal(contAddr.getNode(dummyAddr1).isClusterHead(), false, "Cluster head has issues");
     Assert.equal(contAddr.getNode(dummyAddr1).isMemberNode(), false, "Cluster head has issues");
-    contAddr.registerAsClusterHead(dummyAddr1);
+    contAddr.registerAsClusterHead(0, dummyAddr1);
     Assert.equal(contAddr.getNode(dummyAddr1).isClusterHead(), true, "Cluster head registration has issues");
     Assert.equal(contAddr.getNode(dummyAddr1).isMemberNode(), false, "Cluster head registration has issues");
     // this should fail: contAddr.registerAsMemberNode(dummyAddr2, dummyAddr1);
