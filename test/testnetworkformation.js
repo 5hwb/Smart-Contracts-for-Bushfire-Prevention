@@ -69,8 +69,8 @@ contract("NetworkFormation test", async accounts => {
     // Set its network level to be 0 (because sink node!)
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
     await sinkNode.setNetworkLevel(0);
-    console.log("parentNode = ");
-    console.log(await sinkNode.parentNode.call());
+    //console.log("parentNode = ");
+    //console.log(await sinkNode.parentNode.call());
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);
@@ -139,6 +139,7 @@ contract("NetworkFormation test", async accounts => {
   });
 
   it("should send sensor readings to sink node", async () => {
+    // Simulate reading values from each sensor node
     await instance.readSensorInput([9001], 222001);
     await instance.readSensorInput([9002], 222002);
     await instance.readSensorInput([9003], 222003);
@@ -151,12 +152,20 @@ contract("NetworkFormation test", async accounts => {
     let node222004 = await SensorNode.at(await instance.getNode(222004));
     let node222005 = await SensorNode.at(await instance.getNode(222005));
     let node111000 = await SensorNode.at(await instance.getNode(111000));
-    console.log(await node222001.getSensorReadings.call());
-    console.log(await node222002.getSensorReadings.call());
-    console.log(await node222003.getSensorReadings.call());
-    console.log(await node222004.getSensorReadings.call());
-    console.log(await node222005.getSensorReadings.call());
-    console.log(await node111000.getSensorReadings.call());
+    
+    // Check that the sensor nodes got their readings
+    assert.equal(await node222001.getSensorReadings.call(), 9001);
+    assert.equal(await node222002.getSensorReadings.call(), 9002);
+    assert.equal(await node222003.getSensorReadings.call(), 9003);
+    assert.equal(await node222004.getSensorReadings.call(), 9004);
+    assert.equal(await node222005.getSensorReadings.call(), 9005);
+
+    // Check that the cluster head had received the sensor readings
+    assert.equal((await node111000.getSensorReadings.call())[0], 9001);
+    assert.equal((await node111000.getSensorReadings.call())[1], 9002);
+    assert.equal((await node111000.getSensorReadings.call())[2], 9003);
+    assert.equal((await node111000.getSensorReadings.call())[3], 9004);
+    assert.equal((await node111000.getSensorReadings.call())[4], 9005);
   });
   
   /***********************************************
