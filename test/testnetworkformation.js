@@ -136,6 +136,27 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(await node4.isMemberNode.call(), false);
     assert.equal(await node5.isMemberNode.call(), false);
   });
+
+  it("should send sensor readings to sink node", async () => {
+    await instance.readSensorInput([9001], 222001);
+    await instance.readSensorInput([9002], 222002);
+    await instance.readSensorInput([9003], 222003);
+    await instance.readSensorInput([9004], 222004);
+    await instance.readSensorInput([9005], 222005);
+
+    let node222001 = await SensorNode.at(await instance.getNode(222001));
+    let node222002 = await SensorNode.at(await instance.getNode(222002));
+    let node222003 = await SensorNode.at(await instance.getNode(222003));
+    let node222004 = await SensorNode.at(await instance.getNode(222004));
+    let node222005 = await SensorNode.at(await instance.getNode(222005));
+    let node111000 = await SensorNode.at(await instance.getNode(111000));
+    console.log(await node222001.getSensorReadings.call());
+    console.log(await node222002.getSensorReadings.call());
+    console.log(await node222003.getSensorReadings.call());
+    console.log(await node222004.getSensorReadings.call());
+    console.log(await node222005.getSensorReadings.call());
+    console.log(await node111000.getSensorReadings.call());
+  });
   
   /***********************************************
    * TEST - Sorting

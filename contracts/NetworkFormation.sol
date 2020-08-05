@@ -187,7 +187,12 @@ contract NetworkFormation {
         registerAsMemberNode(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
       }
     }
-  }  
+  }
+  
+  function readSensorInput(uint256[] memory sReadings, uint nodeAddr) public {
+    uint nodeIndex = getNodeIndex(nodeAddr);
+    nodes[nodeIndex].readSensorInput(sReadings);
+  }
   
   // Sort function for SensorNode arrays that sorts by energy level in descending order.
   // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f

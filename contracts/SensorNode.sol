@@ -20,7 +20,7 @@ contract SensorNode {
   
   // Simulate the sensor reading process
   // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
-  //uint256[] private sensorReadings;
+  uint256[] public sensorReadings;
   
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
@@ -33,14 +33,21 @@ contract SensorNode {
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
   
-  // function readSensorInput(uint256 sReading) public {
-  //   // Add incoming sensor readings to this node's list of sensor readings
-  //   for (uint i = 0; i < sReadings.length; i++) {
-  //     sensorReadings.push(sReading);
-  //   }
-  // 
-  //   // Call this 
-  // }
+  function readSensorInput(uint256[] memory sReadings) public {
+    // Add incoming sensor readings to this node's list of sensor readings
+    for (uint i = 0; i < sReadings.length; i++) {
+      sensorReadings.push(sReadings[i]);
+    }
+  
+    // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
+    if (address(parentNode) != 0x0000000000000000000000000000000000000000) {
+      parentNode.readSensorInput(sensorReadings);
+    }
+  }
+  
+  function getSensorReadings() public returns(uint256[] memory) {
+    return sensorReadings;
+  }
     
   ////////////////////////////////////////
   // SETTER FUNCTIONS
