@@ -86,85 +86,79 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(firstNodeAddr, 111000);
     assert.equal(firstNodeEnergyLevel, 100);
   });
-  // 
-  // it("should send beacon", async () => {
-  // 
-  //   // Set sink node as the 1st cluster head
-  //   await instance.registerAsClusterHead(0, 111000);
-  // 
-  //   // Set its network level to be 0 (because sink node!)
-  //   let sinkNode = await SensorNode.at(await instance.getNode(111000));
-  //   await sinkNode.setNetworkLevel(0);
-  //   //console.log("parentNode = ");
-  //   //console.log(await sinkNode.parentNode.call());
-  // 
-  //   // Send beacon from cluster head
-  //   await instance.sendBeacon(111000);
-  // 
-  //   // Get the prospective child nodes
-  //   let node1 = await SensorNode.at(await instance.getNode(222001));
-  //   let node2 = await SensorNode.at(await instance.getNode(222002));
-  //   let node3 = await SensorNode.at(await instance.getNode(222003));
-  //   let node4 = await SensorNode.at(await instance.getNode(222004));
-  //   let node5 = await SensorNode.at(await instance.getNode(222005));
-  // 
-  //   // Ensure network level is correct
-  //   assert.equal(await node1.networkLevel.call(), 1);
-  //   assert.equal(await node2.networkLevel.call(), 1);
-  //   assert.equal(await node3.networkLevel.call(), 1);
-  //   assert.equal(await node4.networkLevel.call(), 1);
-  //   assert.equal(await node5.networkLevel.call(), 1);
-  // });
-  // 
-  // it("should send join requests", async () => {
-  //   // Make all nodes within range send a join request
-  //   await instance.sendJoinRequests(111000);
-  //   let sinkNode = await SensorNode.at(await instance.getNode(111000));
-  //   /*let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
-  //   for (var i = 0; i < withinRangeNodes.length; i++) {
-  //     let nodeAddr = withinRangeNodes[i].words[0]; // need to convert it from a BN.js object to an integer
-  //     let sNode = await SensorNode.at(await instance.getNode(nodeAddr));
-  //     await instance.sendJoinRequest(nodeAddr, 111000);
-  //   }*/
-  // 
-  //   // Ensure the node addresses were added to list of join request nodes
-  //   let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
-  //   let node0 = await SensorNode.at(joinRequestNodes[0]);
-  //   let node1 = await SensorNode.at(joinRequestNodes[1]);
-  //   let node2 = await SensorNode.at(joinRequestNodes[2]);
-  //   let node3 = await SensorNode.at(joinRequestNodes[3]);
-  //   let node4 = await SensorNode.at(joinRequestNodes[4]);
-  //   assert.equal(await node0.nodeAddress.call(), 222001);
-  //   assert.equal(await node1.nodeAddress.call(), 222002);
-  //   assert.equal(await node2.nodeAddress.call(), 222003);
-  //   assert.equal(await node3.nodeAddress.call(), 222004);
-  //   assert.equal(await node4.nodeAddress.call(), 222005);
-  // });
-  // 
-  // it("should elect cluster heads", async () => {
-  //   // 40% chance of being elected?
-  //   await instance.electClusterHeads(111000, 40);
-  // 
-  //   // Get the prospective child nodes
-  //   let node1 = await SensorNode.at(await instance.getNode(222001));
-  //   let node2 = await SensorNode.at(await instance.getNode(222002));
-  //   let node3 = await SensorNode.at(await instance.getNode(222003));
-  //   let node4 = await SensorNode.at(await instance.getNode(222004));
-  //   let node5 = await SensorNode.at(await instance.getNode(222005));
-  // 
-  //   assert.equal(await node1.isClusterHead.call(), false);
-  //   assert.equal(await node2.isClusterHead.call(), true);
-  //   assert.equal(await node3.isClusterHead.call(), false);
-  //   assert.equal(await node4.isClusterHead.call(), true);
-  //   assert.equal(await node5.isClusterHead.call(), false);
-  // 
-  //   assert.equal(await node1.isMemberNode.call(), true);
-  //   assert.equal(await node2.isMemberNode.call(), false);
-  //   assert.equal(await node3.isMemberNode.call(), true);
-  //   assert.equal(await node4.isMemberNode.call(), false);
-  //   assert.equal(await node5.isMemberNode.call(), true);
-  // });
-  // 
+
+  it("should send beacon for Layer 1 nodes", async () => {
+    
+    // Set sink node as the 1st cluster head
+    await instance.registerAsClusterHead(0, 111000);
+
+    // Set its network level to be 0 (because sink node!)
+    let sinkNode = await SensorNode.at(await instance.getNode(111000));
+    await sinkNode.setNetworkLevel(0);
+    //console.log("parentNode = ");
+    //console.log(await sinkNode.parentNode.call());
+    
+    // Send beacon from cluster head
+    await instance.sendBeacon(111000);
+
+    // Get the prospective child nodes
+    let node1 = await SensorNode.at(await instance.getNode(222001));
+    let node2 = await SensorNode.at(await instance.getNode(222002));
+    let node3 = await SensorNode.at(await instance.getNode(222003));
+    let node4 = await SensorNode.at(await instance.getNode(222004));
+    let node5 = await SensorNode.at(await instance.getNode(222005));
+    
+    // Ensure network level is correct
+    assert.equal(await node1.networkLevel.call(), 1);
+    assert.equal(await node2.networkLevel.call(), 1);
+    assert.equal(await node3.networkLevel.call(), 1);
+    assert.equal(await node4.networkLevel.call(), 1);
+    assert.equal(await node5.networkLevel.call(), 1);
+  });
+
+  it("should send join requests for Layer 1 nodes", async () => {
+    // Make all nodes within range send a join request
+    await instance.sendJoinRequests(111000);
+    let sinkNode = await SensorNode.at(await instance.getNode(111000));
+
+    // Ensure the node addresses were added to list of join request nodes
+    let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
+    let node0 = await SensorNode.at(joinRequestNodes[0]);
+    let node1 = await SensorNode.at(joinRequestNodes[1]);
+    let node2 = await SensorNode.at(joinRequestNodes[2]);
+    let node3 = await SensorNode.at(joinRequestNodes[3]);
+    let node4 = await SensorNode.at(joinRequestNodes[4]);
+    assert.equal(await node0.nodeAddress.call(), 222001);
+    assert.equal(await node1.nodeAddress.call(), 222002);
+    assert.equal(await node2.nodeAddress.call(), 222003);
+    assert.equal(await node3.nodeAddress.call(), 222004);
+    assert.equal(await node4.nodeAddress.call(), 222005);
+  });
+
+  it("should elect cluster heads for Layer 1 nodes", async () => {
+    // 50% chance of cluster head being elected
+    await instance.electClusterHeads(111000, 50);
+
+    // Get the prospective child nodes
+    let node1 = await SensorNode.at(await instance.getNode(222001));
+    let node2 = await SensorNode.at(await instance.getNode(222002));
+    let node3 = await SensorNode.at(await instance.getNode(222003));
+    let node4 = await SensorNode.at(await instance.getNode(222004));
+    let node5 = await SensorNode.at(await instance.getNode(222005));
+    
+    assert.equal(await node1.isClusterHead.call(), false);
+    assert.equal(await node2.isClusterHead.call(), true);
+    assert.equal(await node3.isClusterHead.call(), false);
+    assert.equal(await node4.isClusterHead.call(), true);
+    assert.equal(await node5.isClusterHead.call(), false);
+    
+    assert.equal(await node1.isMemberNode.call(), true);
+    assert.equal(await node2.isMemberNode.call(), false);
+    assert.equal(await node3.isMemberNode.call(), true);
+    assert.equal(await node4.isMemberNode.call(), false);
+    assert.equal(await node5.isMemberNode.call(), true);
+  });
+
   // it("should send sensor readings to sink node", async () => {
   //   // Simulate reading values from each sensor node
   //   await instance.readSensorInput([9001], 222001);
