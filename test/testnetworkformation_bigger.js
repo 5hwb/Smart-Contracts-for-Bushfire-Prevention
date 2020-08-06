@@ -118,7 +118,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send join requests for Layer 1 nodes", async () => {
     // Make all nodes within range send a join request
-    await instance.sendJoinRequests(111000);
+    await instance.sendJoinRequests();
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
 
     // Ensure the node addresses were added to list of join request nodes
@@ -188,30 +188,29 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(await node11.networkLevel.call(), 2);
   });
 
-  // it("should send join requests for Layer 2 nodes", async () => {
-  //   // Make all nodes within range send a join request
-  //   await instance.sendJoinRequests(222002);
-  //   await instance.sendJoinRequests(222004);
-  //   let cHead1 = await SensorNode.at(await instance.getNode(222002));
-  //   let cHead2 = await SensorNode.at(await instance.getNode(222004));
-  // 
-  //   // Ensure the node addresses were added to list of join request nodes
-  //   let cHead1joinRequestNodes = await cHead1.getJoinRequestNodes.call();
-  //   let node1_0 = await SensorNode.at(cHead1joinRequestNodes[0]);
-  //   let node1_1 = await SensorNode.at(cHead1joinRequestNodes[1]);
-  //   let cHead2joinRequestNodes = await cHead2.getJoinRequestNodes.call();
-  //   let node2_0 = await SensorNode.at(cHead2joinRequestNodes[0]);
-  //   let node2_1 = await SensorNode.at(cHead2joinRequestNodes[1]);
-  //   let node2_2 = await SensorNode.at(cHead2joinRequestNodes[2]);
-  //   let node2_3 = await SensorNode.at(cHead2joinRequestNodes[3]);
-  //   assert.equal(await node1_0.nodeAddress.call(), 222006);
-  //   assert.equal(await node1_1.nodeAddress.call(), 222007);
-  // 
-  //   assert.equal(await node2_0.nodeAddress.call(), 222008);
-  //   assert.equal(await node2_1.nodeAddress.call(), 222009);
-  //   assert.equal(await node2_2.nodeAddress.call(), 222010);
-  //   assert.equal(await node2_3.nodeAddress.call(), 222011);
-  // });
+  it("should send join requests for Layer 2 nodes", async () => {
+    // Make all nodes within range send a join request
+    await instance.sendJoinRequests();
+    let cHead1 = await SensorNode.at(await instance.getNode(222002));
+    let cHead2 = await SensorNode.at(await instance.getNode(222004));
+  
+    // Ensure the node addresses were added to list of join request nodes
+    let cHead1joinRequestNodes = await cHead1.getJoinRequestNodes.call();
+    let node1_0 = await SensorNode.at(cHead1joinRequestNodes[0]);
+    let node1_1 = await SensorNode.at(cHead1joinRequestNodes[1]);
+    let cHead2joinRequestNodes = await cHead2.getJoinRequestNodes.call();
+    let node2_0 = await SensorNode.at(cHead2joinRequestNodes[0]);
+    let node2_1 = await SensorNode.at(cHead2joinRequestNodes[1]);
+    let node2_2 = await SensorNode.at(cHead2joinRequestNodes[2]);
+    let node2_3 = await SensorNode.at(cHead2joinRequestNodes[3]);
+    assert.equal(await node1_0.nodeAddress.call(), 222006);
+    assert.equal(await node1_1.nodeAddress.call(), 222007);
+  
+    assert.equal(await node2_0.nodeAddress.call(), 222008);
+    assert.equal(await node2_1.nodeAddress.call(), 222009);
+    assert.equal(await node2_2.nodeAddress.call(), 222010);
+    assert.equal(await node2_3.nodeAddress.call(), 222011);
+  });
 
   // it("should elect cluster heads for Layer 2 nodes", async () => {
   //   // 50% chance of cluster head being elected

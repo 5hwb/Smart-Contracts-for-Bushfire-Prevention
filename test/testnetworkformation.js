@@ -92,7 +92,7 @@ contract("NetworkFormation test cases", async accounts => {
 
   it("should send join requests", async () => {
     // Make all nodes within range send a join request
-    await instance.sendJoinRequests(111000);
+    await instance.sendJoinRequests();
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
     /*let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
     for (var i = 0; i < withinRangeNodes.length; i++) {

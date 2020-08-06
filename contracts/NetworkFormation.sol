@@ -98,6 +98,7 @@ contract NetworkFormation {
     uint nextNetLevel = nodes[chIndex].networkLevel();
     nextNetLevel++;
     
+    // Go thru all nodes within range of the cluster head
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
       SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
       
@@ -111,6 +112,7 @@ contract NetworkFormation {
       // (for now, simulate it by setting the network level integer) 
       emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
       currNode.setNetworkLevel(nextNetLevel);
+      currNode.receiveBeacon(nodes[chIndex]);
       
       
       // TODO find out how to do callback function (or equivalent)
@@ -118,24 +120,22 @@ contract NetworkFormation {
     }
   }
   
-  // Send a join request to cluster head.
-  function sendJoinRequest(uint sensorNode, uint clusterHead) public {
+  // Send a join request to the given cluster head.
+  function sendJoinRequest(uint sensorNode, SensorNode cHeadNode) public {
     uint nodeIndex = getNodeIndex(sensorNode);
-    uint chIndex = getNodeIndex(clusterHead);
     
     // Add this node to cluster head's list of nodes that sent join requests
-    SensorNode cHeadNode = nodes[chIndex];
     assert(cHeadNode.nodeID() != 0); // make sure the cluster head node exists
     cHeadNode.addJoinRequestNode(nodes[nodeIndex]);
   }
   
-  // Go thru all nodes to see if they need to send join request to the given cluster head.
-  function sendJoinRequests(uint clusterHeadAddr) public {
+  // Go thru all nodes to see if they have received a beacon from a cluster head and need to send a join request back.
+  function sendJoinRequests() public {
     for (uint i = 0; i < numOfNodes; i++) {
       // For now: Send join request iff the network level has been changed
       // to a value other than 0
-      if (nodes[i].networkLevel() > 0) {
-        sendJoinRequest(nodes[i].nodeAddress(), clusterHeadAddr);
+      if (nodes[i].hasReceivedBeacon()) {
+        sendJoinRequest(nodes[i].nodeAddress(), nodes[i].beaconSenderNode());
       }
     }
   }
