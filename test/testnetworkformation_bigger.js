@@ -35,19 +35,25 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   
   it("should add SensorNode instances", async () => {
     /*
-    LAYOUT:
-     _____   _____   _____   _____ 
-    | 012 | | 013 | | 014 | | 015 |
-    |__71_| |__83_| |__78_| |__80_|
-     _____   _____   _____   _____ 
-    | 006 | | 007 | | 008 | | 009 |
-    |__79_| |__61_| |__94_| |__95_|
-     _____   _____   _____   _____ 
-    | 002 | | 003 | | 004 | | 010 |
-    |__88_| |__82_| |__95_| |__86_|
-     _____   _____   _____   _____ 
-    | 001 | |  SN | | 005 | | 011 |
-    |__82_| |_100_| |__87_| |__93_|
+    LAYOUT (Mxx = member node num xx, Cxx = cluster head num xx):
+    _______   _______   _______   _______
+    | M12 |   | M13 |   | M14 |   | M15 |
+    |__71_|   |__83_|   |__78_|   |__80_|
+       |     /             |         |
+       |    /              |         |
+    ___|___/  _______   ___|___   ___|___
+    | C06 |   | M07 |   | C08 |   | C09 |
+    |__79_|   |__61_|   |__94_|   |__95_|
+       |     /             |     /
+       |    /              |    /
+    ___|___/  _______   ___|___/  _______
+    | C02 |   | M03 |   | C04 |___| M10 |
+    |__88_|   |__82_|   |__95_|   |__86_|
+           \     |     /       \
+            \    |    /         \
+    _______  \___|___/  _______  \_______
+    | M01 |___|  SN |___| M05 |   | M11 |
+    |__82_|   |_100_|   |__87_|   |__93_|
      */
 
     // Add the 'sink node'
@@ -69,6 +75,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     await instance.addNode(11, 222010, 86, [222008, 222009, 222004, 222005, 222011]);
     await instance.addNode(12, 222011, 93, [222004, 222010, 222005]);
 
+    // LAYER 3 NODES
     await instance.addNode(13, 222012, 71, [222013, 222006, 222007]);
     await instance.addNode(14, 222013, 83, [222012, 222014, 222006, 222008]);
     await instance.addNode(15, 222014, 78, [222013, 222015, 222008, 222009]);
@@ -212,29 +219,33 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(await node2_3.nodeAddress.call(), 222011);
   });
 
-  // it("should elect cluster heads for Layer 2 nodes", async () => {
-  //   // 50% chance of cluster head being elected
-  //   await instance.electClusterHeads(111000, 50);
-  // 
-  //   // Get the prospective child nodes
-  //   let node1 = await SensorNode.at(await instance.getNode(222001));
-  //   let node2 = await SensorNode.at(await instance.getNode(222002));
-  //   let node3 = await SensorNode.at(await instance.getNode(222003));
-  //   let node4 = await SensorNode.at(await instance.getNode(222004));
-  //   let node5 = await SensorNode.at(await instance.getNode(222005));
-  // 
-  //   assert.equal(await node1.isClusterHead.call(), false);
-  //   assert.equal(await node2.isClusterHead.call(), true);
-  //   assert.equal(await node3.isClusterHead.call(), false);
-  //   assert.equal(await node4.isClusterHead.call(), true);
-  //   assert.equal(await node5.isClusterHead.call(), false);
-  // 
-  //   assert.equal(await node1.isMemberNode.call(), true);
-  //   assert.equal(await node2.isMemberNode.call(), false);
-  //   assert.equal(await node3.isMemberNode.call(), true);
-  //   assert.equal(await node4.isMemberNode.call(), false);
-  //   assert.equal(await node5.isMemberNode.call(), true);
-  // });
+  it("should elect cluster heads for Layer 2 nodes", async () => {
+    // 50% chance of cluster head being elected
+    await instance.electClusterHeads(222002, 50);
+    await instance.electClusterHeads(222004, 50);
+  
+    // Get the prospective child nodes
+    let node2_06 = await SensorNode.at(await instance.getNode(222006));
+    let node2_07 = await SensorNode.at(await instance.getNode(222007));    
+    let node4_08 = await SensorNode.at(await instance.getNode(222008));
+    let node4_09 = await SensorNode.at(await instance.getNode(222009));
+    let node4_10 = await SensorNode.at(await instance.getNode(222010));
+    let node4_11 = await SensorNode.at(await instance.getNode(222011));
+  
+    assert.equal(await node2_06.isClusterHead.call(), true);
+    assert.equal(await node2_07.isClusterHead.call(), false);
+    assert.equal(await node4_08.isClusterHead.call(), true);
+    assert.equal(await node4_09.isClusterHead.call(), true);
+    assert.equal(await node4_10.isClusterHead.call(), false);
+    assert.equal(await node4_11.isClusterHead.call(), false);
+  
+    assert.equal(await node2_06.isMemberNode.call(), false);
+    assert.equal(await node2_07.isMemberNode.call(), true);
+    assert.equal(await node4_08.isMemberNode.call(), false);
+    assert.equal(await node4_09.isMemberNode.call(), false);
+    assert.equal(await node4_10.isMemberNode.call(), true);
+    assert.equal(await node4_11.isMemberNode.call(), true);
+  });
 
   // it("should send sensor readings to sink node", async () => {
   //   // Simulate reading values from each sensor node
