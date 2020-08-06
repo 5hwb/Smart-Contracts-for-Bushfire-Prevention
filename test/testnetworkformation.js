@@ -12,7 +12,7 @@ const QuickSort = artifacts.require("QuickSort");
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
 
-contract("NetworkFormation test", async accounts => {
+contract("NetworkFormation test cases", async accounts => {
   let instance;
   
   beforeEach(async () => {
@@ -129,13 +129,13 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(await node2.isClusterHead.call(), true);
     assert.equal(await node3.isClusterHead.call(), false);
     assert.equal(await node4.isClusterHead.call(), true);
-    assert.equal(await node5.isClusterHead.call(), true);
+    assert.equal(await node5.isClusterHead.call(), false);
     
     assert.equal(await node1.isMemberNode.call(), true);
     assert.equal(await node2.isMemberNode.call(), false);
     assert.equal(await node3.isMemberNode.call(), true);
     assert.equal(await node4.isMemberNode.call(), false);
-    assert.equal(await node5.isMemberNode.call(), false);
+    assert.equal(await node5.isMemberNode.call(), true);
   });
 
   it("should send sensor readings to sink node", async () => {
@@ -208,11 +208,6 @@ contract("NetworkFormation test", async accounts => {
     assert.equal(sortedThingo[4], 3);
     assert.equal(sortedThingo[5], 2);
     assert.equal(sortedThingo[6], 2);
-  });
-  
-
-  it("this be dummy test", async () => {
-    assert.equal(true, 1);
   });
 
 });

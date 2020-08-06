@@ -171,7 +171,7 @@ contract NetworkFormation {
     // (probability * numOfJoinRequests * 100) / 10000
     // where probability is an integer representing a percentage (0 < probability <= 100)
     // and numOfJoinRequests >= 1
-    uint probability = 65; // 65% chance of being elected?
+    uint probability = 40; // 40% chance of being elected?
     numOfClusterHeads = (probability * 
         (currClusterHead.numOfJoinRequests()*100)) / 10000; 
     
