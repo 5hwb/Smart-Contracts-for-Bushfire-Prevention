@@ -158,8 +158,8 @@ contract NetworkFormation {
     return sort(nodes);
   }
     
-  // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011).
-  function electClusterHeads(uint currClusterHeadAddr) public {
+  // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011) with the given probability.
+  function electClusterHeads(uint currClusterHeadAddr, uint probability) public {
   
     // Get the sensor node with the given address
     SensorNode currClusterHead = getNode(currClusterHeadAddr);
@@ -171,7 +171,6 @@ contract NetworkFormation {
     // (probability * numOfJoinRequests * 100) / 10000
     // where probability is an integer representing a percentage (0 < probability <= 100)
     // and numOfJoinRequests >= 1
-    uint probability = 40; // 40% chance of being elected?
     numOfClusterHeads = (probability * 
         (currClusterHead.numOfJoinRequests()*100)) / 10000; 
     

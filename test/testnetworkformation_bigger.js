@@ -116,7 +116,8 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   });
 
   it("should elect cluster heads", async () => {
-    await instance.electClusterHeads(111000);
+    // 40% chance of being elected?
+    await instance.electClusterHeads(111000, 40);
 
     // Get the prospective child nodes
     let node1 = await SensorNode.at(await instance.getNode(222001));
