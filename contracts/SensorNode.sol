@@ -45,7 +45,7 @@ contract SensorNode {
     }
   }
   
-  function getSensorReadings() public returns(uint256[] memory) {
+  function getSensorReadings() public view returns(uint256[] memory) {
     return sensorReadings;
   }
     
