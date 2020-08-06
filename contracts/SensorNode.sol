@@ -18,6 +18,10 @@ contract SensorNode {
   uint public numOfJoinRequests;     // N_T
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
+  // Simulate receiving a beacon from a cluster head 
+  bool public hasReceivedBeacon;
+  SensorNode public beaconSenderNode;
+  
   // Simulate the sensor reading process
   // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
   uint256[] public sensorReadings;
@@ -27,6 +31,16 @@ contract SensorNode {
     nodeAddress = _addr;
     energyLevel = _energyLevel;
     networkLevel = 0; // invalid value for now
+    hasReceivedBeacon = false;
+  }
+  
+  ////////////////////////////////////////
+  // Simulate receiving beacon from cluster head!
+  ////////////////////////////////////////
+  
+  function receiveBeacon(SensorNode cHead) public {
+    hasReceivedBeacon = true;
+    beaconSenderNode = cHead;
   }
   
   ////////////////////////////////////////
