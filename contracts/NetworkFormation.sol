@@ -18,6 +18,7 @@ contract NetworkFormation {
   
   // Events
   event AddedNode(uint nodeID, uint256 addr, uint energyLevel, uint networkLevel, bool isClusterHead, bool isMemberNode);
+  event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
   
   // Get array of all SensorNode instances.
   function getAllNodes() view public returns(SensorNode[] memory) {
@@ -99,10 +100,18 @@ contract NetworkFormation {
     
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
       SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
+      
+      // Ignore this node if network level is already set
+      if (currNode.isClusterHead() || currNode.networkLevel() > 0) {
+        emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Node was ignored");
+        continue;
+      }
 
       // Send the beacon!
       // (for now, simulate it by setting the network level integer) 
+      emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
       currNode.setNetworkLevel(nextNetLevel);
+      
       
       // TODO find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
