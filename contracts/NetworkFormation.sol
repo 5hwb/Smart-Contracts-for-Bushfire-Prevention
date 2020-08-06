@@ -173,8 +173,15 @@ contract NetworkFormation {
     // Get the sensor node with the given address
     SensorNode currClusterHead = getNode(currClusterHeadAddr);
     
-    // sort the sensor nodes that sent join requests by energy level in descending order
-    SensorNode[] memory nodesWithJoinRequests = sort(currClusterHead.getJoinRequestNodes());
+    // Get the list of nodes that sent join requests
+    // (if its empty, exit the function)
+    SensorNode[] memory nodesWithJoinRequests = currClusterHead.getJoinRequestNodes();
+    if (nodesWithJoinRequests.length == 0) {
+      return;
+    }
+    
+    // Sort the sensor nodes that sent join requests by energy level in descending order
+    nodesWithJoinRequests = sort(nodesWithJoinRequests);
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000

@@ -167,15 +167,16 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   });
 
   it("should send beacon for Layer 2 nodes", async () => {
-        
     // Send beacon from Level 1 cluster heads (do this manually for now.)
     await instance.sendBeacon(222002);
     await instance.sendBeacon(222004);
 
-    // Get the prospective child nodes
+    // Get the currently elected cluster heads
     let nodeSN = await SensorNode.at(await instance.getNode(111000));
     let nodeCH1 = await SensorNode.at(await instance.getNode(222002));
     let nodeCH2 = await SensorNode.at(await instance.getNode(222004));
+    
+    // Get the prospective child nodes
     let node06 = await SensorNode.at(await instance.getNode(222006));
     let node07 = await SensorNode.at(await instance.getNode(222007));
     let node08 = await SensorNode.at(await instance.getNode(222008));
@@ -247,6 +248,85 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(await node4_11.isMemberNode.call(), true);
   });
 
+  it("should send beacon for Layer 3 nodes", async () => {
+    // Send beacon from Level 2 cluster heads (do this manually for now.)
+    await instance.sendBeacon(222006);
+    await instance.sendBeacon(222008);
+    await instance.sendBeacon(222009);
+
+    // Get the currently elected cluster heads
+    let nodeSN = await SensorNode.at(await instance.getNode(111000));
+    let nodeCHL1_1 = await SensorNode.at(await instance.getNode(222002));
+    let nodeCHL1_2 = await SensorNode.at(await instance.getNode(222004));
+    let nodeCHL2_1 = await SensorNode.at(await instance.getNode(222006));
+    let nodeCHL2_2 = await SensorNode.at(await instance.getNode(222008));
+    let nodeCHL2_3 = await SensorNode.at(await instance.getNode(222009));
+
+    // Get the prospective child nodes
+    let node12 = await SensorNode.at(await instance.getNode(222012));
+    let node13 = await SensorNode.at(await instance.getNode(222013));
+    let node14 = await SensorNode.at(await instance.getNode(222014));
+    let node15 = await SensorNode.at(await instance.getNode(222015));
+    
+    // Ensure network level is correct
+    assert.equal(await nodeSN.networkLevel.call(), 0);
+    assert.equal(await nodeCHL1_1.networkLevel.call(), 1);
+    assert.equal(await nodeCHL1_2.networkLevel.call(), 1);
+    assert.equal(await nodeCHL2_1.networkLevel.call(), 2);
+    assert.equal(await nodeCHL2_2.networkLevel.call(), 2);
+    assert.equal(await nodeCHL2_3.networkLevel.call(), 2);
+    assert.equal(await node12.networkLevel.call(), 3);
+    assert.equal(await node13.networkLevel.call(), 3);
+    assert.equal(await node14.networkLevel.call(), 3);
+    assert.equal(await node15.networkLevel.call(), 3);
+  });
+
+  it("should send join requests for Layer 3 nodes", async () => {
+    // Make all nodes within range send a join request
+    await instance.sendJoinRequests();
+    let cHead1 = await SensorNode.at(await instance.getNode(222006));
+    let cHead2 = await SensorNode.at(await instance.getNode(222008));
+    let cHead3 = await SensorNode.at(await instance.getNode(222009)); // this one has no nodes to rule over as 222008 has taken the last one
+  
+    // Ensure the node addresses were added to list of join request nodes
+    let cHead1joinRequestNodes = await cHead1.getJoinRequestNodes.call();
+    let node1_0 = await SensorNode.at(cHead1joinRequestNodes[0]);
+    let node1_1 = await SensorNode.at(cHead1joinRequestNodes[1]);
+    assert.equal(await node1_0.nodeAddress.call(), 222012);
+    assert.equal(await node1_1.nodeAddress.call(), 222013);
+
+    let cHead2joinRequestNodes = await cHead2.getJoinRequestNodes.call();
+    let node2_0 = await SensorNode.at(cHead2joinRequestNodes[0]);
+    let node2_1 = await SensorNode.at(cHead2joinRequestNodes[1]);
+    assert.equal(await node2_0.nodeAddress.call(), 222014);
+    assert.equal(await node2_1.nodeAddress.call(), 222015);
+  });
+
+  it("should elect cluster heads for Layer 3 nodes", async () => {
+    // 50% chance of cluster head being elected
+    await instance.electClusterHeads(222006, 50);
+    await instance.electClusterHeads(222008, 50);
+    await instance.electClusterHeads(222009, 50);
+  
+    // Get the prospective child nodes
+    let node6_12 = await SensorNode.at(await instance.getNode(222012));
+    let node6_13 = await SensorNode.at(await instance.getNode(222013));    
+    let node8_14 = await SensorNode.at(await instance.getNode(222014));
+    let node8_15 = await SensorNode.at(await instance.getNode(222015));
+  
+    assert.equal(await node6_12.isClusterHead.call(), false);
+    assert.equal(await node6_13.isClusterHead.call(), true);
+    assert.equal(await node8_14.isClusterHead.call(), false);
+    assert.equal(await node8_15.isClusterHead.call(), true);
+  
+    assert.equal(await node6_12.isMemberNode.call(), true);
+    assert.equal(await node6_13.isMemberNode.call(), false);
+    assert.equal(await node8_14.isMemberNode.call(), true);
+    assert.equal(await node8_15.isMemberNode.call(), false);
+  });
+
+  // TODO: Test the sensor reading simulation across all 3 levels.
+  // Don't forget to make the cluster heads read their values, too.
   // it("should send sensor readings to sink node", async () => {
   //   // Simulate reading values from each sensor node
   //   await instance.readSensorInput([9001], 222001);
