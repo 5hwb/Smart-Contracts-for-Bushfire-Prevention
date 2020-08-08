@@ -48,6 +48,7 @@ contract SensorNode {
   ////////////////////////////////////////
   
   function readSensorInput(uint256[] memory sReadings) public {
+    
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < sReadings.length; i++) {
       sensorReadings.push(sReadings[i]);

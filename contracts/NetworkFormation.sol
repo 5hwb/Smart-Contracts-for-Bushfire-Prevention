@@ -148,7 +148,11 @@ contract NetworkFormation {
     assert(nodes[nodeIndex].isMemberNode() == false);
     
     nodes[nodeIndex].setAsClusterHead();
-    nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
+    
+    // Set the cluster head as the parent node (only if valid address!)
+    if (clusterHead != 0) {
+      nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
+    }
   }
   
   // Register the given node as a member node of the given cluster head.
