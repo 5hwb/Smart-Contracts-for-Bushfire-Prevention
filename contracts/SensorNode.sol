@@ -53,7 +53,19 @@ contract SensorNode {
     
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < sReadings.length; i++) {
-      sensorReadings.push(sReadings[i]);
+      bool isNotDuplicate = true;
+      
+      // TEMP SOLUTION: Go thru every existing sensor reading - prevent duplicates
+      for (uint j = 0; j < sensorReadings.length; j++) {
+        if (sReadings[i] == sensorReadings[j]) {
+          isNotDuplicate = false;
+          break;
+        }
+      }
+      
+      if (isNotDuplicate) {
+        sensorReadings.push(sReadings[i]);
+      }
     }
   
     // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
