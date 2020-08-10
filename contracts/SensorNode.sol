@@ -26,7 +26,7 @@ contract SensorNode {
   
   // Simulate the sensor reading process
   // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
-  uint256[] public sensorReadings;
+  DS.SensorReading[] public sensorReadings;
   
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
@@ -49,7 +49,7 @@ contract SensorNode {
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
   
-  function readSensorInput(uint256[] memory sReadings) public {
+  function readSensorInput(DS.SensorReading[] memory sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < sReadings.length; i++) {
@@ -57,7 +57,7 @@ contract SensorNode {
       
       // TEMP SOLUTION: Go thru every existing sensor reading - prevent duplicates
       for (uint j = 0; j < sensorReadings.length; j++) {
-        if (sReadings[i] == sensorReadings[j]) {
+        if (sReadings[i].reading == sensorReadings[j].reading) {
           isNotDuplicate = false;
           break;
         }
@@ -75,7 +75,13 @@ contract SensorNode {
   }
   
   function getSensorReadings() public view returns(uint256[] memory) {
-    return sensorReadings;
+    uint256[] memory sensorReadingsUint = new uint256[](sensorReadings.length);
+    
+    for (uint i = 0; i < sensorReadings.length; i++) {
+      sensorReadingsUint[i] = sensorReadings[i].reading;
+    }
+    
+    return sensorReadingsUint;
   }
     
   ////////////////////////////////////////

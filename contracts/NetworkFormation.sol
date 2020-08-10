@@ -218,8 +218,8 @@ contract NetworkFormation {
   
   function readSensorInput(uint256 sReading, uint nodeAddr) public {
     uint nodeIndex = getNodeIndex(nodeAddr);
-    uint[] memory sReadings = new uint[](1);
-    sReadings[0] = sReading;
+    DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
+    sReadings[0] = DS.SensorReading(sReading, true);
     nodes[nodeIndex].readSensorInput(sReadings);
   }
   
