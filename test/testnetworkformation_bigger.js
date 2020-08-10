@@ -327,21 +327,21 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send sensor readings to sink node", async () => {
     // Simulate reading values from each sensor node
-    await instance.readSensorInput([9001], 222001);
-    await instance.readSensorInput([9002], 222002);
-    await instance.readSensorInput([9003], 222003);
-    await instance.readSensorInput([9004], 222004);
-    await instance.readSensorInput([9005], 222005);
-    await instance.readSensorInput([9006], 222006);
-    await instance.readSensorInput([9007], 222007);
-    await instance.readSensorInput([9008], 222008);
-    await instance.readSensorInput([9009], 222009);
-    await instance.readSensorInput([9010], 222010);
-    await instance.readSensorInput([9011], 222011);
-    await instance.readSensorInput([9012], 222012);
-    await instance.readSensorInput([9013], 222013);
-    await instance.readSensorInput([9014], 222014);
-    await instance.readSensorInput([9015], 222015);
+    await instance.readSensorInput(9001, 222001);
+    await instance.readSensorInput(9002, 222002);
+    await instance.readSensorInput(9003, 222003);
+    await instance.readSensorInput(9004, 222004);
+    await instance.readSensorInput(9005, 222005);
+    await instance.readSensorInput(9006, 222006);
+    await instance.readSensorInput(9007, 222007);
+    await instance.readSensorInput(9008, 222008);
+    await instance.readSensorInput(9009, 222009);
+    await instance.readSensorInput(9010, 222010);
+    await instance.readSensorInput(9011, 222011);
+    await instance.readSensorInput(9012, 222012);
+    await instance.readSensorInput(9013, 222013);
+    await instance.readSensorInput(9014, 222014);
+    await instance.readSensorInput(9015, 222015);
 
     let node111000 = await SensorNode.at(await instance.getNode(111000));
     let node222001 = await SensorNode.at(await instance.getNode(222001));

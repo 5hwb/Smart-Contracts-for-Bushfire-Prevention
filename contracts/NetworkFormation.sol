@@ -216,8 +216,10 @@ contract NetworkFormation {
     }
   }
   
-  function readSensorInput(uint256[] memory sReadings, uint nodeAddr) public {
+  function readSensorInput(uint256 sReading, uint nodeAddr) public {
     uint nodeIndex = getNodeIndex(nodeAddr);
+    uint[] memory sReadings = new uint[](1);
+    sReadings[0] = sReading;
     nodes[nodeIndex].readSensorInput(sReadings);
   }
   

@@ -141,11 +141,11 @@ contract("NetworkFormation test cases", async accounts => {
 
   it("should send sensor readings to sink node", async () => {
     // Simulate reading values from each sensor node
-    await instance.readSensorInput([9001], 222001);
-    await instance.readSensorInput([9002], 222002);
-    await instance.readSensorInput([9003], 222003);
-    await instance.readSensorInput([9004], 222004);
-    await instance.readSensorInput([9005], 222005);
+    await instance.readSensorInput(9001, 222001);
+    await instance.readSensorInput(9002, 222002);
+    await instance.readSensorInput(9003, 222003);
+    await instance.readSensorInput(9004, 222004);
+    await instance.readSensorInput(9005, 222005);
 
     let node222001 = await SensorNode.at(await instance.getNode(222001));
     let node222002 = await SensorNode.at(await instance.getNode(222002));
