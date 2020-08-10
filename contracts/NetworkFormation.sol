@@ -12,7 +12,8 @@ contract NetworkFormation {
   
   // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
   SensorNode[] public nodes;
-  
+  mapping (uint => uint) addrToNodeIndex; // node addresses -> node array index
+
   uint public numOfNodes; // Number of nodes in this network
   uint public numOfLevels; // How many levels the network is consisted of
   
@@ -42,6 +43,8 @@ contract NetworkFormation {
       node.addWithinRangeNode(_withinRangeNodes[i]);
     }
     
+    // Add mapping of address to node array index 
+    addrToNodeIndex[addr] = numOfNodes;
     nodes.push(node);
     numOfNodes++;
     emit AddedNode(id, addr, energyLevel, node.networkLevel(), node.isClusterHead(), node.isMemberNode());
@@ -49,20 +52,23 @@ contract NetworkFormation {
   
   // Get the index of the node with the given address
   function getNodeIndex(uint sensorNode) view public returns(uint) {
-    for (uint i = 0; i < numOfNodes; i++) {
+    /*for (uint i = 0; i < numOfNodes; i++) {
       if (nodes[i].nodeAddress() == sensorNode) {
         return i;
       }
-    }
+    }*/
+    return addrToNodeIndex[sensorNode];
   }
   
   // Get the node with the given address
   function getNode(uint sensorNode) view public returns(SensorNode) {
-    for (uint i = 0; i < numOfNodes; i++) {
+    /*for (uint i = 0; i < numOfNodes; i++) {
       if (nodes[i].nodeAddress() == sensorNode) {
         return nodes[i];
       }
-    }
+    }*/
+    uint nodeIndex = addrToNodeIndex[sensorNode];
+    return nodes[nodeIndex];
   }
   
   // returns node information
