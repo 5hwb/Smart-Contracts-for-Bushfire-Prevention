@@ -2,6 +2,8 @@
 pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
+import "./DS.sol";
+
 contract SensorNode {
   uint public nodeID;         // ID of the node
   uint256 public nodeAddress; // Address of the node

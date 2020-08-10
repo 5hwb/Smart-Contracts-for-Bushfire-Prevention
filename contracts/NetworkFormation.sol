@@ -2,7 +2,7 @@
 pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
-import "./Structs.sol";
+import "./DS.sol";
 import "./SensorNode.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 

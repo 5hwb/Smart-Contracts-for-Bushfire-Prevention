@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/NetworkFormation.sol";
-import "../contracts/Structs.sol";
+import "../contracts/DS.sol";
 import "../contracts/SensorNode.sol";
 
 contract TestNetworkFormation {
