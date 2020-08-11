@@ -146,8 +146,9 @@ App = {
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>
                   <p>isMemberNode: ${data[5]}</p>
+                  <p>Sensor readings: [${data[6]}]</p>
                   <div class="input-group">
-                    <label for="id-input-sreading">Sensor reading: </label>
+                    <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
                   </div>
                   <button class="btn btn-primary" onclick="App.readSensorInput(${data[0]}, ${data[1]})" id="btn-${data[1]}">Simulate sensor reading</button>
@@ -280,13 +281,13 @@ App = {
     }
     
     // Call the smart contract function
-    // App.contracts.NetworkFormation.deployed().then(function(instance) {
-    //   instance.readSensorInput(sReading, nodeAddr).then(function(result) {
-    //     $(".msg").html("<p>Sensor reading simulated successfully.</p>");
-    //   })
-    // }).catch(function(err) {
-    //   console.error("readSensorInput ERROR! " + err.message)
-    // });
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.readSensorInput(sReading, nodeAddr).then(function(result) {
+        $(".msg").html("<p>Sensor reading simulated successfully.</p>");
+      })
+    }).catch(function(err) {
+      console.error("readSensorInput ERROR! " + err.message)
+    });
   }
 };
 

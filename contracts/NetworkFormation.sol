@@ -75,12 +75,14 @@ contract NetworkFormation {
   function getNodeInfo(uint sensorNodeAddr) public view returns (
     uint, uint256,
     uint, uint,
-    bool, bool) {
+    bool, bool,
+    uint256[] memory) {
       
     uint nIdx = addrToNodeIndex[sensorNodeAddr];
     return (nodes[nIdx].nodeID(), nodes[nIdx].nodeAddress(),
         nodes[nIdx].energyLevel(), nodes[nIdx].networkLevel(),
-        nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode());
+        nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode(),
+        nodes[nIdx].getSensorReadings());
   }
   
   // Convert a list of addresses into their matching sensor nodes
