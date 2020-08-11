@@ -79,6 +79,7 @@ App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.numOfNodes().then(function(numOfNodes) {
         
+        // Add a bunch of sample nodes if the number of nodes is 0
         if (numOfNodes == 0) {
           // Add the sink node (1 of many to come)
           instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]).then(function(result) {
@@ -115,7 +116,9 @@ App = {
             console.error("add more nodes ERROR! " + err.message);
           });
           
-        } else {
+        }
+        // Otherwise, load the existing sensor nodes
+        else {
           instance.getAllNodeAddresses().then(function(result) {
             for (var i = 0; i < numOfNodes; i++) {
               console.log(i);
@@ -131,7 +134,7 @@ App = {
                 var colour = (isClusterHead) ? "lightcyan" :
                     (isMemberNode) ? "lightyellow" : 
                     "lightcoral";
-                $(".sensornode-box").append(`<div id="node-description" style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
+                $(".sensornode-box").append(`<div class="node-description" style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>
