@@ -84,7 +84,13 @@ App = {
           // Add the sink node (1 of many to come)
           instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]).then(function(result) {
             console.log("FLOW: adding 1st node"); 
-            $(".sensornode-box").append(`<div><h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2><p>Energy level: ${result.logs[0].args.energyLevel}</p><p>Network level: ${result.logs[0].args.networkLevel}</p><p>isClusterHead: ${result.logs[0].args.isClusterHead}</p><p>isMemberNode: ${result.logs[0].args.isMemberNode}</p></div>`);
+            $(".sensornode-box").append(`<div>
+              <h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2>
+              <p>Energy level: ${result.logs[0].args.energyLevel}</p>
+              <p>Network level: ${result.logs[0].args.networkLevel}</p>
+              <p>isClusterHead: ${result.logs[0].args.isClusterHead}</p>
+              <p>isMemberNode: ${result.logs[0].args.isMemberNode}</p>
+              </div>`);
           }).catch(function(err) { 
             console.error("add 1st node ERROR! " + err.message);
           });
@@ -134,11 +140,18 @@ App = {
                 var chosenStyle = (isClusterHead) ? "node-clusterhead" :
                     (isMemberNode) ? "node-membernode" : 
                     "node-unassigned";
-                $(".sensornode-box").append(`<div class="node-description ${chosenStyle}"><h2>Node ${data[0]} with address ${data[1]}</h2>
+                $(".sensornode-box").append(`<div class="node-description ${chosenStyle}">
+                  <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>
-                  <p>isMemberNode: ${data[5]}</p></div>`)
+                  <p>isMemberNode: ${data[5]}</p>
+                  <div class="input-group">
+                    <label for="id-input-wrnodes">Nodes within range: </label>
+                    <input type="string" class="form-control" id="id-input-wrnodes" placeholder="e.g. '222001,222002'">
+                  </div>
+                  <button class="btn btn-primary" onclick="App.addNewNode()">Add node</button>
+                  </div>`)
               }).catch(function(err) {
                 console.error("getting node ERROR! " + err.message)
               });

@@ -214,6 +214,7 @@ contract NetworkFormation {
     }
   }
   
+  // Simulate getting data from the sensors of the given node
   function readSensorInput(uint256 sReading, uint nodeAddr) public {
     uint nodeIndex = getNodeIndex(nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
