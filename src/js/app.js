@@ -147,10 +147,10 @@ App = {
                   <p>isClusterHead: ${data[4]}</p>
                   <p>isMemberNode: ${data[5]}</p>
                   <div class="input-group">
-                    <label for="id-input-wrnodes">Nodes within range: </label>
-                    <input type="string" class="form-control" id="id-input-wrnodes" placeholder="e.g. '222001,222002'">
+                    <label for="id-input-sreading">Sensor reading: </label>
+                    <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
                   </div>
-                  <button class="btn btn-primary" onclick="App.addNewNode()">Add node</button>
+                  <button class="btn btn-primary" onclick="App.readSensorInput(${data[0]}, ${data[1]})" id="btn-${data[1]}">Simulate sensor reading</button>
                   </div>`)
               }).catch(function(err) {
                 console.error("getting node ERROR! " + err.message)
@@ -261,6 +261,32 @@ App = {
     }).catch(function(err) {
       console.error("addNode ERROR! " + err.message)
     });
+  },
+
+  readSensorInput: function(nodeID, nodeAddr) {
+    console.log("FLOW: readSensorInput()");
+
+    // Get integer user input
+    var sReading = $("#id-input-sreading-" + nodeID).val();
+    
+    $(".msg").html("<p>sReading="+sReading+"</p>");
+    console.log("sReading = " + sReading);
+    console.log("nodeAddr = " + nodeAddr);
+
+    // Application Logic 
+    if (sReading == "") {
+      $(".msg").html("<p>Please enter id.</p>");
+      return;
+    }
+    
+    // Call the smart contract function
+    // App.contracts.NetworkFormation.deployed().then(function(instance) {
+    //   instance.readSensorInput(sReading, nodeAddr).then(function(result) {
+    //     $(".msg").html("<p>Sensor reading simulated successfully.</p>");
+    //   })
+    // }).catch(function(err) {
+    //   console.error("readSensorInput ERROR! " + err.message)
+    // });
   }
 };
 
