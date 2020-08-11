@@ -27,6 +27,8 @@ contract SensorNode {
   // Simulate the sensor reading process
   // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
   DS.SensorReading[] public sensorReadings;
+  mapping (uint => uint) readingToStructIndex; // sensor reading -> SensorReading array index
+  uint numOfReadings; // number of sensor readings held by this node
   
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
@@ -34,6 +36,8 @@ contract SensorNode {
     energyLevel = _energyLevel;
     networkLevel = 0; // invalid value for now
     hasReceivedBeacon = false;
+    
+    sensorReadings.push(DS.SensorReading(0, false)); // push a dummy 'null' reading
   }
   
   ////////////////////////////////////////
@@ -48,23 +52,30 @@ contract SensorNode {
   ////////////////////////////////////////
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
-  
+  event Log(uint thisNodeAddr, uint reading);
+  event LogString(string str);
   function readSensorInput(DS.SensorReading[] memory sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < sReadings.length; i++) {
       bool isNotDuplicate = true;
+
+      // INTENT: Use a sensorreading-to-index mapping to identify SensorReadings that already exist.
+      uint ind = readingToStructIndex[sReadings[i].reading];
+      emit Log(nodeAddress, sReadings[i].reading);
       
-      // TEMP SOLUTION: Go thru every existing sensor reading - prevent duplicates
-      for (uint j = 0; j < sensorReadings.length; j++) {
-        if (sReadings[i].reading == sensorReadings[j].reading) {
-          isNotDuplicate = false;
-          break;
-        }
+      if (ind != 0) {
+        isNotDuplicate = false;
       }
       
-      if (isNotDuplicate) {
+      // Ignore duplicates and null '0' readings
+      if (isNotDuplicate && sReadings[i].reading != 0) {
+        emit LogString("Yeah!!!!!!");
+        readingToStructIndex[sReadings[i].reading] = numOfReadings; 
         sensorReadings.push(sReadings[i]);
+        numOfReadings++;
+      } else {
+        emit LogString("Nooooo");
       }
     }
   
@@ -75,10 +86,10 @@ contract SensorNode {
   }
   
   function getSensorReadings() public view returns(uint256[] memory) {
-    uint256[] memory sensorReadingsUint = new uint256[](sensorReadings.length);
+    uint256[] memory sensorReadingsUint = new uint256[](numOfReadings);
     
-    for (uint i = 0; i < sensorReadings.length; i++) {
-      sensorReadingsUint[i] = sensorReadings[i].reading;
+    for (uint i = 0; i < numOfReadings; i++) {
+      sensorReadingsUint[i] = sensorReadings[i+1].reading;
     }
     
     return sensorReadingsUint;
