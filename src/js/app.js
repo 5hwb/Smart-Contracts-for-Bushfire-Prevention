@@ -215,9 +215,8 @@ App = {
     });
   },
   
-  // function for testing only
-  testo: function() {
-    console.log("FLOW: testo()");
+  addNewNode: function() {
+    console.log("FLOW: addNewNode()");
 
     // Get integer user input
     var nodeID = $("#id-input-id").val();
