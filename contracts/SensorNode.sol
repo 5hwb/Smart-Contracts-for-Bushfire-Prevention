@@ -21,15 +21,18 @@ contract SensorNode {
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
   // Simulate receiving a beacon from a cluster head 
-  bool public hasReceivedBeacon;
-  SensorNode public beaconSenderNode;
+  bool public hasReceivedBeacon;      // Self-descriptory bool flag
+  SensorNode public beaconSenderNode; // The node that sent the beacon
   
   // Simulate the sensor reading process
-  // (for now, just use an uint. Change to a struct with more details (timestamp, originating node etc) later
-  DS.SensorReading[] public sensorReadings;
-  mapping (uint => uint) readingToStructIndex; // sensor reading -> SensorReading array index
-  uint numOfReadings; // number of sensor readings held by this node
-  
+  DS.SensorReading[] public sensorReadings;    // Array of SensorReading structs
+  mapping (uint => uint) readingToStructIndex; // Sensor reading -> SensorReading array index
+  uint numOfReadings; // Number of sensor readings held by this node
+
+  // Events
+  event LogString(string str);
+
+  // SensorNode constructor
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
     nodeID = _id;
     nodeAddress = _addr;
@@ -37,7 +40,9 @@ contract SensorNode {
     networkLevel = 0; // invalid value for now
     hasReceivedBeacon = false;
     
-    sensorReadings.push(DS.SensorReading(0, false)); // push a dummy 'null' reading
+    // Add a dummy 'null' reading as the 1st element to make it easy to check 
+    // if a SensorReading is read already 
+    sensorReadings.push(DS.SensorReading(0, false));
   }
   
   ////////////////////////////////////////
@@ -52,30 +57,18 @@ contract SensorNode {
   ////////////////////////////////////////
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
-  event Log(uint thisNodeAddr, uint reading);
-  event LogString(string str);
   function readSensorInput(DS.SensorReading[] memory sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < sReadings.length; i++) {
-      bool isNotDuplicate = true;
 
-      // INTENT: Use a sensorreading-to-index mapping to identify SensorReadings that already exist.
-      uint ind = readingToStructIndex[sReadings[i].reading];
-      emit Log(nodeAddress, sReadings[i].reading);
-      
-      if (ind != 0) {
-        isNotDuplicate = false;
-      }
-      
+      // Check if the sensor reading has already been added before adding it.
       // Ignore duplicates and null '0' readings
-      if (isNotDuplicate && sReadings[i].reading != 0) {
-        emit LogString("Yeah!!!!!!");
+      uint sReadingIndex = readingToStructIndex[sReadings[i].reading];
+      if (sReadingIndex == 0 && sReadings[i].reading != 0) {
         readingToStructIndex[sReadings[i].reading] = numOfReadings; 
         sensorReadings.push(sReadings[i]);
         numOfReadings++;
-      } else {
-        emit LogString("Nooooo");
       }
     }
   

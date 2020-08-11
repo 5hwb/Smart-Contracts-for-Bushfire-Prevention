@@ -67,8 +67,8 @@ contract NetworkFormation {
         return nodes[i];
       }
     }*/
-    uint nodeIndex = addrToNodeIndex[sensorNode];
-    return nodes[nodeIndex];
+    uint nIdx = addrToNodeIndex[sensorNode];
+    return nodes[nIdx];
   }
   
   // returns node information
@@ -76,13 +76,11 @@ contract NetworkFormation {
     uint, uint256,
     uint, uint,
     bool, bool) {
-    for (uint i = 0; i < numOfNodes; i++) {
-      if (nodes[i].nodeAddress() == sensorNodeAddr) {
-        return (nodes[i].nodeID(), nodes[i].nodeAddress(),
-            nodes[i].energyLevel(), nodes[i].networkLevel(),
-            nodes[i].isClusterHead(), nodes[i].isMemberNode());
-      }
-    }
+      
+    uint nIdx = addrToNodeIndex[sensorNodeAddr];
+    return (nodes[nIdx].nodeID(), nodes[nIdx].nodeAddress(),
+        nodes[nIdx].energyLevel(), nodes[nIdx].networkLevel(),
+        nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode());
   }
   
   // Convert a list of addresses into their matching sensor nodes
