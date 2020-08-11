@@ -131,10 +131,10 @@ App = {
                 // Red = unassigned node.
                 var isClusterHead = data[4];
                 var isMemberNode = data[5];
-                var colour = (isClusterHead) ? "lightcyan" :
-                    (isMemberNode) ? "lightyellow" : 
-                    "lightcoral";
-                $(".sensornode-box").append(`<div class="node-description" style="background: ${colour}"><h2>Node ${data[0]} with address ${data[1]}</h2>
+                var chosenStyle = (isClusterHead) ? "node-clusterhead" :
+                    (isMemberNode) ? "node-membernode" : 
+                    "node-unassigned";
+                $(".sensornode-box").append(`<div class="node-description ${chosenStyle}"><h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>

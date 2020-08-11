@@ -3,6 +3,17 @@
   padding: 5px 10px;
 }
 
+/* Node description styles for different node types */
+.node-description.node-unassigned {
+  background: lightcoral;
+}
+.node-description.node-clusterhead {
+  background: lightcyan;
+}
+.node-description.node-membernode {
+  background: lightyellow;
+}
+
 /* Input labels */
 .input-group > label {
   padding-right: 5px;
