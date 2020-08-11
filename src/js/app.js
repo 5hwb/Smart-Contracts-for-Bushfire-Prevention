@@ -160,7 +160,7 @@ App = {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.registerAsClusterHead(111000).then(function(result) {
+      instance.registerAsClusterHead(0, 111000).then(function(result) {
         console.log("FLOW: registerAsClusterHead()");
       }).catch(function(err) {
         console.error("registerAsClusterHead ERROR! " + err.message)
@@ -188,7 +188,7 @@ App = {
     console.log("FLOW: sendJoinRequests()");
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.sendJoinRequests(111000).then(function(result) {
+      instance.sendJoinRequests().then(function(result) {
         console.log("FLOW: sendJoinRequests()");
       }).catch(function(err) {
         console.error("sendJoinRequests ERROR! " + err.message)
@@ -202,7 +202,7 @@ App = {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.electClusterHeads(111000).then(function(result) {
+      instance.electClusterHeads(111000, 65).then(function(result) {
         console.log("FLOW: electClusterHeads()");
       }).catch(function(err) {
         console.error("electClusterHeads ERROR! " + err.message)
