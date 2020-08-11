@@ -1,3 +1,15 @@
+/* Node description boxes */
 #node-description {
   padding: 5px 10px;
+}
+
+/* Input labels */
+.input-group > label {
+  padding-right: 5px;
+  align-self: center;
+}
+
+/* Buttons */
+.btn-primary {
+  margin: 5px 0px;
 }
