@@ -47,7 +47,7 @@ contract SensorNode {
   // Simulate receiving beacon from cluster head!
   ////////////////////////////////////////
   
-  function receiveBeacon(DS.Beacon memory _beacon) public {
+  function addBeacon(DS.Beacon memory _beacon) public {
     beacon = _beacon;
   }
   

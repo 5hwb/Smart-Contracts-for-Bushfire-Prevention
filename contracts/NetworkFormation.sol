@@ -109,7 +109,7 @@ contract NetworkFormation {
       emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
       currNode.setNetworkLevel(nextNetLevel);
       DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress(), nodes[chIndex].getWithinRangeNodes());
-      currNode.receiveBeacon(beacon);
+      currNode.addBeacon(beacon);
       
       // TODO find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], _cHeadAddr); 
