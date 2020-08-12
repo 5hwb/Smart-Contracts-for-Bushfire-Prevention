@@ -21,8 +21,9 @@ contract SensorNode {
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
   // Simulate receiving a beacon from a cluster head 
-  bool public hasReceivedBeacon;      // Self-descriptory bool flag
-  SensorNode public beaconSenderNode; // The node that sent the beacon
+  DS.Beacon public beacon;
+  //bool public hasReceivedBeacon;      // Self-descriptory bool flag
+  //SensorNode public beaconSenderNode; // The node that sent the beacon
   
   // Simulate the sensor reading process
   DS.SensorReading[] public sensorReadings;    // Array of SensorReading structs
@@ -38,7 +39,7 @@ contract SensorNode {
     nodeAddress = _addr;
     energyLevel = _energyLevel;
     networkLevel = 0; // invalid value for now
-    hasReceivedBeacon = false;
+    //hasReceivedBeacon = false;
     
     // Add a dummy 'null' reading as the 1st element to make it easy to check 
     // if a SensorReading is read already 
@@ -49,9 +50,14 @@ contract SensorNode {
   // Simulate receiving beacon from cluster head!
   ////////////////////////////////////////
   
-  function receiveBeacon(SensorNode cHead) public {
-    hasReceivedBeacon = true;
-    beaconSenderNode = cHead;
+  function receiveBeacon(DS.Beacon memory _beacon/*SensorNode cHead*/) public {
+    //hasReceivedBeacon = true;
+    //beaconSenderNode = cHead;
+    beacon = _beacon;
+  }
+  
+  function getBeacon() public view returns(DS.Beacon memory) {
+    return beacon;
   }
   
   ////////////////////////////////////////
