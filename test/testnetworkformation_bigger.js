@@ -61,24 +61,24 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
     // Add neighbouring nodes
     // LAYER 1 NODES
-    await instance.addNode(2, 222001, 82, [111000, 222002]);
+    await instance.addNode(2, 222001, 82, [111000, 222002, 222003]);
     await instance.addNode(3, 222002, 88, [111000, 222006, 222007, 222003, 222001]);
-    await instance.addNode(4, 222003, 82, [111000, 222006, 222007, 222008, 222002, 222003, 222004]);
-    await instance.addNode(5, 222004, 95, [111000, 222007, 222008, 222009, 222010, 222011, 222005]);
+    await instance.addNode(4, 222003, 82, [111000, 222006, 222007, 222008, 222002, 222004, 222001, 222005]);
+    await instance.addNode(5, 222004, 95, [111000, 222007, 222008, 222009, 222003, 222010, 222005, 222011]);
     await instance.addNode(6, 222005, 87, [111000, 222003, 222004, 222010, 222011]);
 
     // LAYER 2 NODES
     await instance.addNode( 7, 222006, 79, [222012, 222013, 222007, 222002, 222003]);
-    await instance.addNode( 8, 222007, 61, [222012, 222013, 222014, 222006, 222008, 222003, 222004]);
-    await instance.addNode( 9, 222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222010]);
+    await instance.addNode( 8, 222007, 61, [222012, 222013, 222014, 222006, 222008, 222002, 222003, 222004]);
+    await instance.addNode( 9, 222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222004, 222010]);
     await instance.addNode(10, 222009, 95, [222014, 222015, 222008, 222004, 222010]);
     await instance.addNode(11, 222010, 86, [222008, 222009, 222004, 222005, 222011]);
     await instance.addNode(12, 222011, 93, [222004, 222010, 222005]);
 
     // LAYER 3 NODES
     await instance.addNode(13, 222012, 71, [222013, 222006, 222007]);
-    await instance.addNode(14, 222013, 83, [222012, 222014, 222006, 222008]);
-    await instance.addNode(15, 222014, 78, [222013, 222015, 222008, 222009]);
+    await instance.addNode(14, 222013, 83, [222012, 222014, 222006, 222007, 222008]);
+    await instance.addNode(15, 222014, 78, [222013, 222015, 222007, 222008, 222009]);
     await instance.addNode(16, 222015, 80, [222014, 222008, 222009]);
 
     // Get list of all SensorNode instances (just their addresses)
