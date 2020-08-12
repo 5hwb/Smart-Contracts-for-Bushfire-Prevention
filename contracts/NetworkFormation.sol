@@ -36,39 +36,39 @@ contract NetworkFormation {
   }
   
   // Add a node to the list of all sensor nodes.
-  function addNode(uint id, uint addr, uint energyLevel, uint[] memory _withinRangeNodes) public {
-    SensorNode node = new SensorNode(id, addr, energyLevel);
+  function addNode(uint _id, uint _addr, uint _energyLevel, uint[] memory _withinRangeNodes) public {
+    SensorNode node = new SensorNode(_id, _addr, _energyLevel);
     
     for (uint i = 0; i < _withinRangeNodes.length; i++) {
       node.addWithinRangeNode(_withinRangeNodes[i]);
     }
     
     // Add mapping of address to node array index 
-    addrToNodeIndex[addr] = numOfNodes;
+    addrToNodeIndex[_addr] = numOfNodes;
     nodes.push(node);
     numOfNodes++;
-    emit AddedNode(id, addr, energyLevel, node.networkLevel(), node.isClusterHead(), node.isMemberNode());
+    emit AddedNode(_id, _addr, _energyLevel, node.networkLevel(), node.isClusterHead(), node.isMemberNode());
   }
   
   // Get the index of the node with the given address
-  function getNodeIndex(uint sensorNode) view public returns(uint) {
-    return addrToNodeIndex[sensorNode];
+  function getNodeIndex(uint _nodeAddr) view public returns(uint) {
+    return addrToNodeIndex[_nodeAddr];
   }
   
   // Get the node with the given address
-  function getNode(uint sensorNode) view public returns(SensorNode) {
-    uint nIdx = addrToNodeIndex[sensorNode];
+  function getNode(uint _nodeAddr) view public returns(SensorNode) {
+    uint nIdx = addrToNodeIndex[_nodeAddr];
     return nodes[nIdx];
   }
   
   // returns node information
-  function getNodeInfo(uint sensorNodeAddr) public view returns (
+  function getNodeInfo(uint _nodeAddr) public view returns (
     uint, uint256,
     uint, uint,
     bool, bool,
     uint256[] memory) {
       
-    uint nIdx = addrToNodeIndex[sensorNodeAddr];
+    uint nIdx = addrToNodeIndex[_nodeAddr];
     return (nodes[nIdx].nodeID(), nodes[nIdx].nodeAddress(),
         nodes[nIdx].energyLevel(), nodes[nIdx].networkLevel(),
         nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode(),
@@ -76,18 +76,18 @@ contract NetworkFormation {
   }
   
   // Convert a list of addresses into their matching sensor nodes
-  function addrsToSensorNodes(uint[] memory listOfNodes) view public returns(SensorNode[] memory) {
-    SensorNode[] memory result = new SensorNode[](listOfNodes.length); 
-    for (uint i = 0; i < listOfNodes.length; i++) {
-      result[i] = getNode(listOfNodes[i]);
+  function addrsToSensorNodes(uint[] memory _listOfNodeAddrs) view public returns(SensorNode[] memory) {
+    SensorNode[] memory result = new SensorNode[](_listOfNodeAddrs.length); 
+    for (uint i = 0; i < _listOfNodeAddrs.length; i++) {
+      result[i] = getNode(_listOfNodeAddrs[i]);
     }
     
     return result;
   }
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
-  function sendBeacon(uint clusterHead) public {
-    uint chIndex = getNodeIndex(clusterHead);
+  function sendBeacon(uint _cHeadAddr) public {
+    uint chIndex = getNodeIndex(_cHeadAddr);
     require(nodes[chIndex].isClusterHead() == true, "Given node is not cluster head");
 
     // Get network level of this cluster head to calculate next level
@@ -112,14 +112,14 @@ contract NetworkFormation {
       currNode.receiveBeacon(beacon);
       
       // TODO find out how to do callback function (or equivalent)
-      // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], clusterHead); 
+      // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], _cHeadAddr); 
     }
   }
   
   // Send a join request to the given cluster head.
-  function sendJoinRequest(uint sensorAddr, uint cHeadAddr) public {
-    uint nodeIndex = getNodeIndex(sensorAddr);
-    SensorNode cHeadNode = getNode(cHeadAddr);
+  function sendJoinRequest(uint _sensorAddr, uint _cHeadAddr) public {
+    uint nodeIndex = getNodeIndex(_sensorAddr);
+    SensorNode cHeadNode = getNode(_cHeadAddr);
     
     // Add this node to cluster head's list of nodes that sent join requests
     assert(cHeadNode.nodeID() != 0); // make sure the cluster head node exists
@@ -138,24 +138,24 @@ contract NetworkFormation {
   }
   
   // Register the given node as a cluster head.
-  function registerAsClusterHead(uint clusterHead, uint sensorNode) public {
-    uint nodeIndex = getNodeIndex(sensorNode);
-    uint cHeadIndex = getNodeIndex(clusterHead);
+  function registerAsClusterHead(uint _cHeadAddr, uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    uint cHeadIndex = getNodeIndex(_cHeadAddr);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
     
     nodes[nodeIndex].setAsClusterHead();
     
     // Set the cluster head as the parent node (only if valid address!)
-    if (clusterHead != 0) {
+    if (_cHeadAddr != 0) {
       nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
     }
   }
   
   // Register the given node as a member node of the given cluster head.
-  function registerAsMemberNode(uint clusterHead, uint sensorNode) public {
-    uint nodeIndex = getNodeIndex(sensorNode);
-    uint cHeadIndex = getNodeIndex(clusterHead);
+  function registerAsMemberNode(uint _cHeadAddr, uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    uint cHeadIndex = getNodeIndex(_cHeadAddr);
     assert(nodes[nodeIndex].isClusterHead() == false);
     assert(nodes[nodeIndex].isMemberNode() == false);
 
@@ -169,10 +169,10 @@ contract NetworkFormation {
   }
     
   // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011) with the given probability.
-  function electClusterHeads(uint currClusterHeadAddr, uint probability) public {
+  function electClusterHeads(uint _currCHeadAddr, uint _probability) public {
   
     // Get the sensor node with the given address
-    SensorNode currClusterHead = getNode(currClusterHeadAddr);
+    SensorNode currClusterHead = getNode(_currCHeadAddr);
     
     // Get the list of nodes that sent join requests
     // (if its empty, exit the function)
@@ -188,7 +188,7 @@ contract NetworkFormation {
     // (probability * numOfJoinRequests * 100) / 10000
     // where probability is an integer representing a percentage (0 < probability <= 100)
     // and numOfJoinRequests >= 1
-    numOfClusterHeads = (probability * 
+    numOfClusterHeads = (_probability * 
         (currClusterHead.numOfJoinRequests()*100)) / 10000; 
     
     // Select the cluster heads from the nodes with join requests
@@ -197,50 +197,50 @@ contract NetworkFormation {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
       if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
-        registerAsClusterHead(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
+        registerAsClusterHead(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress());
         numOfElectedClusterHeads++;
       }
       // If all cluster heads have been elected, register the member nodes for this layer
       else {
-        registerAsMemberNode(currClusterHeadAddr, nodesWithJoinRequests[i].nodeAddress());
+        registerAsMemberNode(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress());
       }
     }
   }
   
   // Simulate getting data from the sensors of the given node
-  function readSensorInput(uint256 sReading, uint nodeAddr) public {
-    uint nodeIndex = getNodeIndex(nodeAddr);
+  function readSensorInput(uint256 _sReading, uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
-    sReadings[0] = DS.SensorReading(sReading, true);
+    sReadings[0] = DS.SensorReading(_sReading, true);
     nodes[nodeIndex].readSensorInput(sReadings);
   }
   
   // Sort function for SensorNode arrays that sorts by energy level in descending order.
   // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
-  function sort(SensorNode[] memory data) public returns(SensorNode[] memory) {
-     quickSort(data, int(0), int(data.length - 1));
-     return data;
+  function sort(SensorNode[] memory _data) public returns(SensorNode[] memory) {
+     quickSort(_data, int(0), int(_data.length - 1));
+     return _data;
   }
   
-  function quickSort(SensorNode[] memory arr, int left, int right) internal {
-      int i = left;
-      int j = right;
+  function quickSort(SensorNode[] memory _arr, int _left, int _right) internal {
+      int i = _left;
+      int j = _right;
       if(i==j) return;
-      uint pivot = arr[uint(left + (right - left) / 2)].energyLevel();
+      uint pivot = _arr[uint(_left + (_right - _left) / 2)].energyLevel();
       while (i <= j) {
-          while (arr[uint(i)].energyLevel() > pivot) i++;
-          while (pivot > arr[uint(j)].energyLevel()) j--;
+          while (_arr[uint(i)].energyLevel() > pivot) i++;
+          while (pivot > _arr[uint(j)].energyLevel()) j--;
           if (i <= j) {
-              SensorNode temp = arr[uint(i)];
-              arr[uint(i)] = arr[uint(j)];
-              arr[uint(j)] = temp;
+              SensorNode temp = _arr[uint(i)];
+              _arr[uint(i)] = _arr[uint(j)];
+              _arr[uint(j)] = temp;
               i++;
               j--;
           }
       }
-      if (left < j)
-          quickSort(arr, left, j);
-      if (i < right)
-          quickSort(arr, i, right);
+      if (_left < j)
+          quickSort(_arr, _left, j);
+      if (i < _right)
+          quickSort(_arr, i, _right);
   }
 }

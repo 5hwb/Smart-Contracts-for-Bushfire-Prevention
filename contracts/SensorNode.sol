@@ -58,17 +58,17 @@ contract SensorNode {
   ////////////////////////////////////////
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
-  function readSensorInput(DS.SensorReading[] memory sReadings) public {
+  function readSensorInput(DS.SensorReading[] memory _sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
-    for (uint i = 0; i < sReadings.length; i++) {
+    for (uint i = 0; i < _sReadings.length; i++) {
 
       // Check if the sensor reading has already been added before adding it.
       // Ignore duplicates and null '0' readings
-      uint sReadingIndex = readingToStructIndex[sReadings[i].reading];
-      if (sReadingIndex == 0 && sReadings[i].reading != 0) {
-        readingToStructIndex[sReadings[i].reading] = numOfReadings; 
-        sensorReadings.push(sReadings[i]);
+      uint sReadingIndex = readingToStructIndex[_sReadings[i].reading];
+      if (sReadingIndex == 0 && _sReadings[i].reading != 0) {
+        readingToStructIndex[_sReadings[i].reading] = numOfReadings; 
+        sensorReadings.push(_sReadings[i]);
         numOfReadings++;
       }
     }
@@ -93,12 +93,12 @@ contract SensorNode {
   // SETTER FUNCTIONS
   ////////////////////////////////////////
   
-  function setEnergyLevel(uint eLevel) public {
-    energyLevel = eLevel;
+  function setEnergyLevel(uint _eLevel) public {
+    energyLevel = _eLevel;
   }
   
-  function setNetworkLevel(uint nLevel) public {
-    networkLevel = nLevel;
+  function setNetworkLevel(uint _nLevel) public {
+    networkLevel = _nLevel;
   }
   
   function setAsClusterHead() public {
@@ -111,17 +111,17 @@ contract SensorNode {
     isMemberNode = true;
   }
   
-  function setParentNode(SensorNode addr) public {
-    parentNode = addr;
+  function setParentNode(SensorNode _node) public {
+    parentNode = _node;
   }
   
-  function addJoinRequestNode(SensorNode addr) public {
-    joinRequestNodes.push(addr);
+  function addJoinRequestNode(SensorNode _node) public {
+    joinRequestNodes.push(_node);
     numOfJoinRequests++;
   }
 
-  function addWithinRangeNode(uint256 addr) public {
-    withinRangeNodes.push(addr);
+  function addWithinRangeNode(uint256 _addr) public {
+    withinRangeNodes.push(_addr);
   }
     
   ////////////////////////////////////////
