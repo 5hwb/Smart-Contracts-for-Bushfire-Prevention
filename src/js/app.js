@@ -64,6 +64,21 @@ App = {
     });
   },
   
+  addNode: function(instance, nodeID, nodeAddr, nodeELevel, nodesWithinRange) {
+    instance.addNode(nodeID, nodeAddr, nodeELevel, nodesWithinRange).then(function(result) {
+      console.log("FLOW: adding more nodes - nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodesWithinRange="+nodesWithinRange);
+      $(".sensornode-box").append(`<div>
+        <h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2>
+        <p>Energy level: ${result.logs[0].args.energyLevel}</p>
+        <p>Network level: ${result.logs[0].args.networkLevel}</p>
+        <p>isClusterHead: ${result.logs[0].args.isClusterHead}</p>
+        <p>isMemberNode: ${result.logs[0].args.isMemberNode}</p>
+        </div>`);
+    }).catch(function(err) { 
+      console.error("add more nodes ERROR! " + err.message);
+    });
+  },
+  
   /* Adds data by inserting directly into the HTML with the following:
   <div>
     <h2>Node 10 with address 111000</h2>
@@ -82,45 +97,14 @@ App = {
         // Add a bunch of sample nodes if the number of nodes is 0
         if (numOfNodes == 0) {
           // Add the sink node (1 of many to come)
-          instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]).then(function(result) {
-            console.log("FLOW: adding 1st node"); 
-            $(".sensornode-box").append(`<div>
-              <h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2>
-              <p>Energy level: ${result.logs[0].args.energyLevel}</p>
-              <p>Network level: ${result.logs[0].args.networkLevel}</p>
-              <p>isClusterHead: ${result.logs[0].args.isClusterHead}</p>
-              <p>isMemberNode: ${result.logs[0].args.isMemberNode}</p>
-              </div>`);
-          }).catch(function(err) { 
-            console.error("add 1st node ERROR! " + err.message);
-          });
+          App.addNode(instance, 10, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
           
           // Add the child nodes
-          instance.addNode(11, 222001, 35, [111000, 222002]).then(function(result) {
-            console.log("FLOW: adding more nodes"); 
-          }).catch(function(err) { 
-            console.error("add more nodes ERROR! " + err.message);
-          });
-          instance.addNode(12, 222002, 66, [111000, 222001, 222003]).then(function(result) {
-            console.log("FLOW: adding more nodes"); 
-          }).catch(function(err) { 
-            console.error("add more nodes ERROR! " + err.message);
-          });
-          instance.addNode(13, 222003, 53, [111000, 222002, 222004]).then(function(result) {
-            console.log("FLOW: adding more nodes"); 
-          }).catch(function(err) { 
-            console.error("add more nodes ERROR! " + err.message);
-          });
-          instance.addNode(14, 222004, 82, [111000, 222003, 222005]).then(function(result) {
-            console.log("FLOW: adding more nodes"); 
-          }).catch(function(err) { 
-            console.error("add more nodes ERROR! " + err.message);
-          });
-          instance.addNode(15, 222005, 65, [111000, 222004]).then(function(result) {
-            console.log("FLOW: adding more nodes"); 
-          }).catch(function(err) { 
-            console.error("add more nodes ERROR! " + err.message);
-          });
+          App.addNode(instance, 11, 222001, 35, [111000, 222002]);
+          App.addNode(instance, 12, 222002, 66, [111000, 222001, 222003]);
+          App.addNode(instance, 13, 222003, 53, [111000, 222002, 222004]);
+          App.addNode(instance, 14, 222004, 82, [111000, 222003, 222005]);
+          App.addNode(instance, 15, 222005, 65, [111000, 222004]);
           
         }
         // Otherwise, load the existing sensor nodes
