@@ -10,7 +10,7 @@ contract NetworkFormation {
   
   uint numOfClusterHeads; // N_CH
   
-  // TODO change this to a mapping + list - this article can help: https://ethereum.stackexchange.com/questions/15337/can-we-get-all-elements-stored-in-a-mapping-in-the-contract
+  // Array of all nodes in the network
   SensorNode[] public nodes;
   mapping (uint => uint) addrToNodeIndex; // node addresses -> node array index
 
@@ -52,21 +52,11 @@ contract NetworkFormation {
   
   // Get the index of the node with the given address
   function getNodeIndex(uint sensorNode) view public returns(uint) {
-    /*for (uint i = 0; i < numOfNodes; i++) {
-      if (nodes[i].nodeAddress() == sensorNode) {
-        return i;
-      }
-    }*/
     return addrToNodeIndex[sensorNode];
   }
   
   // Get the node with the given address
   function getNode(uint sensorNode) view public returns(SensorNode) {
-    /*for (uint i = 0; i < numOfNodes; i++) {
-      if (nodes[i].nodeAddress() == sensorNode) {
-        return nodes[i];
-      }
-    }*/
     uint nIdx = addrToNodeIndex[sensorNode];
     return nodes[nIdx];
   }
@@ -118,7 +108,6 @@ contract NetworkFormation {
       // (for now, simulate it by setting the network level integer) 
       emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
       currNode.setNetworkLevel(nextNetLevel);
-      //currNode.receiveBeacon(nodes[chIndex]);
       DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress(), nodes[chIndex].getWithinRangeNodes());
       currNode.receiveBeacon(beacon);
       
