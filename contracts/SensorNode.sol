@@ -21,7 +21,7 @@ contract SensorNode {
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
   // Simulate receiving a beacon from a cluster head 
-  DS.Beacon public beacon;
+  DS.Beacon[] public beacons;
   
   // Simulate the sensor reading process
   DS.SensorReading[] public sensorReadings;    // Array of SensorReading structs
@@ -37,9 +37,13 @@ contract SensorNode {
     nodeAddress = _addr;
     energyLevel = _energyLevel;
     networkLevel = 0; // invalid value for now
+
+    // Add a dummy 'null' beacon as the 1st element to make null-checking easy
+    uint[] memory dummyAddrs = new uint[](1);
+    dummyAddrs[0] = 0;
+    beacons.push(DS.Beacon(false, 0, 0, dummyAddrs));
     
-    // Add a dummy 'null' reading as the 1st element to make it easy to check 
-    // if a SensorReading is read already 
+    // Add a dummy 'null' reading as the 1st element to make null-checking easy
     sensorReadings.push(DS.SensorReading(0, false));
   }
   
@@ -48,11 +52,14 @@ contract SensorNode {
   ////////////////////////////////////////
   
   function addBeacon(DS.Beacon memory _beacon) public {
-    beacon = _beacon;
+    beacons.push(_beacon);
   }
   
   function getBeacon() public view returns(DS.Beacon memory) {
-    return beacon;
+    if (beacons.length > 1) {
+      return beacons[1];
+    }
+    return beacons[0];
   }
   
   ////////////////////////////////////////
