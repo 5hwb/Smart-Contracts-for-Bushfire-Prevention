@@ -158,21 +158,32 @@ contract("NetworkFormation test cases", async accounts => {
   /***********************************************
    * TEST - Sorting SensorNode instances
    ***********************************************/
-  // it("should sort a SensorNode array", async () => {
-  // 
-  //   // sort to [89, 71, 62, 53]
-  //   SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
-  //   // Check that nodes have been sorted by their energy levels in descending order
-  //   Assert.equal(sortedThingo[0].energyLevel(), 89, "Sorting error");
-  //   Assert.equal(sortedThingo[1].energyLevel(), 71, "Sorting error");
-  //   Assert.equal(sortedThingo[2].energyLevel(), 62, "Sorting error");
-  //   Assert.equal(sortedThingo[3].energyLevel(), 53, "Sorting error");
-  //   // Another check to ensure the IDs are correct
-  //   Assert.equal(sortedThingo[0].nodeID(), 3, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[1].nodeID(), 4, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[2].nodeID(), 2, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[3].nodeID(), 1, "Sorting error - wrong ID");
-  // });
+  it("should sort a SensorNode array", async () => {
+  
+    // sort to [89, 71, 62, 53]
+    let sortedThingo = await instance.getSortedNodes.call();
+    let node0 = await SensorNode.at(sortedThingo[0]);
+    let node1 = await SensorNode.at(sortedThingo[1]);
+    let node2 = await SensorNode.at(sortedThingo[2]);
+    let node3 = await SensorNode.at(sortedThingo[3]);
+    let node4 = await SensorNode.at(sortedThingo[4]);
+    let node5 = await SensorNode.at(sortedThingo[5]);
+    
+    // Check that nodes have been sorted by their energy levels in descending order
+    assert.equal(await node0.energyLevel(), 100, "Sorting error");
+    assert.equal(await node1.energyLevel(), 82, "Sorting error");
+    assert.equal(await node2.energyLevel(), 66, "Sorting error");
+    assert.equal(await node3.energyLevel(), 65, "Sorting error");
+    assert.equal(await node4.energyLevel(), 53, "Sorting error");
+    assert.equal(await node5.energyLevel(), 35, "Sorting error");
+    // Another check to ensure the IDs are correct
+    assert.equal(await node0.nodeID(), 10, "Sorting error - wrong ID");
+    assert.equal(await node1.nodeID(), 14, "Sorting error - wrong ID");
+    assert.equal(await node2.nodeID(), 12, "Sorting error - wrong ID");
+    assert.equal(await node3.nodeID(), 15, "Sorting error - wrong ID");
+    assert.equal(await node4.nodeID(), 13, "Sorting error - wrong ID");
+    assert.equal(await node5.nodeID(), 11, "Sorting error - wrong ID");
+  });
   
   /***********************************************
    * TEST - Sorting integers
