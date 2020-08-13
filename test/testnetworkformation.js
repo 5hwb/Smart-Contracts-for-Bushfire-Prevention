@@ -33,26 +33,6 @@ contract("NetworkFormation test cases", async accounts => {
   });
   
   it("should add SensorNode instances", async () => {
-    // Add a SensorNode
-    let dummyAddr = [1001, 1002];
-    await instance.addNode(1, 1000, 56, dummyAddr);
-
-    // Get list of all SensorNode instances (just their addresses)
-    let allNodes = await instance.getAllNodes.call();
-
-    // Ensure the values within this SensorNode is as expected
-    let firstNode = await SensorNode.at(allNodes[0]);    
-    //console.log("firstNode = ");
-    //console.log(firstNode);
-    let firstNodeID = await firstNode.nodeID.call();
-    let firstNodeAddr = await firstNode.nodeAddress.call();
-    let firstNodeEnergyLevel = await firstNode.energyLevel.call();
-    assert.equal(firstNodeID, 1);
-    assert.equal(firstNodeAddr, 1000);
-    assert.equal(firstNodeEnergyLevel, 56);
-  });
-
-  it("should send beacon", async () => {
     // Add the 'sink node'
     await instance.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
@@ -63,14 +43,26 @@ contract("NetworkFormation test cases", async accounts => {
     await instance.addNode(14, 222004, 82, [111000, 222003, 222005]);
     await instance.addNode(15, 222005, 65, [111000, 222004]);
     
+    // Get list of all SensorNode instances (just their addresses)
+    let allNodes = await instance.getAllNodes.call();
+
+    // Ensure the values within this SensorNode is as expected
+    let firstNode = await SensorNode.at(allNodes[0]);    
+    let firstNodeID = await firstNode.nodeID.call();
+    let firstNodeAddr = await firstNode.nodeAddress.call();
+    let firstNodeEnergyLevel = await firstNode.energyLevel.call();
+    assert.equal(firstNodeID, 10);
+    assert.equal(firstNodeAddr, 111000);
+    assert.equal(firstNodeEnergyLevel, 100);
+  });
+
+  it("should send beacon", async () => {
     // Set sink node as the 1st cluster head
     await instance.registerAsClusterHead(0, 111000);
 
     // Set its network level to be 0 (because sink node!)
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
     await sinkNode.setNetworkLevel(0);
-    //console.log("parentNode = ");
-    //console.log(await sinkNode.parentNode.call());
     
     // Send beacon from cluster head
     await instance.sendBeacon(111000);
@@ -94,12 +86,6 @@ contract("NetworkFormation test cases", async accounts => {
     // Make all nodes within range send a join request
     await instance.sendJoinRequests();
     let sinkNode = await SensorNode.at(await instance.getNode(111000));
-    /*let withinRangeNodes = await sinkNode.getWithinRangeNodes.call();
-    for (var i = 0; i < withinRangeNodes.length; i++) {
-      let nodeAddr = withinRangeNodes[i].words[0]; // need to convert it from a BN.js object to an integer
-      let sNode = await SensorNode.at(await instance.getNode(nodeAddr));
-      await instance.sendJoinRequest(nodeAddr, 111000);
-    }*/
 
     // Ensure the node addresses were added to list of join request nodes
     let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
@@ -173,11 +159,6 @@ contract("NetworkFormation test cases", async accounts => {
    * TEST - Sorting SensorNode instances
    ***********************************************/
   // it("should sort a SensorNode array", async () => {
-  //   let dummyAddrs = [888999777];
-  //   contAddr.addNode(1, dummyAddr, 53, dummyAddrs);  // 3
-  //   contAddr.addNode(2, dummyAddr, 62, dummyAddrs);  // 2
-  //   contAddr.addNode(3, dummyAddr, 89, dummyAddrs);  // 0
-  //   contAddr.addNode(4, dummyAddr, 71, dummyAddrs);  // 1
   // 
   //   // sort to [89, 71, 62, 53]
   //   SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
