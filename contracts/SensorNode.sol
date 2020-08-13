@@ -22,6 +22,7 @@ contract SensorNode {
   
   // Simulate receiving a beacon from a cluster head 
   DS.Beacon[] public beacons;
+  uint public numOfBeacons;
   
   // Simulate the sensor reading process
   DS.SensorReading[] public sensorReadings;    // Array of SensorReading structs
@@ -53,6 +54,7 @@ contract SensorNode {
   
   function addBeacon(DS.Beacon memory _beacon) public {
     beacons.push(_beacon);
+    numOfBeacons++;
   }
   
   function getBeacon() public view returns(DS.Beacon memory) {
@@ -61,6 +63,18 @@ contract SensorNode {
     }
     return beacons[0];
   }
+  
+  // // Get a beacon at the specified index.
+  // function getBeaconAt(uint index) public view returns(DS.Beacon memory) {
+  //   if (beacons.length > 1 && index < beacons.length - 1) {
+  //     return beacons[index + 1];
+  //   }
+  //   return beacons[0];
+  // }
+  // 
+  // function getBeacons() public view returns(DS.Beacon[] memory) {
+  //   return beacons;
+  // }
   
   ////////////////////////////////////////
   // Simulate receiving input from sensors!

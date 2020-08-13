@@ -61,7 +61,7 @@ contract NetworkFormation {
     return nodes[nIdx];
   }
   
-  // returns node information
+  // Get node information
   function getNodeInfo(uint _nodeAddr) public view returns (
     uint, uint256,
     uint, uint,
@@ -73,6 +73,15 @@ contract NetworkFormation {
         nodes[nIdx].energyLevel(), nodes[nIdx].networkLevel(),
         nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode(),
         nodes[nIdx].getSensorReadings());
+  }
+  
+  // Get a node's beacon data
+  function getNodeBeaconData(uint _nodeAddr) public view returns (
+    bool, uint, uint256, uint) {
+      
+    SensorNode node = getNode(_nodeAddr);
+    DS.Beacon memory beacon = node.getBeacon();
+    return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.numOfBeacons());
   }
   
   // Convert a list of addresses into their matching sensor nodes
@@ -98,8 +107,10 @@ contract NetworkFormation {
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
       SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
       
-      // Ignore this node if network level is already set
-      if (currNode.isClusterHead() || currNode.networkLevel() > 0) {
+      // Ignore this node if it's a cluster head or if the network level is 
+      // already set between 1 and the current cluster head's network level 
+      if (currNode.isClusterHead() || (currNode.networkLevel() > 0
+          && currNode.networkLevel() <= nodes[chIndex].networkLevel())) {
         emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Node was ignored");
         continue;
       }
