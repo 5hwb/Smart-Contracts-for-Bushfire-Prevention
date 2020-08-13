@@ -170,7 +170,31 @@ contract("NetworkFormation test cases", async accounts => {
   });
   
   /***********************************************
-   * TEST - Sorting
+   * TEST - Sorting SensorNode instances
+   ***********************************************/
+  // it("should sort a SensorNode array", async () => {
+  //   let dummyAddrs = [888999777];
+  //   contAddr.addNode(1, dummyAddr, 53, dummyAddrs);  // 3
+  //   contAddr.addNode(2, dummyAddr, 62, dummyAddrs);  // 2
+  //   contAddr.addNode(3, dummyAddr, 89, dummyAddrs);  // 0
+  //   contAddr.addNode(4, dummyAddr, 71, dummyAddrs);  // 1
+  // 
+  //   // sort to [89, 71, 62, 53]
+  //   SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
+  //   // Check that nodes have been sorted by their energy levels in descending order
+  //   Assert.equal(sortedThingo[0].energyLevel(), 89, "Sorting error");
+  //   Assert.equal(sortedThingo[1].energyLevel(), 71, "Sorting error");
+  //   Assert.equal(sortedThingo[2].energyLevel(), 62, "Sorting error");
+  //   Assert.equal(sortedThingo[3].energyLevel(), 53, "Sorting error");
+  //   // Another check to ensure the IDs are correct
+  //   Assert.equal(sortedThingo[0].nodeID(), 3, "Sorting error - wrong ID");
+  //   Assert.equal(sortedThingo[1].nodeID(), 4, "Sorting error - wrong ID");
+  //   Assert.equal(sortedThingo[2].nodeID(), 2, "Sorting error - wrong ID");
+  //   Assert.equal(sortedThingo[3].nodeID(), 1, "Sorting error - wrong ID");
+  // });
+  
+  /***********************************************
+   * TEST - Sorting integers
    ***********************************************/
   it("should sort an int array", async () => {
     //let numCandidates = await instance.numCandidates();
