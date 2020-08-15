@@ -9,8 +9,6 @@ import "../contracts/DS.sol";
 import "../contracts/SensorNode.sol";
 
 contract TestNetworkFormation {
-  // TODO: next step - implement the cluster head election algorithm!
-
   // The address of the contract to be tested
   NetworkFormation contAddr = NetworkFormation(DeployedAddresses.NetworkFormation());
 
