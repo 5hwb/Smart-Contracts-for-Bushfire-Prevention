@@ -18,35 +18,6 @@ contract TestNetworkFormation {
   address contractAddress = address(this);
 
   /***********************************************
-   * TEST - Sorting
-   ***********************************************/
-   // PROBLEM: this function fails if I add another function to SensorNode contract! WHY?
-   // Testing the getSortedNodes() function
-   // note: address is just a placeholder
-  // uint256 dummyAddr = 888999777;
-  // function testSortNodes() public {
-  //   uint[] memory dummyAddrs = new uint[](1);
-  //   dummyAddrs[0] = dummyAddr;
-  //   contAddr.addNode(1, dummyAddr, 53, dummyAddrs);  // 3
-  //   contAddr.addNode(2, dummyAddr, 62, dummyAddrs);  // 2
-  //   contAddr.addNode(3, dummyAddr, 89, dummyAddrs);  // 0
-  //   contAddr.addNode(4, dummyAddr, 71, dummyAddrs);  // 1
-  // 
-  //   // sort to [89, 71, 62, 53]
-  //   SensorNode[] memory sortedThingo = contAddr.getSortedNodes();
-  //   // Check that nodes have been sorted by their energy levels in descending order
-  //   Assert.equal(sortedThingo[0].energyLevel(), 89, "Sorting error");
-  //   Assert.equal(sortedThingo[1].energyLevel(), 71, "Sorting error");
-  //   Assert.equal(sortedThingo[2].energyLevel(), 62, "Sorting error");
-  //   Assert.equal(sortedThingo[3].energyLevel(), 53, "Sorting error");
-  //   // Another check to ensure the IDs are correct
-  //   Assert.equal(sortedThingo[0].nodeID(), 3, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[1].nodeID(), 4, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[2].nodeID(), 2, "Sorting error - wrong ID");
-  //   Assert.equal(sortedThingo[3].nodeID(), 1, "Sorting error - wrong ID");
-  // }
-
-  /***********************************************
    * TEST - Getting existing nodes
    ***********************************************/
   //address dummyAddr1 = 0xaaAD3A6d3889dF677070DED06db7A1b2CCD1d3a1;
