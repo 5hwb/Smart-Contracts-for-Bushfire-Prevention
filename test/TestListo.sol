@@ -30,5 +30,10 @@ contract TestListo {
     Assert.equal(DC.get(arr, 0), 5, "Retrieval error");
     Assert.equal(DC.get(arr, 1), 3, "Retrieval error");
     Assert.equal(DC.get(arr, 2), 4, "Retrieval error");
+    
+    Assert.equal(DC.contains(arr, 5), true, "It should be true1");
+    Assert.equal(DC.contains(arr, 3), true, "It should be true2");
+    Assert.equal(DC.contains(arr, 4), true, "It should be true3");
+    Assert.equal(DC.contains(arr, 9), false, "It should be false");
   }
 }

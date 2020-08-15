@@ -10,7 +10,8 @@ library DC {
   }
 
   function initIndexedArray(IndexedArray storage arr) public {
-    arr.numEntries = 0;
+    arr.entries.push(0); // Add a dummy value to represent null
+    arr.numEntries = 1;
   }
   
   function add(IndexedArray storage arr, uint256 val) public {
@@ -21,12 +22,18 @@ library DC {
   }
   
   function get(IndexedArray storage arr, uint256 idx) view public returns(uint256) {
-    return arr.entries[idx];
+    return arr.entries[idx+1];
+  }
+  
+  function contains(IndexedArray storage arr, uint256 val) view public returns(bool) {
+    return arr.entToIndex[val] != 0;
   }
 
 }
 
 contract Listo {
+  // TODO: Use the IndexedArray to store withinRangeNodes
+  // to make it easy to find their intersections.
   function testThingo() public {
     uint[5] memory aa02 = [uint(0), 1, 3, 6, 7];
     uint[8] memory aa04 = [uint(0), 3, 5, 7, 8, 9, 10, 11];
