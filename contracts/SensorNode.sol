@@ -64,17 +64,17 @@ contract SensorNode {
     return beacons[0];
   }
   
-  // // Get a beacon at the specified index.
-  // function getBeaconAt(uint index) public view returns(DS.Beacon memory) {
-  //   if (beacons.length > 1 && index < beacons.length - 1) {
-  //     return beacons[index + 1];
-  //   }
-  //   return beacons[0];
-  // }
-  // 
-  // function getBeacons() public view returns(DS.Beacon[] memory) {
-  //   return beacons;
-  // }
+  // Get a beacon at the specified index.
+  function getBeaconAt(uint index) public view returns(DS.Beacon memory) {
+    if (beacons.length > 1 && index < beacons.length - 1) {
+      return beacons[index + 1];
+    }
+    return beacons[0];
+  }
+  
+  function getBeacons() public view returns(DS.Beacon[] memory) {
+    return beacons;
+  }
   
   ////////////////////////////////////////
   // Simulate receiving input from sensors!

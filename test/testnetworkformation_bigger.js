@@ -194,6 +194,38 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(await node09.networkLevel.call(), 2);
     assert.equal(await node10.networkLevel.call(), 2);
     assert.equal(await node11.networkLevel.call(), 2);
+
+    var node06NumBeacons = await node06.numOfBeacons.call();
+    for (var i = 0; i < node06NumBeacons; i++) {
+      let node06BeaconData = await node06.getBeaconAt.call(i);
+      console.log("node06BeaconData = "); console.log(node06BeaconData);
+    }
+    var node07NumBeacons = await node07.numOfBeacons.call();
+    for (var i = 0; i < node07NumBeacons; i++) {
+      let node07BeaconData = await node07.getBeaconAt.call(i);
+      console.log("node07BeaconData = "); console.log(node07BeaconData);
+    }
+    var node08NumBeacons = await node08.numOfBeacons.call();
+    for (var i = 0; i < node08NumBeacons; i++) {
+      let node08BeaconData = await node08.getBeaconAt.call(i);
+      console.log("node08BeaconData = "); console.log(node08BeaconData);
+    }
+    var node09NumBeacons = await node09.numOfBeacons.call();
+    for (var i = 0; i < node09NumBeacons; i++) {
+      let node09BeaconData = await node09.getBeaconAt.call(i);
+      console.log("node09BeaconData = "); console.log(node09BeaconData);
+    }
+    var node10NumBeacons = await node10.numOfBeacons.call();
+    for (var i = 0; i < node10NumBeacons; i++) {
+      let node10BeaconData = await node10.getBeaconAt.call(i);
+      console.log("node10BeaconData = "); console.log(node10BeaconData);
+    }
+    var node11NumBeacons = await node11.numOfBeacons.call();
+    for (var i = 0; i < node11NumBeacons; i++) {
+      let node11BeaconData = await node11.getBeaconAt.call(i);
+      console.log("node11BeaconData = "); console.log(node11BeaconData);
+    }
+    
   });
 
   it("should send join requests for Layer 2 nodes", async () => {
@@ -412,5 +444,24 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal((await node111000.getSensorReadings.call())[13], 9014);
     assert.equal((await node111000.getSensorReadings.call())[14], 9015);
   });
+
+  // TODO Add redundancy - put it in SensorNode perhaps?
+  /*
+CLUSTER HED NODE02:
+[0, 1, 3, 6, 7]
+CLUSTER HED NODE04:
+[0, 3, 5, 7, 8, 9, 10, 11]
+NODE07 (which received beacons from 02 and 04):
+[2, 3, 4, 6, 8, 12, 13, 14]
+
+OVERLAP of 02 and 07:
+[3, 6]
+
+OVERLAP of 04 and 07:
+[3, 8]
+
+OVERLAP of 02, 04 and 07:
+[3]
+  */
     
 });
