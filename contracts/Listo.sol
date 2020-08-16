@@ -14,19 +14,32 @@ library DC {
     arr.numEntries = 1;
   }
   
+  function get(IndexedArray storage arr, uint256 idx) view public returns(uint256) {
+    require(idx < arr.entries.length - 1);
+    return arr.entries[idx+1];
+  }
+  
+  function getWithVal(IndexedArray storage arr, uint256 val) view public returns(uint256) {
+    return arr.entries[arr.entToIndex[val]];
+  }
+  
   function add(IndexedArray storage arr, uint256 val) public {
+    // Cancel the add if an existing entry with the same value is found
+    if (getWithVal(arr, val) != 0) 
+      return;
+    
     // Add mapping of address to node array index 
     arr.entToIndex[val] = arr.numEntries;
     arr.entries.push(val);
     arr.numEntries++;
   }
   
-  function get(IndexedArray storage arr, uint256 idx) view public returns(uint256) {
-    return arr.entries[idx+1];
-  }
-  
   function contains(IndexedArray storage arr, uint256 val) view public returns(bool) {
     return arr.entToIndex[val] != 0;
+  }
+  
+  function intersection() public {
+    
   }
 
 }

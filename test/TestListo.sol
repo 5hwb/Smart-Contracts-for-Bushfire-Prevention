@@ -26,10 +26,17 @@ contract TestListo {
     DC.add(arr, 5);
     DC.add(arr, 3);
     DC.add(arr, 4);
+    DC.add(arr, 5);
 
     Assert.equal(DC.get(arr, 0), 5, "Retrieval error");
     Assert.equal(DC.get(arr, 1), 3, "Retrieval error");
     Assert.equal(DC.get(arr, 2), 4, "Retrieval error");
+    //Assert.equal(DC.get(arr, 3), 5, "SOMETHING IS RUGHT");
+    
+    Assert.equal(DC.getWithVal(arr, 5), 5, "Retrieval error");
+    Assert.equal(DC.getWithVal(arr, 3), 3, "Retrieval error");
+    Assert.equal(DC.getWithVal(arr, 4), 4, "Retrieval error");
+    Assert.equal(DC.getWithVal(arr, 9), 0, "Retrieval error");
     
     Assert.equal(DC.contains(arr, 5), true, "It should be true1");
     Assert.equal(DC.contains(arr, 3), true, "It should be true2");
