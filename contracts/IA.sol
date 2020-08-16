@@ -111,16 +111,25 @@ library IA {
   }
 
   /**
+   * @notice Copy 1 array to another. 
+   * WARNING: arr2 must be 'deleted' before calling this function - otherwise there will be unexpected beaviour!
+   * (fkn Solidity is a pain in the ass to work with)
+   * @param arr1 The array to copy from
+   * @param arr2 The array to place the contents of arr1
+   */
+  function copy(uint256[] storage arr1, uint256[] storage arr2) public {
+    for (uint i = 0; i < arr1.length; i++) {
+      arr2.push(arr1[i]);
+    }
+  }
+
+  /**
    * @notice Calculate the intersection between 2 arrays and output the results in a 3rd array.
    * @param arr1 The 1st array to check
    * @param arr2 The 2nd array to check
    * @param res The array to put the results in
    */
   function inter(uint256[] storage arr1, uint256[] storage arr2, uint256[] storage res) public {
-    // if (arr1 == res) {
-    //   delete res;
-    // }
-    
     
     for (uint i = 0; i < arr1.length; i++) {
       for (uint j = 0; j < arr2.length; j++) {
