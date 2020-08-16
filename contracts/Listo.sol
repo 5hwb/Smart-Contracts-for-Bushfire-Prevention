@@ -2,7 +2,7 @@
 pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
-library DC {
+library IA {
     /**
      * @notice A struct for holding array and entry-to-index mappings
      */
