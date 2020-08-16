@@ -18,6 +18,8 @@ contract TestListo {
    ***********************************************/
 
   IA.IndexedArray arr;
+  IA.IndexedArray arr2;
+  uint[] res; 
 
   function testSomething() public {
     contAddr.testThingo();
@@ -28,6 +30,11 @@ contract TestListo {
     IA.add(arr, 4);
     IA.add(arr, 5);
 
+    IA.initIndexedArray(arr2);
+    IA.add(arr2, 4);
+    IA.add(arr2, 8);
+    IA.add(arr2, 3);
+    
     Assert.equal(IA.get(arr, 0), 5, "Retrieval error");
     Assert.equal(IA.get(arr, 1), 3, "Retrieval error");
     Assert.equal(IA.get(arr, 2), 4, "Retrieval error");
@@ -42,5 +49,12 @@ contract TestListo {
     Assert.equal(IA.contains(arr, 3), true, "It should be true2");
     Assert.equal(IA.contains(arr, 4), true, "It should be true3");
     Assert.equal(IA.contains(arr, 9), false, "It should be false");
+    
+    // Test the intersection() function
+    // should get [3, 4]
+    IA.intersection(arr, arr2.entries, res);
+
+    Assert.equal(res[0], 3, "It should be 3");
+    Assert.equal(res[1], 4, "It should be 4");
   }
 }

@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
+//pragma solidity ^0.7.0;
 pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
 library IA {
-    /**
-     * @notice A struct for holding array and entry-to-index mappings
-     */
-    struct IndexedArray {
+  /**
+   * @notice A struct for holding array and entry-to-index mappings
+   */
+  struct IndexedArray {
     // Array of entries
     uint256[] entries;
     // Number of entries in the IndexedArray
@@ -71,9 +72,23 @@ library IA {
     return arr.entToIndex[val] != 0;
   }
   
-  // function intersection(IndexedArray storage arr1, IndexedArray storage arr2) public returns(IndexedArray memory res) {
-  // 
-  // }
+  /**
+   * @notice Calculate the intersection between 2 objects and output the results in a 3rd array.
+   * @param ia1 The 1st IndexedArray to check
+   * @param arr2 The 2nd array to check
+   * @param res The array to put the results in
+   */
+  function intersection(IndexedArray storage ia1, uint256[] storage arr2, uint256[] storage res) public {
+    
+    for (uint i = 0; i < ia1.entries.length; i++) {
+      for (uint j = 0; j < arr2.length; j++) {
+        // Get non-zero elements in both arrays
+        if (ia1.entries[i] == arr2[j] && ia1.entries[i] != 0) {
+          res.push(ia1.entries[i]);
+        }
+      } 
+    }
+  }
 
 }
 
