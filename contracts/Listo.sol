@@ -80,14 +80,12 @@ library IA {
    */
   function intersection(IndexedArray storage ia1, uint256[] storage arr2, uint256[] storage res) public {
     
-    for (uint i = 0; i < ia1.entries.length; i++) {
-      for (uint j = 0; j < arr2.length; j++) {
-        // Get non-zero elements in both arrays
-        if (ia1.entries[i] == arr2[j] && ia1.entries[i] != 0) {
-          res.push(ia1.entries[i]);
-        }
-      } 
-    }
+    for (uint j = 0; j < arr2.length; j++) {
+      // Get non-zero elements in both arrays
+      if (contains(ia1, arr2[j]) && arr2[j] != 0) {
+        res.push(arr2[j]);
+      }
+    } 
   }
 
 }

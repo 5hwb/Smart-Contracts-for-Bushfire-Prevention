@@ -60,9 +60,9 @@ contract TestListo {
     // should get [3, 4, 10, 8]
     IA.intersection(arr, arr2.entries, res);
 
-    Assert.equal(res[0], 3, "It should be 3");
-    Assert.equal(res[1], 4, "It should be 4");
-    Assert.equal(res[2], 10, "It should be 10");
-    Assert.equal(res[3], 8, "It should be 8");
+    Assert.equal(res[0], 4, "It should be 4");
+    Assert.equal(res[1], 8, "It should be 8");
+    Assert.equal(res[2], 3, "It should be 3");
+    Assert.equal(res[3], 10, "It should be 10");
   }
 }
