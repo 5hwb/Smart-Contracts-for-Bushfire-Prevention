@@ -28,12 +28,18 @@ contract TestListo {
     IA.add(arr, 5);
     IA.add(arr, 3);
     IA.add(arr, 4);
-    IA.add(arr, 5);
+    IA.add(arr, 5); // this should do nothing
+    IA.add(arr, 10);
+    IA.add(arr, 8);
+    IA.add(arr, 9);
 
     IA.initIndexedArray(arr2);
     IA.add(arr2, 4);
     IA.add(arr2, 8);
     IA.add(arr2, 3);
+    IA.add(arr2, 11);
+    IA.add(arr2, 7);
+    IA.add(arr2, 10);
     
     Assert.equal(IA.get(arr, 0), 5, "Retrieval error");
     Assert.equal(IA.get(arr, 1), 3, "Retrieval error");
@@ -43,18 +49,20 @@ contract TestListo {
     Assert.equal(IA.getWithVal(arr, 5), 5, "Retrieval error");
     Assert.equal(IA.getWithVal(arr, 3), 3, "Retrieval error");
     Assert.equal(IA.getWithVal(arr, 4), 4, "Retrieval error");
-    Assert.equal(IA.getWithVal(arr, 9), 0, "Retrieval error");
+    Assert.equal(IA.getWithVal(arr, 19), 0, "Retrieval error");
     
     Assert.equal(IA.contains(arr, 5), true, "It should be true1");
     Assert.equal(IA.contains(arr, 3), true, "It should be true2");
     Assert.equal(IA.contains(arr, 4), true, "It should be true3");
-    Assert.equal(IA.contains(arr, 9), false, "It should be false");
+    Assert.equal(IA.contains(arr, 19), false, "It should be false");
     
     // Test the intersection() function
-    // should get [3, 4]
+    // should get [3, 4, 10, 8]
     IA.intersection(arr, arr2.entries, res);
 
     Assert.equal(res[0], 3, "It should be 3");
     Assert.equal(res[1], 4, "It should be 4");
+    Assert.equal(res[2], 10, "It should be 10");
+    Assert.equal(res[3], 8, "It should be 8");
   }
 }
