@@ -21,7 +21,8 @@ contract TestListo {
   IA.IndexedArray ia2;
   uint[] res;
   
-  function testSomething() public {
+  // Test the get() and contains() IA functions
+  function testGetAndContains() public {
     contAddr.testThingo();
 
     IA.initIndexedArray(ia);
@@ -70,6 +71,7 @@ contract TestListo {
   uint[] arr2;
   uint[] resa;
   
+  // Test the inter() function with my WSN withinRangeNodes examples
   function testInter() public {
     arr1.push(0);
     arr1.push(5);
@@ -101,7 +103,9 @@ contract TestListo {
   uint[] arr04;
   uint[] arr07;
   uint[] resb;
+  uint[] resc;
   
+  // Test the equals() function
   function testEquals() public {
     arr02.push(0);
     arr02.push(1);
@@ -135,6 +139,7 @@ contract TestListo {
     Assert.equal(IA.equals(arr02, arr04), false, "They should not match (different lengths)");
   }
   
+  // Test the inter() function with the WSN withinRangeNodes examples
   function testInter3Arrays() public {    
     arr07.push(0);
     arr07.push(2);
@@ -149,9 +154,72 @@ contract TestListo {
     IA.inter(arr02, arr04, resb);
     Assert.equal(resb[0], 3, "It should be 3");
     Assert.equal(resb[1], 7, "It should be 7");
-        
-    //IA.inter(resb, arr07, resb);
-    //Assert.equal(resb[0], 3, "It should be 3");
+
+    IA.inter(resb, arr07, resc);
+    Assert.equal(resc[0], 3, "It should be 3");
+    delete resb;
+  }
+  
+  uint[] arr1245679; // [1,2,4,5,6,7,9]
+  uint[] arr2345780; // [2,3,4,5,7,8,10]
+  uint[] arr4679012; // [4,6,7,9,10,11,12]
+  uint[] arr5789023; // [5,7,8,9,10,12,13]
+  uint[] arrtemp1; // temp array to store the results
+  uint[] arrtemp2; // need 2 temp storage arrays as Solidity won't let me do shit with memory arrays
+
+  // Test the inter() function with four 7-element arrays whose total intersection is [7]. 
+  function testInter4Arrays() public {
+    arr1245679.push(0);
+    arr1245679.push(1);
+    arr1245679.push(2);
+    arr1245679.push(4);
+    arr1245679.push(5);
+    arr1245679.push(6);
+    arr1245679.push(7);
+    arr1245679.push(9);
+
+    arr2345780.push(0);
+    arr2345780.push(2);
+    arr2345780.push(3);
+    arr2345780.push(4);
+    arr2345780.push(5);
+    arr2345780.push(7);
+    arr2345780.push(8);
+    arr2345780.push(10);
+
+    arr4679012.push(0);
+    arr4679012.push(4);
+    arr4679012.push(6);
+    arr4679012.push(7);
+    arr4679012.push(9);
+    arr4679012.push(10);
+    arr4679012.push(11);
+    arr4679012.push(12);
+
+    arr5789023.push(0);
+    arr5789023.push(5);
+    arr5789023.push(7);
+    arr5789023.push(8);
+    arr5789023.push(9);
+    arr5789023.push(10);
+    arr5789023.push(12);
+    arr5789023.push(13);
+
+    // TODO implement this setup (as an iterative function) in SensorNode!
+    delete arrtemp1;
+    IA.inter(arr1245679, arr2345780, arrtemp1);
+    Assert.equal(arrtemp1[0], 2, "It should be 2");
+    Assert.equal(arrtemp1[1], 4, "It should be 4");
+    Assert.equal(arrtemp1[2], 5, "It should be 5");
+    Assert.equal(arrtemp1[3], 7, "It should be 7");
     
+    delete arrtemp2;
+    IA.inter(arrtemp1, arr4679012, arrtemp2);
+    Assert.equal(arrtemp2[0], 4, "It should be 4");
+    Assert.equal(arrtemp2[1], 7, "It should be 7");
+
+    delete arrtemp1;
+    IA.inter(arrtemp2, arr5789023, arrtemp1);
+    Assert.equal(arrtemp1[0], 7, "It should be 7");    
   }
 }
