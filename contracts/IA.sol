@@ -73,7 +73,7 @@ library IA {
   }
   
   /**
-   * @notice Calculate the intersection between 2 objects and output the results in a 3rd array.
+   * @notice Calculate the intersection between 2 arrays and output the results in a 3rd array.
    * @param ia1 The 1st IndexedArray to check
    * @param arr2 The 2nd array to check
    * @param res The array to put the results in
@@ -86,5 +86,49 @@ library IA {
         res.push(arr2[j]);
       }
     } 
+  }
+  
+  /**
+   * @notice Check if 2 arrays are equal.
+   * @param arr1 The 1st array to check
+   * @param arr2 The 2nd array to check
+   * @return True if length of both arrays are identical and all elements match 
+   */
+  function equals(uint256[] storage arr1, uint256[] storage arr2) public returns(bool) {
+    // If the lengths match...
+    if (arr1.length == arr2.length) {
+      bool isMatch = true;
+      
+      // and every element is a match...
+      for (uint i = 0; i < arr1.length; i++) {
+        isMatch = isMatch && (arr1[i] == arr2[i]);
+      }
+      
+      return isMatch;
+    }
+    
+    return false;
+  }
+
+  /**
+   * @notice Calculate the intersection between 2 arrays and output the results in a 3rd array.
+   * @param arr1 The 1st array to check
+   * @param arr2 The 2nd array to check
+   * @param res The array to put the results in
+   */
+  function inter(uint256[] storage arr1, uint256[] storage arr2, uint256[] storage res) public {
+    // if (arr1 == res) {
+    //   delete res;
+    // }
+    
+    
+    for (uint i = 0; i < arr1.length; i++) {
+      for (uint j = 0; j < arr2.length; j++) {
+        // Get non-zero elements in both arrays
+        if (arr1[i] == arr2[j] && arr1[i] != 0) {
+          res.push(arr1[i]);
+        }
+      }
+    }
   }
 }
