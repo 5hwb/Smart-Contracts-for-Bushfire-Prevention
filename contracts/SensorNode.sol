@@ -21,6 +21,13 @@ contract SensorNode {
   uint public numOfJoinRequests;     // N_T
   uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
   
+  // // Backup nodes to communicate with if parent node (cluster head) fails
+  // uint256[] public backupCHeads;
+  // 
+  // // temp
+  // uint256[] arrtemp1;
+  // uint256[] arrtemp2;
+  
   // Simulate receiving a beacon from a cluster head 
   DS.Beacon[] public beacons;
   uint public numOfBeacons;
@@ -110,6 +117,16 @@ contract SensorNode {
     
     return sensorReadingsUint;
   }
+
+  ////////////////////////////////////////
+  // Get backup cluster heads from beacons
+  ////////////////////////////////////////
+  // function identifyBackups() public {
+  //   // TODO implement this setup (as an iterative function) in SensorNode!
+  //   delete arrtemp1;
+  //   IA.inter(arrtemp2, withinRangeNodes, arrtemp1);
+  // 
+  // }
     
   ////////////////////////////////////////
   // SETTER FUNCTIONS
