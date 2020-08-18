@@ -222,4 +222,12 @@ contract TestListo {
     IA.inter(arrtemp2, arr5789023, arrtemp1);
     Assert.equal(arrtemp1[0], 7, "It should be 7");    
   }
+  
+  event ShowHash(bytes32 hash);
+  
+  function testHash() public {
+    bytes32 lel = keccak256("this.be.test");
+    emit ShowHash(lel);
+    Assert.equal(lel, bytes32(0x1481436747e1fe67659cee77ec8383b231e8f8eefe596007b4a51cea1b2c2ed8), "Hash is wrong. Or you forgot to update the expected hash");
+  }
 }
