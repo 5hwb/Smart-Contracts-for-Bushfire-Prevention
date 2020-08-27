@@ -4,84 +4,61 @@ pragma experimental ABIEncoderV2;
 
 import "./DS.sol";
 import "./IA.sol";
+// import "./SomeLib.sol";
 
 contract SensorNode {
-  uint public nodeID;         // ID of the node
-  uint256 public nodeAddress; // Address of the node
-  // TODO eventually: Make the energy level based on the battery current and voltage available 
-  uint public energyLevel;    // give it when initialising.
-  uint public networkLevel;          // Tree level this node is located at
-  uint public numOfOneHopClusterHeads; // init to 1
-  bool public isClusterHead;           // init to false
-  bool public isMemberNode;            // init to false
-  
-  SensorNode public parentNode;         // parent (cluster head) of this node
-  SensorNode[] public childNodes;       // children of this node (if cluster head)
-  SensorNode[] public joinRequestNodes; // nodes that have sent join requests to this node
-  uint public numOfJoinRequests;     // N_T
-  uint256[] public withinRangeNodes; // nodes that are within transmission distance to this node
-  
-  // // Backup nodes to communicate with if parent node (cluster head) fails
-  // uint256[] public backupCHeads;
-  // 
-  // // temp
-  // uint256[] arrtemp1;
-  // uint256[] arrtemp2;
-  
-  // Simulate receiving a beacon from a cluster head 
-  DS.Beacon[] public beacons;
-  uint public numOfBeacons;
-  
-  // Simulate the sensor reading process
-  DS.SensorReading[] public sensorReadings;    // Array of SensorReading structs
-  mapping (uint => uint) readingToStructIndex; // Sensor reading -> SensorReading array index
-  uint numOfReadings; // Number of sensor readings held by this node
+  DS.Node daNode;
 
   // Events
   event LogString(string str);
 
   // SensorNode constructor
   constructor(uint _id, uint256 _addr, uint _energyLevel) public {
-    nodeID = _id;
-    nodeAddress = _addr;
-    energyLevel = _energyLevel;
-    networkLevel = 0; // invalid value for now
+    daNode.nodeID = _id;
+    daNode.nodeAddress = _addr;
+    daNode.energyLevel = _energyLevel;
+    daNode.networkLevel = 0; // invalid value for now
 
     // Add a dummy 'null' beacon as the 1st element to make null-checking easy
     uint[] memory dummyAddrs = new uint[](1);
     dummyAddrs[0] = 0;
-    beacons.push(DS.Beacon(false, 0, 0, dummyAddrs));
+    daNode.beacons.push(DS.Beacon(false, 0, 0, dummyAddrs));
     
     // Add a dummy 'null' reading as the 1st element to make null-checking easy
-    sensorReadings.push(DS.SensorReading(0, false));
+    daNode.sensorReadings.push(DS.SensorReading(0, false));
   }
+  
+  // // test func for calling library function
+  // function getMeFive() public view returns(uint) {
+  //   return SomeLib.getMeFive();
+  // }
   
   ////////////////////////////////////////
   // Simulate receiving beacon from cluster head!
   ////////////////////////////////////////
   
   function addBeacon(DS.Beacon memory _beacon) public {
-    beacons.push(_beacon);
-    numOfBeacons++;
+    daNode.beacons.push(_beacon);
+    daNode.numOfBeacons++;
   }
   
   function getBeacon() public view returns(DS.Beacon memory) {
-    if (beacons.length > 1) {
-      return beacons[1];
+    if (daNode.beacons.length > 1) {
+      return daNode.beacons[1];
     }
-    return beacons[0];
+    return daNode.beacons[0];
   }
   
   // Get a beacon at the specified index.
   function getBeaconAt(uint index) public view returns(DS.Beacon memory) {
-    if (beacons.length > 1 && index < beacons.length - 1) {
-      return beacons[index + 1];
+    if (daNode.beacons.length > 1 && index < daNode.beacons.length - 1) {
+      return daNode.beacons[index + 1];
     }
-    return beacons[0];
+    return daNode.beacons[0];
   }
   
   function getBeacons() public view returns(DS.Beacon[] memory) {
-    return beacons;
+    return daNode.beacons;
   }
   
   ////////////////////////////////////////
@@ -94,25 +71,26 @@ contract SensorNode {
 
       // Check if the sensor reading has already been added before adding it.
       // Ignore duplicates and null '0' readings
-      uint sReadingIndex = readingToStructIndex[_sReadings[i].reading];
+      uint sReadingIndex = daNode.readingToStructIndex[_sReadings[i].reading];
       if (sReadingIndex == 0 && _sReadings[i].reading != 0) {
-        readingToStructIndex[_sReadings[i].reading] = numOfReadings; 
-        sensorReadings.push(_sReadings[i]);
-        numOfReadings++;
+        daNode.readingToStructIndex[_sReadings[i].reading] = daNode.numOfReadings; 
+        daNode.sensorReadings.push(_sReadings[i]);
+        daNode.numOfReadings++;
       }
     }
   
-    // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
-    if (address(parentNode) != 0x0000000000000000000000000000000000000000) {
-      parentNode.readSensorInput(sensorReadings);
-    }
+    // COMMENTED OUT FOR NOW
+    // // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
+    // if (address(daNode.parentNode) != 0x0000000000000000000000000000000000000000) {
+    //   daNode.parentNode.readSensorInput(daNode.sensorReadings);
+    // }
   }
   
   function getSensorReadings() public view returns(uint256[] memory) {
-    uint256[] memory sensorReadingsUint = new uint256[](numOfReadings);
+    uint256[] memory sensorReadingsUint = new uint256[](daNode.numOfReadings);
     
-    for (uint i = 0; i < numOfReadings; i++) {
-      sensorReadingsUint[i] = sensorReadings[i+1].reading;
+    for (uint i = 0; i < daNode.numOfReadings; i++) {
+      sensorReadingsUint[i] = daNode.sensorReadings[i+1].reading;
     }
     
     return sensorReadingsUint;
@@ -133,34 +111,34 @@ contract SensorNode {
   ////////////////////////////////////////
   
   function setEnergyLevel(uint _eLevel) public {
-    energyLevel = _eLevel;
+    daNode.energyLevel = _eLevel;
   }
   
   function setNetworkLevel(uint _nLevel) public {
-    networkLevel = _nLevel;
+    daNode.networkLevel = _nLevel;
   }
   
   function setAsClusterHead() public {
-    assert(isMemberNode == false);
-    isClusterHead = true;
+    assert(daNode.isMemberNode == false);
+    daNode.isClusterHead = true;
   }
   
   function setAsMemberNode() public {
-    assert(isClusterHead == false);
-    isMemberNode = true;
+    assert(daNode.isClusterHead == false);
+    daNode.isMemberNode = true;
   }
   
-  function setParentNode(SensorNode _node) public {
-    parentNode = _node;
+  function setParentNode(uint256 _nodeAddr) public {
+    daNode.parentNode = _nodeAddr;
   }
   
-  function addJoinRequestNode(SensorNode _node) public {
-    joinRequestNodes.push(_node);
-    numOfJoinRequests++;
+  function addJoinRequestNode(uint256 _nodeAddr) public {
+    daNode.joinRequestNodes.push(_nodeAddr);
+    daNode.numOfJoinRequests++;
   }
 
   function addWithinRangeNode(uint256 _addr) public {
-    withinRangeNodes.push(_addr);
+    daNode.withinRangeNodes.push(_addr);
   }
     
   ////////////////////////////////////////
@@ -168,15 +146,15 @@ contract SensorNode {
   ////////////////////////////////////////
   
   function numOfChildNodes() public view returns (uint) {
-    return childNodes.length;
+    return daNode.childNodes.length;
   }
   
   ////////////////////////////////////////
   // joinRequestNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
-  function getJoinRequestNodes() public view returns (SensorNode[] memory) {
-    return joinRequestNodes;
+  function getJoinRequestNodes() public view returns (uint256[] memory) {
+    return daNode.joinRequestNodes;
   }
   
   ////////////////////////////////////////
@@ -184,11 +162,11 @@ contract SensorNode {
   ////////////////////////////////////////
   
   function getWithinRangeNodes() public view returns (uint256[] memory) {
-    return withinRangeNodes;
+    return daNode.withinRangeNodes;
   }
   
   function numOfWithinRangeNodes() public view returns (uint) {
-    return withinRangeNodes.length;
+    return daNode.withinRangeNodes.length;
   }
   
   // TODO:
