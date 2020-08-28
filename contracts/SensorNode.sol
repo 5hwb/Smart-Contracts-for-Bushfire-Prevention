@@ -77,9 +77,17 @@ library SensorNode {
 
       // Check if the sensor reading has already been added before adding it.
       // Ignore duplicates and null '0' readings
-      uint sReadingIndex = daNode.readingToStructIndex[_sReadings[i].reading];
-      if (sReadingIndex == 0 && _sReadings[i].reading != 0) {
-        daNode.readingToStructIndex[_sReadings[i].reading] = daNode.numOfReadings; 
+      // TODO: check that this works!
+      bool isnotPresent = true;
+      
+      for (uint j = 0; j < daNode.sensorReadings.length; j++) {
+        // If a match is found, ignore it
+        if (_sReadings[i].reading == daNode.sensorReadings[j].reading) {
+          isnotPresent = false;
+        }
+      }
+      
+      if (isnotPresent) {
         daNode.sensorReadings.push(_sReadings[i]);
         daNode.numOfReadings++;
       }

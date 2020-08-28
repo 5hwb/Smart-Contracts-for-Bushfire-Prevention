@@ -46,7 +46,6 @@ library DS {
     
     // Simulate the sensor reading process
     DS.SensorReading[] sensorReadings;    // Array of SensorReading structs
-    mapping (uint => uint) readingToStructIndex; // Sensor reading -> SensorReading array index
     uint numOfReadings; // Number of sensor readings held by this node
   }
 }
