@@ -30,7 +30,7 @@ contract NetworkFormation {
   function getAllNodeAddresses() view public returns(uint[] memory) {
     uint[] memory nodeAddresses = new uint[](numOfNodes);
     for (uint i = 0; i < numOfNodes; i++) {
-      nodeAddresses[i] = nodes[i].nodeAddress();
+      nodeAddresses[i] = nodes[i].daNode.nodeAddress;
     }
     return nodeAddresses;
   }
@@ -47,7 +47,7 @@ contract NetworkFormation {
     addrToNodeIndex[_addr] = numOfNodes;
     nodes.push(node);
     numOfNodes++;
-    emit AddedNode(_id, _addr, _energyLevel, node.networkLevel(), node.isClusterHead(), node.isMemberNode());
+    emit AddedNode(_id, _addr, _energyLevel, node.daNode.networkLevel, node.daNode.isClusterHead, node.daNode.isMemberNode);
   }
   
   // Get the index of the node with the given address
@@ -69,9 +69,9 @@ contract NetworkFormation {
     uint256[] memory) {
       
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    return (nodes[nIdx].nodeID(), nodes[nIdx].nodeAddress(),
-        nodes[nIdx].energyLevel(), nodes[nIdx].networkLevel(),
-        nodes[nIdx].isClusterHead(), nodes[nIdx].isMemberNode(),
+    return (nodes[nIdx].daNode.nodeID, nodes[nIdx].daNode.nodeAddress,
+        nodes[nIdx].daNode.energyLevel, nodes[nIdx].daNode.networkLevel,
+        nodes[nIdx].daNode.isClusterHead, nodes[nIdx].daNode.isMemberNode,
         nodes[nIdx].getSensorReadings());
   }
   
@@ -81,7 +81,7 @@ contract NetworkFormation {
       
     SensorNode node = getNode(_nodeAddr);
     DS.Beacon memory beacon = node.getBeacon();
-    return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.numOfBeacons());
+    return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.daNode.numOfBeacons);
   }
   
   // Convert a list of addresses into their matching sensor nodes
@@ -97,29 +97,29 @@ contract NetworkFormation {
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(uint _cHeadAddr) public {
     uint chIndex = getNodeIndex(_cHeadAddr);
-    require(nodes[chIndex].isClusterHead() == true, "Given node is not cluster head");
+    require(nodes[chIndex].daNode.isClusterHead == true, "Given node is not cluster head");
 
     // Get network level of this cluster head to calculate next level
-    uint nextNetLevel = nodes[chIndex].networkLevel();
+    uint nextNetLevel = nodes[chIndex].daNode.networkLevel;
     nextNetLevel++;
     
     // Go thru all nodes within range of the cluster head
     for (uint i = 0; i < nodes[chIndex].numOfWithinRangeNodes(); i++) {
-      SensorNode currNode = getNode(nodes[chIndex].withinRangeNodes(i));
+      SensorNode currNode = getNode(nodes[chIndex].daNode.withinRangeNodes[i]);
       
       // Ignore this node if it's a cluster head or if the network level is 
       // already set between 1 and the current cluster head's network level 
-      if (currNode.isClusterHead() || (currNode.networkLevel() > 0
-          && currNode.networkLevel() <= nodes[chIndex].networkLevel())) {
-        emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Node was ignored");
+      if (currNode.daNode.isClusterHead || (currNode.daNode.networkLevel > 0
+          && currNode.daNode.networkLevel <= nodes[chIndex].daNode.networkLevel)) {
+        emit SomethingHappened(i, nodes[chIndex].daNode.nodeAddress, currNode.daNode.nodeAddress, nodes[chIndex].numOfWithinRangeNodes(), "Node was ignored");
         continue;
       }
 
       // Send the beacon!
       // (for now, simulate it by setting the network level integer) 
-      emit SomethingHappened(i, nodes[chIndex].nodeAddress(), currNode.nodeAddress(), nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
+      emit SomethingHappened(i, nodes[chIndex].daNode.nodeAddress, currNode.daNode.nodeAddress, nodes[chIndex].numOfWithinRangeNodes(), "Gonna set...");
       currNode.setNetworkLevel(nextNetLevel);
-      DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress(), nodes[chIndex].getWithinRangeNodes());
+      DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].daNode.nodeAddress, nodes[chIndex].getWithinRangeNodes());
       currNode.addBeacon(beacon);
       
       // TODO find out how to do callback function (or equivalent)
@@ -133,7 +133,7 @@ contract NetworkFormation {
     SensorNode cHeadNode = getNode(_cHeadAddr);
     
     // Add this node to cluster head's list of nodes that sent join requests
-    assert(cHeadNode.nodeID() != 0); // make sure the cluster head node exists
+    assert(cHeadNode.daNode.nodeID != 0); // make sure the cluster head node exists
     cHeadNode.addJoinRequestNode(nodes[nodeIndex]);
   }
   
@@ -143,7 +143,7 @@ contract NetworkFormation {
       // For now: Send join request iff the network level has been changed
       // to a value other than 0
       if (nodes[i].getBeacon().isSent) {
-        sendJoinRequest(nodes[i].nodeAddress(), nodes[i].getBeacon().senderNodeAddr);
+        sendJoinRequest(nodes[i].daNode.nodeAddress, nodes[i].getBeacon().senderNodeAddr);
       }
     }
   }
@@ -152,8 +152,8 @@ contract NetworkFormation {
   function registerAsClusterHead(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].isClusterHead() == false);
-    assert(nodes[nodeIndex].isMemberNode() == false);
+    assert(nodes[nodeIndex].daNode.isClusterHead == false);
+    assert(nodes[nodeIndex].daNode.isMemberNode == false);
     
     nodes[nodeIndex].setAsClusterHead();
     
@@ -167,8 +167,8 @@ contract NetworkFormation {
   function registerAsMemberNode(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].isClusterHead() == false);
-    assert(nodes[nodeIndex].isMemberNode() == false);
+    assert(nodes[nodeIndex].daNode.isClusterHead == false);
+    assert(nodes[nodeIndex].daNode.isMemberNode == false);
 
     nodes[nodeIndex].setAsMemberNode();
     nodes[nodeIndex].setParentNode(nodes[cHeadIndex]);
@@ -200,7 +200,7 @@ contract NetworkFormation {
     // where probability is an integer representing a percentage (0 < probability <= 100)
     // and numOfJoinRequests >= 1
     numOfClusterHeads = (_probability * 
-        (currClusterHead.numOfJoinRequests()*100)) / 10000; 
+        (currClusterHead.daNode.numOfJoinRequests*100)) / 10000; 
     
     // Select the cluster heads from the nodes with join requests
     uint numOfElectedClusterHeads = 0;
@@ -208,12 +208,12 @@ contract NetworkFormation {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
       if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
-        registerAsClusterHead(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress());
+        registerAsClusterHead(_currCHeadAddr, nodesWithJoinRequests[i].daNode.nodeAddress);
         numOfElectedClusterHeads++;
       }
       // If all cluster heads have been elected, register the member nodes for this layer
       else {
-        registerAsMemberNode(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress());
+        registerAsMemberNode(_currCHeadAddr, nodesWithJoinRequests[i].daNode.nodeAddress);
       }
     }
   }
@@ -237,10 +237,10 @@ contract NetworkFormation {
       int i = _left;
       int j = _right;
       if(i==j) return;
-      uint pivot = _arr[uint(_left + (_right - _left) / 2)].energyLevel();
+      uint pivot = _arr[uint(_left + (_right - _left) / 2)].daNode.energyLevel;
       while (i <= j) {
-          while (_arr[uint(i)].energyLevel() > pivot) i++;
-          while (pivot > _arr[uint(j)].energyLevel()) j--;
+          while (_arr[uint(i)].daNode.energyLevel > pivot) i++;
+          while (pivot > _arr[uint(j)].daNode.energyLevel) j--;
           if (i <= j) {
               SensorNode temp = _arr[uint(i)];
               _arr[uint(i)] = _arr[uint(j)];

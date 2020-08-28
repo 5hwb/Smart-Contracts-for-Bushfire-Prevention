@@ -7,7 +7,7 @@ import "./IA.sol";
 // import "./SomeLib.sol";
 
 contract SensorNode {
-  DS.Node daNode;
+  DS.Node public daNode;
 
   // Events
   event LogString(string str);
