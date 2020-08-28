@@ -65,6 +65,11 @@ contract NetworkFormation {
     return nodes[nIdx];
   }
   
+  // Get the node with the given address
+  function getNodeAt(uint _index) view public returns(DS.Node memory) {
+    return nodes[_index];
+  }
+  
   // Get node information
   function getNodeInfo(uint _nodeAddr) public view returns (
     uint, uint256,
