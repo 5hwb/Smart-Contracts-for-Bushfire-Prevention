@@ -12,6 +12,54 @@ const QuickSort = artifacts.require("QuickSort");
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
 
+// Convert the raw array returned by NetworkFormation into a Node struct format
+function toStruct(val) {
+  convertedBeacons = [];
+  convertedSReadings = [];
+
+  // Convert the beacons
+  for (var i = 0; i < val[12].length; i++) {
+    var currBeacon = val[12][i];
+    convertedBeacons.push({
+      isSent: currBeacon[0],
+      nextNetLevel: parseInt(currBeacon[1]),
+      senderNodeAddr: parseInt(currBeacon[2]),
+      withinRangeNodes: currBeacon[3].map(i => parseInt(i))
+    });
+  }
+
+  // Convert the sensor readings
+  for (var i = 0; i < val[14].length; i++) {
+    var currSReading = val[14][i];
+    convertedSReadings.push({
+      reading: parseInt(currSReading[0]),
+      exists: currSReading[1]
+    });
+  }
+
+  return {
+    nodeID: parseInt(val[0]),
+    nodeAddress: parseInt(val[1]),
+    energyLevel: parseInt(val[2]),
+    networkLevel: parseInt(val[3]),
+    numOfOneHopClusterHeads: parseInt(val[4]),
+    isClusterHead: val[5],
+    isMemberNode: val[6],
+
+    parentNode: parseInt(val[7]),
+    childNodes: val[8].map(i => parseInt(i)),
+    joinRequestNodes: val[9].map(i => parseInt(i)),
+    numOfJoinRequests: parseInt(val[10]),
+    withinRangeNodes: val[11].map(i => parseInt(i)),
+
+    beacons: convertedBeacons,
+    numOfBeacons: parseInt(val[13]),
+
+    sensorReadings: convertedSReadings,
+    numOfReadings: parseInt(val[15])
+  };
+}
+
 contract("NetworkFormation test cases", async accounts => {
   let networkFormation;
   
@@ -43,147 +91,146 @@ contract("NetworkFormation test cases", async accounts => {
     await networkFormation.addNode(14, 222004, 82, [111000, 222003, 222005]);
     await networkFormation.addNode(15, 222005, 65, [111000, 222004]);
     
-    // Get list of all SensorNode instances (just their addresses)
-    let allNodes = await networkFormation.getAllNodes.call();
-
-    // Ensure the values within this SensorNode is as expected
-    let firstNode = await SensorNode.at(allNodes[0]);    
-    let firstNodeID = await firstNode.nodeID.call();
-    let firstNodeAddr = await firstNode.nodeAddress.call();
-    let firstNodeEnergyLevel = await firstNode.energyLevel.call();
+    console.log(toStruct(await networkFormation.getNodeAsMemory(111000)));
+    
+    // Ensure the values within the first DS.Node are as expected
+    let firstNode = toStruct(await networkFormation.getNodeAt.call(0));
+    let firstNodeID = firstNode.nodeID;
+    let firstNodeAddr = firstNode.nodeAddress;
+    let firstNodeEnergyLevel = firstNode.energyLevel;
     assert.equal(firstNodeID, 10);
     assert.equal(firstNodeAddr, 111000);
     assert.equal(firstNodeEnergyLevel, 100);
   });
 
-  it("should send beacon", async () => {
-    // Set sink node as the 1st cluster head
-    await networkFormation.registerAsClusterHead(0, 111000);
+  // it("should send beacon", async () => {
+  //   // Set sink node as the 1st cluster head
+  //   await networkFormation.registerAsClusterHead(0, 111000);
+  // 
+  //   // Set its network level to be 0 (because sink node!)
+  //   let sinkNode = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
+  //   await sinkNode.setNetworkLevel(0);
+  // 
+  //   // Send beacon from cluster head
+  //   await networkFormation.sendBeacon(111000);
+  // 
+  //   // Get the prospective child nodes
+  //   let node1 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
+  //   let node2 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
+  //   let node3 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
+  //   let node4 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
+  //   let node5 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
+  // 
+  //   // Ensure network level is correct
+  //   assert.equal(await node1.networkLevel.call(), 1);
+  //   assert.equal(await node2.networkLevel.call(), 1);
+  //   assert.equal(await node3.networkLevel.call(), 1);
+  //   assert.equal(await node4.networkLevel.call(), 1);
+  //   assert.equal(await node5.networkLevel.call(), 1);
+  // });
+  // 
+  // it("should send join requests", async () => {
+  //   // Make all nodes within range send a join request
+  //   await networkFormation.sendJoinRequests();
+  //   let sinkNode = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
+  // 
+  //   // Ensure the node addresses were added to list of join request nodes
+  //   let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
+  //   let node0 = await SensorNode.at(joinRequestNodes[0]);
+  //   let node1 = await SensorNode.at(joinRequestNodes[1]);
+  //   let node2 = await SensorNode.at(joinRequestNodes[2]);
+  //   let node3 = await SensorNode.at(joinRequestNodes[3]);
+  //   let node4 = await SensorNode.at(joinRequestNodes[4]);
+  //   assert.equal(await node0.nodeAddress.call(), 222001);
+  //   assert.equal(await node1.nodeAddress.call(), 222002);
+  //   assert.equal(await node2.nodeAddress.call(), 222003);
+  //   assert.equal(await node3.nodeAddress.call(), 222004);
+  //   assert.equal(await node4.nodeAddress.call(), 222005);
+  // });
 
-    // Set its network level to be 0 (because sink node!)
-    let sinkNode = await SensorNode.at(await networkFormation.getNode(111000));
-    await sinkNode.setNetworkLevel(0);
-    
-    // Send beacon from cluster head
-    await networkFormation.sendBeacon(111000);
-
-    // Get the prospective child nodes
-    let node1 = await SensorNode.at(await networkFormation.getNode(222001));
-    let node2 = await SensorNode.at(await networkFormation.getNode(222002));
-    let node3 = await SensorNode.at(await networkFormation.getNode(222003));
-    let node4 = await SensorNode.at(await networkFormation.getNode(222004));
-    let node5 = await SensorNode.at(await networkFormation.getNode(222005));
-    
-    // Ensure network level is correct
-    assert.equal(await node1.networkLevel.call(), 1);
-    assert.equal(await node2.networkLevel.call(), 1);
-    assert.equal(await node3.networkLevel.call(), 1);
-    assert.equal(await node4.networkLevel.call(), 1);
-    assert.equal(await node5.networkLevel.call(), 1);
-  });
-
-  it("should send join requests", async () => {
-    // Make all nodes within range send a join request
-    await networkFormation.sendJoinRequests();
-    let sinkNode = await SensorNode.at(await networkFormation.getNode(111000));
-
-    // Ensure the node addresses were added to list of join request nodes
-    let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
-    let node0 = await SensorNode.at(joinRequestNodes[0]);
-    let node1 = await SensorNode.at(joinRequestNodes[1]);
-    let node2 = await SensorNode.at(joinRequestNodes[2]);
-    let node3 = await SensorNode.at(joinRequestNodes[3]);
-    let node4 = await SensorNode.at(joinRequestNodes[4]);
-    assert.equal(await node0.nodeAddress.call(), 222001);
-    assert.equal(await node1.nodeAddress.call(), 222002);
-    assert.equal(await node2.nodeAddress.call(), 222003);
-    assert.equal(await node3.nodeAddress.call(), 222004);
-    assert.equal(await node4.nodeAddress.call(), 222005);
-  });
-
-  it("should elect cluster heads", async () => {
-    // 40% chance of being elected?
-    await networkFormation.electClusterHeads(111000, 40);
-
-    // Get the prospective child nodes
-    let node1 = await SensorNode.at(await networkFormation.getNode(222001));
-    let node2 = await SensorNode.at(await networkFormation.getNode(222002));
-    let node3 = await SensorNode.at(await networkFormation.getNode(222003));
-    let node4 = await SensorNode.at(await networkFormation.getNode(222004));
-    let node5 = await SensorNode.at(await networkFormation.getNode(222005));
-    
-    assert.equal(await node1.isClusterHead.call(), false);
-    assert.equal(await node2.isClusterHead.call(), true);
-    assert.equal(await node3.isClusterHead.call(), false);
-    assert.equal(await node4.isClusterHead.call(), true);
-    assert.equal(await node5.isClusterHead.call(), false);
-    
-    assert.equal(await node1.isMemberNode.call(), true);
-    assert.equal(await node2.isMemberNode.call(), false);
-    assert.equal(await node3.isMemberNode.call(), true);
-    assert.equal(await node4.isMemberNode.call(), false);
-    assert.equal(await node5.isMemberNode.call(), true);
-  });
-
-  it("should send sensor readings to sink node", async () => {
-    // Simulate reading values from each sensor node
-    await networkFormation.readSensorInput(9001, 222001);
-    await networkFormation.readSensorInput(9002, 222002);
-    await networkFormation.readSensorInput(9003, 222003);
-    await networkFormation.readSensorInput(9004, 222004);
-    await networkFormation.readSensorInput(9005, 222005);
-
-    let node222001 = await SensorNode.at(await networkFormation.getNode(222001));
-    let node222002 = await SensorNode.at(await networkFormation.getNode(222002));
-    let node222003 = await SensorNode.at(await networkFormation.getNode(222003));
-    let node222004 = await SensorNode.at(await networkFormation.getNode(222004));
-    let node222005 = await SensorNode.at(await networkFormation.getNode(222005));
-    let node111000 = await SensorNode.at(await networkFormation.getNode(111000));
-    
-    // Check that the sensor nodes got their readings
-    assert.equal(await node222001.getSensorReadings.call(), 9001);
-    assert.equal(await node222002.getSensorReadings.call(), 9002);
-    assert.equal(await node222003.getSensorReadings.call(), 9003);
-    assert.equal(await node222004.getSensorReadings.call(), 9004);
-    assert.equal(await node222005.getSensorReadings.call(), 9005);
-
-    // Check that the cluster head had received the sensor readings
-    assert.equal((await node111000.getSensorReadings.call())[0], 9001);
-    assert.equal((await node111000.getSensorReadings.call())[1], 9002);
-    assert.equal((await node111000.getSensorReadings.call())[2], 9003);
-    assert.equal((await node111000.getSensorReadings.call())[3], 9004);
-    assert.equal((await node111000.getSensorReadings.call())[4], 9005);
-  });
-  
-  /***********************************************
-   * TEST - Sorting SensorNode instances
-   ***********************************************/
-  it("should sort a SensorNode array", async () => {
-  
-    // sort to [89, 71, 62, 53]
-    let sortedThingo = await networkFormation.getSortedNodes.call();
-    let node0 = await SensorNode.at(sortedThingo[0]);
-    let node1 = await SensorNode.at(sortedThingo[1]);
-    let node2 = await SensorNode.at(sortedThingo[2]);
-    let node3 = await SensorNode.at(sortedThingo[3]);
-    let node4 = await SensorNode.at(sortedThingo[4]);
-    let node5 = await SensorNode.at(sortedThingo[5]);
-    
-    // Check that nodes have been sorted by their energy levels in descending order
-    assert.equal(await node0.energyLevel(), 100, "Sorting error");
-    assert.equal(await node1.energyLevel(), 82, "Sorting error");
-    assert.equal(await node2.energyLevel(), 66, "Sorting error");
-    assert.equal(await node3.energyLevel(), 65, "Sorting error");
-    assert.equal(await node4.energyLevel(), 53, "Sorting error");
-    assert.equal(await node5.energyLevel(), 35, "Sorting error");
-    // Another check to ensure the IDs are correct
-    assert.equal(await node0.nodeID(), 10, "Sorting error - wrong ID");
-    assert.equal(await node1.nodeID(), 14, "Sorting error - wrong ID");
-    assert.equal(await node2.nodeID(), 12, "Sorting error - wrong ID");
-    assert.equal(await node3.nodeID(), 15, "Sorting error - wrong ID");
-    assert.equal(await node4.nodeID(), 13, "Sorting error - wrong ID");
-    assert.equal(await node5.nodeID(), 11, "Sorting error - wrong ID");
-  });
+  // it("should elect cluster heads", async () => {
+  //   // 40% chance of being elected?
+  //   await networkFormation.electClusterHeads(111000, 40);
+  // 
+  //   // Get the prospective child nodes
+  //   let node1 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
+  //   let node2 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
+  //   let node3 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
+  //   let node4 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
+  //   let node5 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
+  // 
+  //   assert.equal(await node1.isClusterHead.call(), false);
+  //   assert.equal(await node2.isClusterHead.call(), true);
+  //   assert.equal(await node3.isClusterHead.call(), false);
+  //   assert.equal(await node4.isClusterHead.call(), true);
+  //   assert.equal(await node5.isClusterHead.call(), false);
+  // 
+  //   assert.equal(await node1.isMemberNode.call(), true);
+  //   assert.equal(await node2.isMemberNode.call(), false);
+  //   assert.equal(await node3.isMemberNode.call(), true);
+  //   assert.equal(await node4.isMemberNode.call(), false);
+  //   assert.equal(await node5.isMemberNode.call(), true);
+  // });
+  // 
+  // it("should send sensor readings to sink node", async () => {
+  //   // Simulate reading values from each sensor node
+  //   await networkFormation.readSensorInput(9001, 222001);
+  //   await networkFormation.readSensorInput(9002, 222002);
+  //   await networkFormation.readSensorInput(9003, 222003);
+  //   await networkFormation.readSensorInput(9004, 222004);
+  //   await networkFormation.readSensorInput(9005, 222005);
+  // 
+  //   let node222001 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
+  //   let node222002 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
+  //   let node222003 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
+  //   let node222004 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
+  //   let node222005 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
+  //   let node111000 = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
+  // 
+  //   // Check that the sensor nodes got their readings
+  //   assert.equal(await node222001.getSensorReadings.call(), 9001);
+  //   assert.equal(await node222002.getSensorReadings.call(), 9002);
+  //   assert.equal(await node222003.getSensorReadings.call(), 9003);
+  //   assert.equal(await node222004.getSensorReadings.call(), 9004);
+  //   assert.equal(await node222005.getSensorReadings.call(), 9005);
+  // 
+  //   // Check that the cluster head had received the sensor readings
+  //   assert.equal((await node111000.getSensorReadings.call())[0], 9001);
+  //   assert.equal((await node111000.getSensorReadings.call())[1], 9002);
+  //   assert.equal((await node111000.getSensorReadings.call())[2], 9003);
+  //   assert.equal((await node111000.getSensorReadings.call())[3], 9004);
+  //   assert.equal((await node111000.getSensorReadings.call())[4], 9005);
+  // });
+  // 
+  // /***********************************************
+  //  * TEST - Sorting SensorNode instances
+  //  ***********************************************/
+  // it("should sort a SensorNode array", async () => {
+  // 
+  //   // sort to [89, 71, 62, 53]
+  //   let sortedThingo = await networkFormation.getSortedNodes.call();
+  //   let node0 = await SensorNode.at(sortedThingo[0]);
+  //   let node1 = await SensorNode.at(sortedThingo[1]);
+  //   let node2 = await SensorNode.at(sortedThingo[2]);
+  //   let node3 = await SensorNode.at(sortedThingo[3]);
+  //   let node4 = await SensorNode.at(sortedThingo[4]);
+  //   let node5 = await SensorNode.at(sortedThingo[5]);
+  // 
+  //   // Check that nodes have been sorted by their energy levels in descending order
+  //   assert.equal(await node0.energyLevel(), 100, "Sorting error");
+  //   assert.equal(await node1.energyLevel(), 82, "Sorting error");
+  //   assert.equal(await node2.energyLevel(), 66, "Sorting error");
+  //   assert.equal(await node3.energyLevel(), 65, "Sorting error");
+  //   assert.equal(await node4.energyLevel(), 53, "Sorting error");
+  //   assert.equal(await node5.energyLevel(), 35, "Sorting error");
+  //   // Another check to ensure the IDs are correct
+  //   assert.equal(await node0.nodeID(), 10, "Sorting error - wrong ID");
+  //   assert.equal(await node1.nodeID(), 14, "Sorting error - wrong ID");
+  //   assert.equal(await node2.nodeID(), 12, "Sorting error - wrong ID");
+  //   assert.equal(await node3.nodeID(), 15, "Sorting error - wrong ID");
+  //   assert.equal(await node4.nodeID(), 13, "Sorting error - wrong ID");
+  //   assert.equal(await node5.nodeID(), 11, "Sorting error - wrong ID");
+  // });
   
   /***********************************************
    * TEST - Sorting integers
