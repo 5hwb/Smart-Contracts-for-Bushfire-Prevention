@@ -59,6 +59,12 @@ contract NetworkFormation {
     return addrToNodeIndex[_nodeAddr];
   }
   
+  // Get the node with the given address
+  function getNodeAsMemory(uint _nodeAddr) view public returns(DS.Node memory) {
+    uint nIdx = addrToNodeIndex[_nodeAddr];
+    return nodes[nIdx];
+  }
+  
   // Get node information
   function getNodeInfo(uint _nodeAddr) public view returns (
     uint, uint256,
