@@ -91,7 +91,10 @@ contract("NetworkFormation test cases", async accounts => {
     await networkFormation.addNode(14, 222004, 82, [111000, 222003, 222005]);
     await networkFormation.addNode(15, 222005, 65, [111000, 222004]);
     
-    console.log(toStruct(await networkFormation.getNodeAsMemory(111000)));
+    // Ensure there are 6 nodes
+    assert.equal(await networkFormation.numOfNodes.call(), 6, "Num of nodes is not 6!");
+    
+    //console.log(toStruct(await networkFormation.getNodeAsMemory(111000)));
     
     // Ensure the values within the first DS.Node are as expected
     let firstNode = toStruct(await networkFormation.getNodeAt.call(0));
