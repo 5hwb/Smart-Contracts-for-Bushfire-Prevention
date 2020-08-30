@@ -190,10 +190,9 @@ contract NetworkFormation {
   }
   
   // // Get the sorted nodes 
-  // TODO: move getSortedNodes() to SensorNode perhaps?
-  // function getSortedNodes() public returns(DS.Node[] memory) {
-  //   return sort(nodes);
-  // }
+  function getSortedNodes() public returns(DS.Node[] memory) {
+    return QuickSort.sort(nodes);
+  }
     
   // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011) with the given probability.
   function electClusterHeads(uint _currCHeadAddr, uint _probability) public {
