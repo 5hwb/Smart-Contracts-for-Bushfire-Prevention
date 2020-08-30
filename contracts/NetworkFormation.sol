@@ -3,6 +3,7 @@ pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
 import "./DS.sol";
+import "./QuickSort.sol";
 import "./SensorNode.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 
@@ -185,6 +186,7 @@ contract NetworkFormation {
   }
   
   // // Get the sorted nodes 
+  // TODO: move getSortedNodes() to SensorNode perhaps?
   // function getSortedNodes() public returns(DS.Node[] memory) {
   //   return sort(nodes);
   // }
@@ -203,8 +205,8 @@ contract NetworkFormation {
     }
     
     // Sort the sensor nodes that sent join requests by energy level in descending order
-    // TODO make it work - move getSortedNodes() to SensorNode perhaps?
-    //nodesWithJoinRequests = sort(nodesWithJoinRequests);
+    // TODO make it work - nodesWithJoinRequests is now a uint256 array (prev it was SensorNode array...)
+    //nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000
@@ -237,32 +239,4 @@ contract NetworkFormation {
     SensorNode.readSensorInput(nodes[nodeIndex], sReadings);
   }
   
-  // // Sort function for DS.Node arrays that sorts by energy level in descending order.
-  // // From here: https://gist.github.com/subhodi/b3b86cc13ad2636420963e692a4d896f
-  // function sort(DS.Node[] memory _data) public returns(DS.Node[] memory) {
-  //    quickSort(_data, int(0), int(_data.length - 1));
-  //    return _data;
-  // }
-  // 
-  // function quickSort(DS.Node[] memory _arr, int _left, int _right) internal {
-  //     int i = _left;
-  //     int j = _right;
-  //     if(i==j) return;
-  //     uint pivot = _arr[uint(_left + (_right - _left) / 2)].energyLevel;
-  //     while (i <= j) {
-  //         while (_arr[uint(i)].energyLevel > pivot) i++;
-  //         while (pivot > _arr[uint(j)].energyLevel) j--;
-  //         if (i <= j) {
-  //             DS.Node memory temp = _arr[uint(i)];
-  //             _arr[uint(i)] = _arr[uint(j)];
-  //             _arr[uint(j)] = temp;
-  //             i++;
-  //             j--;
-  //         }
-  //     }
-  //     if (_left < j)
-  //         quickSort(_arr, _left, j);
-  //     if (i < _right)
-  //         quickSort(_arr, i, _right);
-  // }
 }
