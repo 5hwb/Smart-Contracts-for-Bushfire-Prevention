@@ -157,30 +157,30 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node4.nodeAddress, 222005);
   });
 
-  // it("should elect cluster heads", async () => {
-  //   // 40% chance of being elected?
-  //   await networkFormation.electClusterHeads(111000, 40);
-  // 
-  //   // Get the prospective child nodes
-  //   let node1 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
-  //   let node2 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
-  //   let node3 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
-  //   let node4 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
-  //   let node5 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
-  // 
-  //   assert.equal(await node1.isClusterHead.call(), false);
-  //   assert.equal(await node2.isClusterHead.call(), true);
-  //   assert.equal(await node3.isClusterHead.call(), false);
-  //   assert.equal(await node4.isClusterHead.call(), true);
-  //   assert.equal(await node5.isClusterHead.call(), false);
-  // 
-  //   assert.equal(await node1.isMemberNode.call(), true);
-  //   assert.equal(await node2.isMemberNode.call(), false);
-  //   assert.equal(await node3.isMemberNode.call(), true);
-  //   assert.equal(await node4.isMemberNode.call(), false);
-  //   assert.equal(await node5.isMemberNode.call(), true);
-  // });
-  // 
+  it("should elect cluster heads", async () => {
+    // 40% chance of being elected?
+    await networkFormation.electClusterHeads(111000, 40);
+  
+    // Get the prospective child nodes
+    let node1 = toStruct(await networkFormation.getNodeAsMemory(222001));
+    let node2 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    let node3 = toStruct(await networkFormation.getNodeAsMemory(222003));
+    let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    
+    assert.equal(node1.isClusterHead, false);
+    assert.equal(node2.isClusterHead, true);
+    assert.equal(node3.isClusterHead, false);
+    assert.equal(node4.isClusterHead, true);
+    assert.equal(node5.isClusterHead, false);
+    
+    assert.equal(node1.isMemberNode, true);
+    assert.equal(node2.isMemberNode, false);
+    assert.equal(node3.isMemberNode, true);
+    assert.equal(node4.isMemberNode, false);
+    assert.equal(node5.isMemberNode, true);
+  });
+  
   // it("should send sensor readings to sink node", async () => {
   //   // Simulate reading values from each sensor node
   //   await networkFormation.readSensorInput(9001, 222001);

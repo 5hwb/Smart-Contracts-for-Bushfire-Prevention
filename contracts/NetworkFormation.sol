@@ -133,7 +133,7 @@ contract NetworkFormation {
       DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress, SensorNode.getWithinRangeNodes(nodes[chIndex]));
       SensorNode.addBeacon(currNode, beacon);
       
-      // TODO find out how to do callback function (or equivalent)
+      // IF POSSIBLE: find out how to do callback function (or equivalent)
       // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], _cHeadAddr); 
     }
   }
@@ -203,14 +203,16 @@ contract NetworkFormation {
     
     // Get the list of nodes that sent join requests
     // (if its empty, exit the function)
-    uint256[] memory nodesWithJoinRequests = SensorNode.getJoinRequestNodes(currClusterHead);
-    if (nodesWithJoinRequests.length == 0) {
+    uint256[] memory nodesWithJoinRequestAddrs = SensorNode.getJoinRequestNodes(currClusterHead);
+    if (nodesWithJoinRequestAddrs.length == 0) {
       return;
     }
+
+    DS.Node[] memory nodesWithJoinRequests = SensorNode.nodeAddrsToNodes(nodes, addrToNodeIndex, nodesWithJoinRequestAddrs);
     
     // Sort the sensor nodes that sent join requests by energy level in descending order
     // TODO make it work - nodesWithJoinRequests is now a uint256 array (prev it was SensorNode array...)
-    //nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
+    nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
 
     // N_CH calculation:
     // (probability * numOfJoinRequests * 100) / 10000
@@ -225,12 +227,12 @@ contract NetworkFormation {
       // If more than 1 cluster head to select: Select N_CH nodes with the highest energy levels as cluster heads
       if (numOfElectedClusterHeads < numOfClusterHeads) {
         // Register the cluster heads
-        registerAsClusterHead(_currCHeadAddr, nodesWithJoinRequests[i]);
+        registerAsClusterHead(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress);
         numOfElectedClusterHeads++;
       }
       // If all cluster heads have been elected, register the member nodes for this layer
       else {
-        registerAsMemberNode(_currCHeadAddr, nodesWithJoinRequests[i]);
+        registerAsMemberNode(_currCHeadAddr, nodesWithJoinRequests[i].nodeAddress);
       }
     }
   }

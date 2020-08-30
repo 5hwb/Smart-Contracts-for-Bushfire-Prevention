@@ -70,6 +70,7 @@ library SensorNode {
   ////////////////////////////////////////
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
+
   function readSensorInput(DS.Node storage daNode, DS.SensorReading[] memory _sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
@@ -114,6 +115,7 @@ library SensorNode {
   ////////////////////////////////////////
   // Get backup cluster heads from beacons
   ////////////////////////////////////////
+  
   // function identifyBackups(DS.Node storage daNode) public {
   //   // TODO implement this setup (as an iterative function) in SensorNode!
   //   delete arrtemp1;
@@ -184,6 +186,24 @@ library SensorNode {
     return daNode.withinRangeNodes.length;
   }
   
-  // TODO:
-  // make functions to add/get/remove elements in the arrays
+  ////////////////////////////////////////
+  // Conversion functions
+  ////////////////////////////////////////
+  
+  /**
+   * @notice Convert an array of uint256 addresses into an array of their corresponding DS.Node instances. 
+   * @param _allNodes List of all DS.Node instances
+   * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
+   * @param _nodeAddrs The array of uint256 addresses 
+   * @return An array of DS.Node instances matching the given uint256 addresses
+   */
+  function nodeAddrsToNodes(DS.Node[] storage _allNodes, mapping(uint => uint) storage _addrToNodeIndex, uint256[] memory _nodeAddrs) public view returns(DS.Node[] memory) {
+    DS.Node[] memory nodes = new DS.Node[](_nodeAddrs.length);
+    for (uint i = 0; i < _nodeAddrs.length; i++) {
+      nodes[i] = getNode(_allNodes, _addrToNodeIndex, _nodeAddrs[i]);
+    }
+    
+    return nodes;
+  }
+  
 }
