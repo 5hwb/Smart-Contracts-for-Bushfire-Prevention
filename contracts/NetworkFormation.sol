@@ -201,17 +201,17 @@ contract NetworkFormation {
     // Get the sensor node with the given address
     DS.Node storage currClusterHead = SensorNode.getNode(nodes, addrToNodeIndex, _currCHeadAddr);
     
-    // Get the list of nodes that sent join requests
+    // Get the list of addresses of nodes that sent join requests
     // (if its empty, exit the function)
     uint256[] memory nodesWithJoinRequestAddrs = SensorNode.getJoinRequestNodes(currClusterHead);
     if (nodesWithJoinRequestAddrs.length == 0) {
       return;
     }
-
+    
+    // Convert list of addresses into their corresponding nodes
     DS.Node[] memory nodesWithJoinRequests = SensorNode.nodeAddrsToNodes(nodes, addrToNodeIndex, nodesWithJoinRequestAddrs);
     
     // Sort the sensor nodes that sent join requests by energy level in descending order
-    // TODO make it work - nodesWithJoinRequests is now a uint256 array (prev it was SensorNode array...)
     nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
 
     // N_CH calculation:
