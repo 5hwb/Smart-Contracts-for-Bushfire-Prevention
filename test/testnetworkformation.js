@@ -7,7 +7,7 @@
 // (TruffleContract instances)
 const NetworkFormation = artifacts.require("NetworkFormation");
 const SensorNode = artifacts.require("SensorNode");
-const QuickSort = artifacts.require("QuickSort");
+const QuickSortContract = artifacts.require("QuickSortContract");
 
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
@@ -245,7 +245,7 @@ contract("NetworkFormation test cases", async accounts => {
   it("should sort an int array", async () => {
     //let numCandidates = await networkFormation.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
-    let sortInstance = await QuickSort.deployed();
+    let sortInstance = await QuickSortContract.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];
     // sort to [2, 2, 3, 6, 9, 29, 73]
     let sortedThingo = await sortInstance.sortInts.call(thingo);
@@ -266,7 +266,7 @@ contract("NetworkFormation test cases", async accounts => {
   it("should sort an int array backwards", async () => {
     //let numCandidates = await networkFormation.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
-    let sortInstance = await QuickSort.deployed();
+    let sortInstance = await QuickSortContract.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];
     // sort to [73, 29, 9, 6, 3, 2, 2]
     let sortedThingo = await sortInstance.sortRev.call(thingo);
