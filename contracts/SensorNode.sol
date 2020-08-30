@@ -125,12 +125,15 @@ library SensorNode {
   // Get backup cluster heads from beacons
   ////////////////////////////////////////
   
-  // function identifyBackups(DS.Node storage daNode) public {
-  //   // TODO implement this setup (as an iterative function) in SensorNode!
-  //   delete arrtemp1;
-  //   IA.inter(arrtemp2, withinRangeNodes, arrtemp1);
-  // 
-  // }
+  function identifyBackups(DS.Node storage daNode) public {
+    // TODO implement this setup (as an iterative function) in SensorNode!
+    // IDEA: manually loop thru each array I guess - just use the length of the shortest array (since the size of the intersection cannot be larger than the shortest array)?
+
+    
+    // delete arrtemp1;
+    // IA.inter(arrtemp2, daNode.withinRangeNodes, arrtemp1);
+  
+  }
     
   ////////////////////////////////////////
   // SETTER FUNCTIONS
