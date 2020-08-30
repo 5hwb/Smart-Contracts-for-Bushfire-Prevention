@@ -242,7 +242,7 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
     sReadings[0] = DS.SensorReading(_sReading, true);
-    SensorNode.readSensorInput(nodes[nodeIndex], sReadings);
+    SensorNode.readSensorInput(nodes, addrToNodeIndex, nodes[nodeIndex], sReadings);
   }
   
 }

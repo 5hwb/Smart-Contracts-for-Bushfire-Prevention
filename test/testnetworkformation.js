@@ -181,35 +181,37 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node5.isMemberNode, true);
   });
   
-  // it("should send sensor readings to sink node", async () => {
-  //   // Simulate reading values from each sensor node
-  //   await networkFormation.readSensorInput(9001, 222001);
-  //   await networkFormation.readSensorInput(9002, 222002);
-  //   await networkFormation.readSensorInput(9003, 222003);
-  //   await networkFormation.readSensorInput(9004, 222004);
-  //   await networkFormation.readSensorInput(9005, 222005);
-  // 
-  //   let node222001 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
-  //   let node222002 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
-  //   let node222003 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
-  //   let node222004 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
-  //   let node222005 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
-  //   let node111000 = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
-  // 
-  //   // Check that the sensor nodes got their readings
-  //   assert.equal(await node222001.getSensorReadings.call(), 9001);
-  //   assert.equal(await node222002.getSensorReadings.call(), 9002);
-  //   assert.equal(await node222003.getSensorReadings.call(), 9003);
-  //   assert.equal(await node222004.getSensorReadings.call(), 9004);
-  //   assert.equal(await node222005.getSensorReadings.call(), 9005);
-  // 
-  //   // Check that the cluster head had received the sensor readings
-  //   assert.equal((await node111000.getSensorReadings.call())[0], 9001);
-  //   assert.equal((await node111000.getSensorReadings.call())[1], 9002);
-  //   assert.equal((await node111000.getSensorReadings.call())[2], 9003);
-  //   assert.equal((await node111000.getSensorReadings.call())[3], 9004);
-  //   assert.equal((await node111000.getSensorReadings.call())[4], 9005);
-  // });
+  it("should send sensor readings to sink node", async () => {
+    // Simulate reading values from each sensor node
+    await networkFormation.readSensorInput(9001, 222001);
+    await networkFormation.readSensorInput(9002, 222002);
+    await networkFormation.readSensorInput(9003, 222003);
+    await networkFormation.readSensorInput(9004, 222004);
+    await networkFormation.readSensorInput(9005, 222005);
+  
+    let node222001 = toStruct(await networkFormation.getNodeAsMemory(222001));
+    let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    let node222003 = toStruct(await networkFormation.getNodeAsMemory(222003));
+    let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    let node222005 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    let node111000 = toStruct(await networkFormation.getNodeAsMemory(111000));
+  
+    // Check that the sensor nodes got their readings
+    // node: sensorReadings[0] is a dummy reading to help detect null values,
+    // hence the 2nd element is actually the 1st reading
+    assert.equal(node222001.sensorReadings[1].reading, 9001);
+    assert.equal(node222002.sensorReadings[1].reading, 9002);
+    assert.equal(node222003.sensorReadings[1].reading, 9003);
+    assert.equal(node222004.sensorReadings[1].reading, 9004);
+    assert.equal(node222005.sensorReadings[1].reading, 9005);
+    
+    // Check that the cluster head had received the sensor readings
+    assert.equal(node111000.sensorReadings[1].reading, 9001);
+    assert.equal(node111000.sensorReadings[2].reading, 9002);
+    assert.equal(node111000.sensorReadings[3].reading, 9003);
+    assert.equal(node111000.sensorReadings[4].reading, 9004);
+    assert.equal(node111000.sensorReadings[5].reading, 9005);
+  });
   // 
   // /***********************************************
   //  * TEST - Sorting SensorNode instances

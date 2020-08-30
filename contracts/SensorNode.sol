@@ -71,14 +71,24 @@ library SensorNode {
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
 
-  function readSensorInput(DS.Node storage daNode, DS.SensorReading[] memory _sReadings) public {
+  /**
+   * @notice Read sensor input.
+   * @param _allNodes List of all DS.Node instances
+   * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
+   * @param daNode Node to read readings from 
+   * @param _sReadings List of sensor readings to input 
+   */
+  function readSensorInput(
+      DS.Node[] storage _allNodes, 
+      mapping(uint => uint) storage _addrToNodeIndex, 
+      DS.Node storage daNode, 
+      DS.SensorReading[] memory _sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
     for (uint i = 0; i < _sReadings.length; i++) {
 
       // Check if the sensor reading has already been added before adding it.
       // Ignore duplicates and null '0' readings
-      // TODO: check that this works!
       bool isnotPresent = true;
       
       for (uint j = 0; j < daNode.sensorReadings.length; j++) {
@@ -94,12 +104,11 @@ library SensorNode {
       }
     }
   
-    // COMMENTED OUT FOR NOW
-    // TODO MAKE THIS WORK
-    // // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
-    // if (address(daNode.parentNode) != 0x0000000000000000000000000000000000000000) {
-    //   daNode.parentNode.readSensorInput(daNode.sensorReadings);
-    // }
+    // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
+    if (daNode.parentNode != 0) {
+      DS.Node storage parentDsnode = getNode(_allNodes, _addrToNodeIndex, daNode.parentNode);
+      readSensorInput(_allNodes, _addrToNodeIndex, parentDsnode, daNode.sensorReadings);
+    }
   }
   
   function getSensorReadings(DS.Node storage daNode) public view returns(uint256[] memory) {
