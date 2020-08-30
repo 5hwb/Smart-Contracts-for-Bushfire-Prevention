@@ -7,27 +7,74 @@
 // (TruffleContract instances)
 const NetworkFormation = artifacts.require("NetworkFormation");
 const SensorNode = artifacts.require("SensorNode");
-const QuickSort = artifacts.require("QuickSort");
 
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
 
+// Convert the raw array returned by NetworkFormation into a Node struct format
+function toStruct(val) {
+  convertedBeacons = [];
+  convertedSReadings = [];
+
+  // Convert the beacons
+  for (var i = 0; i < val[12].length; i++) {
+    var currBeacon = val[12][i];
+    convertedBeacons.push({
+      isSent: currBeacon[0],
+      nextNetLevel: parseInt(currBeacon[1]),
+      senderNodeAddr: parseInt(currBeacon[2]),
+      withinRangeNodes: currBeacon[3].map(i => parseInt(i))
+    });
+  }
+
+  // Convert the sensor readings
+  for (var i = 0; i < val[14].length; i++) {
+    var currSReading = val[14][i];
+    convertedSReadings.push({
+      reading: parseInt(currSReading[0]),
+      exists: currSReading[1]
+    });
+  }
+
+  return {
+    nodeID: parseInt(val[0]),
+    nodeAddress: parseInt(val[1]),
+    energyLevel: parseInt(val[2]),
+    networkLevel: parseInt(val[3]),
+    numOfOneHopClusterHeads: parseInt(val[4]),
+    isClusterHead: val[5],
+    isMemberNode: val[6],
+
+    parentNode: parseInt(val[7]),
+    childNodes: val[8].map(i => parseInt(i)),
+    joinRequestNodes: val[9].map(i => parseInt(i)),
+    numOfJoinRequests: parseInt(val[10]),
+    withinRangeNodes: val[11].map(i => parseInt(i)),
+
+    beacons: convertedBeacons,
+    numOfBeacons: parseInt(val[13]),
+
+    sensorReadings: convertedSReadings,
+    numOfReadings: parseInt(val[15])
+  };
+}
+
 contract("NetworkFormation - 3-layer network test case", async accounts => {
-  let instance;
+  let networkFormation;
   
   beforeEach(async () => {
-    instance = await NetworkFormation.deployed();
+    networkFormation = await NetworkFormation.deployed();
   });
 
   /***********************************************
    * TEST - ADD NODES
    ***********************************************/
   it("should initialise everything correctly", async () => {
-    //let numCandidates = await instance.numCandidates();
+    //let numCandidates = await networkFormation.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
-    let numOfNodes = await instance.numOfNodes();
+    let numOfNodes = await networkFormation.numOfNodes();
     assert.equal(numOfNodes, 0);
-    let numOfLevels = await instance.numOfLevels();
+    let numOfLevels = await networkFormation.numOfLevels();
     assert.equal(numOfLevels, 0);
 
   });
@@ -57,32 +104,32 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
      */
 
     // Add the 'sink node'
-    await instance.addNode(1, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+    await networkFormation.addNode(1, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
     // Add neighbouring nodes
     // LAYER 1 NODES
-    await instance.addNode(2, 222001, 82, [111000, 222002, 222003]);
-    await instance.addNode(3, 222002, 88, [111000, 222006, 222007, 222003, 222001]);
-    await instance.addNode(4, 222003, 82, [111000, 222006, 222007, 222008, 222002, 222004, 222001, 222005]);
-    await instance.addNode(5, 222004, 95, [111000, 222007, 222008, 222009, 222003, 222010, 222005, 222011]);
-    await instance.addNode(6, 222005, 87, [111000, 222003, 222004, 222010, 222011]);
+    await networkFormation.addNode(2, 222001, 82, [111000, 222002, 222003]);
+    await networkFormation.addNode(3, 222002, 88, [111000, 222006, 222007, 222003, 222001]);
+    await networkFormation.addNode(4, 222003, 82, [111000, 222006, 222007, 222008, 222002, 222004, 222001, 222005]);
+    await networkFormation.addNode(5, 222004, 95, [111000, 222007, 222008, 222009, 222003, 222010, 222005, 222011]);
+    await networkFormation.addNode(6, 222005, 87, [111000, 222003, 222004, 222010, 222011]);
 
     // LAYER 2 NODES
-    await instance.addNode( 7, 222006, 79, [222012, 222013, 222007, 222002, 222003]);
-    await instance.addNode( 8, 222007, 61, [222012, 222013, 222014, 222006, 222008, 222002, 222003, 222004]);
-    await instance.addNode( 9, 222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222004, 222010]);
-    await instance.addNode(10, 222009, 95, [222014, 222015, 222008, 222004, 222010]);
-    await instance.addNode(11, 222010, 86, [222008, 222009, 222004, 222005, 222011]);
-    await instance.addNode(12, 222011, 93, [222004, 222010, 222005]);
+    await networkFormation.addNode( 7, 222006, 79, [222012, 222013, 222007, 222002, 222003]);
+    await networkFormation.addNode( 8, 222007, 61, [222012, 222013, 222014, 222006, 222008, 222002, 222003, 222004]);
+    await networkFormation.addNode( 9, 222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222004, 222010]);
+    await networkFormation.addNode(10, 222009, 95, [222014, 222015, 222008, 222004, 222010]);
+    await networkFormation.addNode(11, 222010, 86, [222008, 222009, 222004, 222005, 222011]);
+    await networkFormation.addNode(12, 222011, 93, [222004, 222010, 222005]);
 
     // LAYER 3 NODES
-    await instance.addNode(13, 222012, 71, [222013, 222006, 222007]);
-    await instance.addNode(14, 222013, 83, [222012, 222014, 222006, 222007, 222008]);
-    await instance.addNode(15, 222014, 78, [222013, 222015, 222007, 222008, 222009]);
-    await instance.addNode(16, 222015, 80, [222014, 222008, 222009]);
+    await networkFormation.addNode(13, 222012, 71, [222013, 222006, 222007]);
+    await networkFormation.addNode(14, 222013, 83, [222012, 222014, 222006, 222007, 222008]);
+    await networkFormation.addNode(15, 222014, 78, [222013, 222015, 222007, 222008, 222009]);
+    await networkFormation.addNode(16, 222015, 80, [222014, 222008, 222009]);
 
     // Get list of all SensorNode instances (just their addresses)
-    let allNodes = await instance.getAllNodes.call();
+    let allNodes = await networkFormation.getAllNodes.call();
 
     // Ensure the values within this SensorNode is as expected
     let firstNode = await SensorNode.at(allNodes[0]);    
@@ -97,23 +144,23 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   it("should send beacon for Layer 1 nodes", async () => {
     
     // Set sink node as the 1st cluster head
-    await instance.registerAsClusterHead(0, 111000);
+    await networkFormation.registerAsClusterHead(0, 111000);
 
     // Set its network level to be 0 (because sink node!)
-    let sinkNode = await SensorNode.at(await instance.getNode(111000));
+    let sinkNode = await SensorNode.at(await networkFormation.getNode(111000));
     await sinkNode.setNetworkLevel(0);
     //console.log("parentNode = ");
     //console.log(await sinkNode.parentNode.call());
     
     // Send beacon from cluster head
-    await instance.sendBeacon(111000);
+    await networkFormation.sendBeacon(111000);
 
     // Get the prospective child nodes
-    let node1 = await SensorNode.at(await instance.getNode(222001));
-    let node2 = await SensorNode.at(await instance.getNode(222002));
-    let node3 = await SensorNode.at(await instance.getNode(222003));
-    let node4 = await SensorNode.at(await instance.getNode(222004));
-    let node5 = await SensorNode.at(await instance.getNode(222005));
+    let node1 = await SensorNode.at(await networkFormation.getNode(222001));
+    let node2 = await SensorNode.at(await networkFormation.getNode(222002));
+    let node3 = await SensorNode.at(await networkFormation.getNode(222003));
+    let node4 = await SensorNode.at(await networkFormation.getNode(222004));
+    let node5 = await SensorNode.at(await networkFormation.getNode(222005));
     
     // Ensure network level is correct
     assert.equal(await node1.networkLevel.call(), 1);
@@ -125,8 +172,8 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send join requests for Layer 1 nodes", async () => {
     // Make all nodes within range send a join request
-    await instance.sendJoinRequests();
-    let sinkNode = await SensorNode.at(await instance.getNode(111000));
+    await networkFormation.sendJoinRequests();
+    let sinkNode = await SensorNode.at(await networkFormation.getNode(111000));
 
     // Ensure the node addresses were added to list of join request nodes
     let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
@@ -144,14 +191,14 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should elect cluster heads for Layer 1 nodes", async () => {
     // 50% chance of cluster head being elected
-    await instance.electClusterHeads(111000, 50);
+    await networkFormation.electClusterHeads(111000, 50);
 
     // Get the prospective child nodes
-    let node1 = await SensorNode.at(await instance.getNode(222001));
-    let node2 = await SensorNode.at(await instance.getNode(222002));
-    let node3 = await SensorNode.at(await instance.getNode(222003));
-    let node4 = await SensorNode.at(await instance.getNode(222004));
-    let node5 = await SensorNode.at(await instance.getNode(222005));
+    let node1 = await SensorNode.at(await networkFormation.getNode(222001));
+    let node2 = await SensorNode.at(await networkFormation.getNode(222002));
+    let node3 = await SensorNode.at(await networkFormation.getNode(222003));
+    let node4 = await SensorNode.at(await networkFormation.getNode(222004));
+    let node5 = await SensorNode.at(await networkFormation.getNode(222005));
     
     assert.equal(await node1.isClusterHead.call(), false);
     assert.equal(await node2.isClusterHead.call(), true);
@@ -168,21 +215,21 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send beacon for Layer 2 nodes", async () => {
     // Send beacon from Level 1 cluster heads (do this manually for now.)
-    await instance.sendBeacon(222002);
-    await instance.sendBeacon(222004);
+    await networkFormation.sendBeacon(222002);
+    await networkFormation.sendBeacon(222004);
 
     // Get the currently elected cluster heads
-    let nodeSN = await SensorNode.at(await instance.getNode(111000));
-    let nodeCH1 = await SensorNode.at(await instance.getNode(222002));
-    let nodeCH2 = await SensorNode.at(await instance.getNode(222004));
+    let nodeSN = await SensorNode.at(await networkFormation.getNode(111000));
+    let nodeCH1 = await SensorNode.at(await networkFormation.getNode(222002));
+    let nodeCH2 = await SensorNode.at(await networkFormation.getNode(222004));
     
     // Get the prospective child nodes
-    let node06 = await SensorNode.at(await instance.getNode(222006));
-    let node07 = await SensorNode.at(await instance.getNode(222007));
-    let node08 = await SensorNode.at(await instance.getNode(222008));
-    let node09 = await SensorNode.at(await instance.getNode(222009));
-    let node10 = await SensorNode.at(await instance.getNode(222010));
-    let node11 = await SensorNode.at(await instance.getNode(222011));
+    let node06 = await SensorNode.at(await networkFormation.getNode(222006));
+    let node07 = await SensorNode.at(await networkFormation.getNode(222007));
+    let node08 = await SensorNode.at(await networkFormation.getNode(222008));
+    let node09 = await SensorNode.at(await networkFormation.getNode(222009));
+    let node10 = await SensorNode.at(await networkFormation.getNode(222010));
+    let node11 = await SensorNode.at(await networkFormation.getNode(222011));
     
     // Ensure network level is correct
     assert.equal(await nodeSN.networkLevel.call(), 0);
@@ -230,9 +277,9 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send join requests for Layer 2 nodes", async () => {
     // Make all nodes within range send a join request
-    await instance.sendJoinRequests();
-    let cHead1 = await SensorNode.at(await instance.getNode(222002));
-    let cHead2 = await SensorNode.at(await instance.getNode(222004));
+    await networkFormation.sendJoinRequests();
+    let cHead1 = await SensorNode.at(await networkFormation.getNode(222002));
+    let cHead2 = await SensorNode.at(await networkFormation.getNode(222004));
   
     // Ensure the node addresses were added to list of join request nodes
     let cHead1joinRequestNodes = await cHead1.getJoinRequestNodes.call();
@@ -254,16 +301,16 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should elect cluster heads for Layer 2 nodes", async () => {
     // 50% chance of cluster head being elected
-    await instance.electClusterHeads(222002, 50);
-    await instance.electClusterHeads(222004, 50);
+    await networkFormation.electClusterHeads(222002, 50);
+    await networkFormation.electClusterHeads(222004, 50);
   
     // Get the prospective child nodes
-    let node2_06 = await SensorNode.at(await instance.getNode(222006));
-    let node2_07 = await SensorNode.at(await instance.getNode(222007));    
-    let node4_08 = await SensorNode.at(await instance.getNode(222008));
-    let node4_09 = await SensorNode.at(await instance.getNode(222009));
-    let node4_10 = await SensorNode.at(await instance.getNode(222010));
-    let node4_11 = await SensorNode.at(await instance.getNode(222011));
+    let node2_06 = await SensorNode.at(await networkFormation.getNode(222006));
+    let node2_07 = await SensorNode.at(await networkFormation.getNode(222007));    
+    let node4_08 = await SensorNode.at(await networkFormation.getNode(222008));
+    let node4_09 = await SensorNode.at(await networkFormation.getNode(222009));
+    let node4_10 = await SensorNode.at(await networkFormation.getNode(222010));
+    let node4_11 = await SensorNode.at(await networkFormation.getNode(222011));
   
     assert.equal(await node2_06.isClusterHead.call(), true);
     assert.equal(await node2_07.isClusterHead.call(), false);
@@ -282,23 +329,23 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send beacon for Layer 3 nodes", async () => {
     // Send beacon from Level 2 cluster heads (do this manually for now.)
-    await instance.sendBeacon(222006);
-    await instance.sendBeacon(222008);
-    await instance.sendBeacon(222009);
+    await networkFormation.sendBeacon(222006);
+    await networkFormation.sendBeacon(222008);
+    await networkFormation.sendBeacon(222009);
 
     // Get the currently elected cluster heads
-    let nodeSN = await SensorNode.at(await instance.getNode(111000));
-    let nodeCHL1_1 = await SensorNode.at(await instance.getNode(222002));
-    let nodeCHL1_2 = await SensorNode.at(await instance.getNode(222004));
-    let nodeCHL2_1 = await SensorNode.at(await instance.getNode(222006));
-    let nodeCHL2_2 = await SensorNode.at(await instance.getNode(222008));
-    let nodeCHL2_3 = await SensorNode.at(await instance.getNode(222009));
+    let nodeSN = await SensorNode.at(await networkFormation.getNode(111000));
+    let nodeCHL1_1 = await SensorNode.at(await networkFormation.getNode(222002));
+    let nodeCHL1_2 = await SensorNode.at(await networkFormation.getNode(222004));
+    let nodeCHL2_1 = await SensorNode.at(await networkFormation.getNode(222006));
+    let nodeCHL2_2 = await SensorNode.at(await networkFormation.getNode(222008));
+    let nodeCHL2_3 = await SensorNode.at(await networkFormation.getNode(222009));
 
     // Get the prospective child nodes
-    let node12 = await SensorNode.at(await instance.getNode(222012));
-    let node13 = await SensorNode.at(await instance.getNode(222013));
-    let node14 = await SensorNode.at(await instance.getNode(222014));
-    let node15 = await SensorNode.at(await instance.getNode(222015));
+    let node12 = await SensorNode.at(await networkFormation.getNode(222012));
+    let node13 = await SensorNode.at(await networkFormation.getNode(222013));
+    let node14 = await SensorNode.at(await networkFormation.getNode(222014));
+    let node15 = await SensorNode.at(await networkFormation.getNode(222015));
     
     // Ensure network level is correct
     assert.equal(await nodeSN.networkLevel.call(), 0);
@@ -315,10 +362,10 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send join requests for Layer 3 nodes", async () => {
     // Make all nodes within range send a join request
-    await instance.sendJoinRequests();
-    let cHead1 = await SensorNode.at(await instance.getNode(222006));
-    let cHead2 = await SensorNode.at(await instance.getNode(222008));
-    let cHead3 = await SensorNode.at(await instance.getNode(222009)); // this one has no nodes to rule over as 222008 has taken the last one
+    await networkFormation.sendJoinRequests();
+    let cHead1 = await SensorNode.at(await networkFormation.getNode(222006));
+    let cHead2 = await SensorNode.at(await networkFormation.getNode(222008));
+    let cHead3 = await SensorNode.at(await networkFormation.getNode(222009)); // this one has no nodes to rule over as 222008 has taken the last one
   
     // Ensure the node addresses were added to list of join request nodes
     let cHead1joinRequestNodes = await cHead1.getJoinRequestNodes.call();
@@ -336,15 +383,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should elect cluster heads for Layer 3 nodes", async () => {
     // 50% chance of cluster head being elected
-    await instance.electClusterHeads(222006, 50);
-    await instance.electClusterHeads(222008, 50);
-    await instance.electClusterHeads(222009, 50);
+    await networkFormation.electClusterHeads(222006, 50);
+    await networkFormation.electClusterHeads(222008, 50);
+    await networkFormation.electClusterHeads(222009, 50);
   
     // Get the prospective child nodes
-    let node6_12 = await SensorNode.at(await instance.getNode(222012));
-    let node6_13 = await SensorNode.at(await instance.getNode(222013));    
-    let node8_14 = await SensorNode.at(await instance.getNode(222014));
-    let node8_15 = await SensorNode.at(await instance.getNode(222015));
+    let node6_12 = await SensorNode.at(await networkFormation.getNode(222012));
+    let node6_13 = await SensorNode.at(await networkFormation.getNode(222013));    
+    let node8_14 = await SensorNode.at(await networkFormation.getNode(222014));
+    let node8_15 = await SensorNode.at(await networkFormation.getNode(222015));
   
     assert.equal(await node6_12.isClusterHead.call(), false);
     assert.equal(await node6_13.isClusterHead.call(), true);
@@ -359,38 +406,38 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
 
   it("should send sensor readings to sink node", async () => {
     // Simulate reading values from each sensor node
-    await instance.readSensorInput(9001, 222001);
-    await instance.readSensorInput(9002, 222002);
-    await instance.readSensorInput(9003, 222003);
-    await instance.readSensorInput(9004, 222004);
-    await instance.readSensorInput(9005, 222005);
-    await instance.readSensorInput(9006, 222006);
-    await instance.readSensorInput(9007, 222007);
-    await instance.readSensorInput(9008, 222008);
-    await instance.readSensorInput(9009, 222009);
-    await instance.readSensorInput(9010, 222010);
-    await instance.readSensorInput(9011, 222011);
-    await instance.readSensorInput(9012, 222012);
-    await instance.readSensorInput(9013, 222013);
-    await instance.readSensorInput(9014, 222014);
-    await instance.readSensorInput(9015, 222015);
+    await networkFormation.readSensorInput(9001, 222001);
+    await networkFormation.readSensorInput(9002, 222002);
+    await networkFormation.readSensorInput(9003, 222003);
+    await networkFormation.readSensorInput(9004, 222004);
+    await networkFormation.readSensorInput(9005, 222005);
+    await networkFormation.readSensorInput(9006, 222006);
+    await networkFormation.readSensorInput(9007, 222007);
+    await networkFormation.readSensorInput(9008, 222008);
+    await networkFormation.readSensorInput(9009, 222009);
+    await networkFormation.readSensorInput(9010, 222010);
+    await networkFormation.readSensorInput(9011, 222011);
+    await networkFormation.readSensorInput(9012, 222012);
+    await networkFormation.readSensorInput(9013, 222013);
+    await networkFormation.readSensorInput(9014, 222014);
+    await networkFormation.readSensorInput(9015, 222015);
 
-    let node111000 = await SensorNode.at(await instance.getNode(111000));
-    let node222001 = await SensorNode.at(await instance.getNode(222001));
-    let node222002 = await SensorNode.at(await instance.getNode(222002));
-    let node222003 = await SensorNode.at(await instance.getNode(222003));
-    let node222004 = await SensorNode.at(await instance.getNode(222004));
-    let node222005 = await SensorNode.at(await instance.getNode(222005));
-    let node222006 = await SensorNode.at(await instance.getNode(222006));
-    let node222007 = await SensorNode.at(await instance.getNode(222007));
-    let node222008 = await SensorNode.at(await instance.getNode(222008));
-    let node222009 = await SensorNode.at(await instance.getNode(222009));
-    let node222010 = await SensorNode.at(await instance.getNode(222010));
-    let node222011 = await SensorNode.at(await instance.getNode(222011));
-    let node222012 = await SensorNode.at(await instance.getNode(222012));
-    let node222013 = await SensorNode.at(await instance.getNode(222013));
-    let node222014 = await SensorNode.at(await instance.getNode(222014));
-    let node222015 = await SensorNode.at(await instance.getNode(222015));
+    let node111000 = await SensorNode.at(await networkFormation.getNode(111000));
+    let node222001 = await SensorNode.at(await networkFormation.getNode(222001));
+    let node222002 = await SensorNode.at(await networkFormation.getNode(222002));
+    let node222003 = await SensorNode.at(await networkFormation.getNode(222003));
+    let node222004 = await SensorNode.at(await networkFormation.getNode(222004));
+    let node222005 = await SensorNode.at(await networkFormation.getNode(222005));
+    let node222006 = await SensorNode.at(await networkFormation.getNode(222006));
+    let node222007 = await SensorNode.at(await networkFormation.getNode(222007));
+    let node222008 = await SensorNode.at(await networkFormation.getNode(222008));
+    let node222009 = await SensorNode.at(await networkFormation.getNode(222009));
+    let node222010 = await SensorNode.at(await networkFormation.getNode(222010));
+    let node222011 = await SensorNode.at(await networkFormation.getNode(222011));
+    let node222012 = await SensorNode.at(await networkFormation.getNode(222012));
+    let node222013 = await SensorNode.at(await networkFormation.getNode(222013));
+    let node222014 = await SensorNode.at(await networkFormation.getNode(222014));
+    let node222015 = await SensorNode.at(await networkFormation.getNode(222015));
     
     // Check that all sensor nodes got their readings
     assert.equal((await node222001.getSensorReadings.call())[0], 9001);
