@@ -62,9 +62,11 @@ function toStruct(val) {
 
 contract("NetworkFormation test cases", async accounts => {
   let networkFormation;
+  let sensorNode;
   
   beforeEach(async () => {
     networkFormation = await NetworkFormation.deployed();
+    sensorNode = await SensorNode.deployed();
   });
 
   /***********************************************
@@ -106,32 +108,34 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(firstNodeEnergyLevel, 100);
   });
 
-  // it("should send beacon", async () => {
-  //   // Set sink node as the 1st cluster head
-  //   await networkFormation.registerAsClusterHead(0, 111000);
-  // 
-  //   // Set its network level to be 0 (because sink node!)
-  //   let sinkNode = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
-  //   await sinkNode.setNetworkLevel(0);
-  // 
-  //   // Send beacon from cluster head
-  //   await networkFormation.sendBeacon(111000);
-  // 
-  //   // Get the prospective child nodes
-  //   let node1 = await SensorNode.at(await networkFormation.getNodeAsMemory(222001));
-  //   let node2 = await SensorNode.at(await networkFormation.getNodeAsMemory(222002));
-  //   let node3 = await SensorNode.at(await networkFormation.getNodeAsMemory(222003));
-  //   let node4 = await SensorNode.at(await networkFormation.getNodeAsMemory(222004));
-  //   let node5 = await SensorNode.at(await networkFormation.getNodeAsMemory(222005));
-  // 
-  //   // Ensure network level is correct
-  //   assert.equal(await node1.networkLevel.call(), 1);
-  //   assert.equal(await node2.networkLevel.call(), 1);
-  //   assert.equal(await node3.networkLevel.call(), 1);
-  //   assert.equal(await node4.networkLevel.call(), 1);
-  //   assert.equal(await node5.networkLevel.call(), 1);
-  // });
-  // 
+  it("should send beacon", async () => {
+    // Set sink node as the 1st cluster head
+    await networkFormation.registerAsClusterHead(0, 111000);
+  
+    // Set its network level to be 0 (because sink node!)
+    let sinkNode = await networkFormation.getNodeAsMemory(111000);
+
+    // TODO move this to NetworkFormation - might add argument indicating if sink node or not
+    //await networkFormation.setNetworkLevel(sinkNode, 0);
+  
+    // Send beacon from cluster head
+    await networkFormation.sendBeacon(111000);
+  
+    // Get the prospective child nodes
+    let node1 = toStruct(await networkFormation.getNodeAsMemory(222001));
+    let node2 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    let node3 = toStruct(await networkFormation.getNodeAsMemory(222003));
+    let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
+  
+    // Ensure network level is correct
+    assert.equal(node1.networkLevel, 1);
+    assert.equal(node2.networkLevel, 1);
+    assert.equal(node3.networkLevel, 1);
+    assert.equal(node4.networkLevel, 1);
+    assert.equal(node5.networkLevel, 1);
+  });
+  
   // it("should send join requests", async () => {
   //   // Make all nodes within range send a join request
   //   await networkFormation.sendJoinRequests();
@@ -244,7 +248,7 @@ contract("NetworkFormation test cases", async accounts => {
     let sortInstance = await QuickSort.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];
     // sort to [2, 2, 3, 6, 9, 29, 73]
-    let sortedThingo = await sortInstance.sort.call(thingo);
+    let sortedThingo = await sortInstance.sortInts.call(thingo);
     //console.log("sortedThingo = ");
     //console.log(sortedThingo);
     assert.equal(sortedThingo[0], 2);
