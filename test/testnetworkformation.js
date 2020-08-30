@@ -136,24 +136,26 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node5.networkLevel, 1);
   });
   
-  // it("should send join requests", async () => {
-  //   // Make all nodes within range send a join request
-  //   await networkFormation.sendJoinRequests();
-  //   let sinkNode = await SensorNode.at(await networkFormation.getNodeAsMemory(111000));
-  // 
-  //   // Ensure the node addresses were added to list of join request nodes
-  //   let joinRequestNodes = await sinkNode.getJoinRequestNodes.call();
-  //   let node0 = await SensorNode.at(joinRequestNodes[0]);
-  //   let node1 = await SensorNode.at(joinRequestNodes[1]);
-  //   let node2 = await SensorNode.at(joinRequestNodes[2]);
-  //   let node3 = await SensorNode.at(joinRequestNodes[3]);
-  //   let node4 = await SensorNode.at(joinRequestNodes[4]);
-  //   assert.equal(await node0.nodeAddress.call(), 222001);
-  //   assert.equal(await node1.nodeAddress.call(), 222002);
-  //   assert.equal(await node2.nodeAddress.call(), 222003);
-  //   assert.equal(await node3.nodeAddress.call(), 222004);
-  //   assert.equal(await node4.nodeAddress.call(), 222005);
-  // });
+  it("should send join requests", async () => {
+    // Make all nodes within range send a join request
+    await networkFormation.sendJoinRequests();
+    let sinkNode = toStruct(await networkFormation.getNodeAsMemory(111000));
+  
+    console.log("sinkNode = ");
+    console.log(sinkNode);
+  
+    // Ensure the node addresses were added to list of join request nodes
+    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[0]));
+    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[1]));
+    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[2]));
+    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[3]));
+    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[4]));
+    assert.equal(node0.nodeAddress, 222001);
+    assert.equal(node1.nodeAddress, 222002);
+    assert.equal(node2.nodeAddress, 222003);
+    assert.equal(node3.nodeAddress, 222004);
+    assert.equal(node4.nodeAddress, 222005);
+  });
 
   // it("should elect cluster heads", async () => {
   //   // 40% chance of being elected?

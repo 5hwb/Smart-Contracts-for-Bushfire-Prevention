@@ -148,11 +148,19 @@ contract NetworkFormation {
     SensorNode.addJoinRequestNode(cHeadNode, nodes[nodeIndex].nodeAddress);
   }
   
+  event SentJoinRequest(uint256 _addr, uint _i);
+  
   // Go thru all nodes to see if they have received a beacon from a cluster head and need to send a join request back.
   function sendJoinRequests() public {
+    // LENGTH IS NOT THE ISSUE. require(numOfNodes == nodes.length, "NODE LENGTHS DONT MATCH");
     for (uint i = 0; i < numOfNodes; i++) {
+      emit SentJoinRequest(nodes[i].nodeAddress, i);
       // For now: Send join request iff the network level has been changed
       // to a value other than 0
+      // CAUSE OF ERROR: not all nodes HAVE beacons! 
+      require(nodes[i].beacons.length > 0, "NO BEACONS!??");
+      //require(SensorNode.getBeacon(nodes[i]).isSent == true, "BEACON NOT SENT?");
+      // 
       if (SensorNode.getBeacon(nodes[i]).isSent) {
         sendJoinRequest(nodes[i].nodeAddress, SensorNode.getBeacon(nodes[i]).senderNodeAddr);
       }

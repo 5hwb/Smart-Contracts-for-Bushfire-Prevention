@@ -19,13 +19,13 @@ library SensorNode {
     daNode.networkLevel = 0; // invalid value for now
 
     // TODO relocate this to NetworkFormation?
-    // // Add a dummy 'null' beacon as the 1st element to make null-checking easy
-    // uint[] memory dummyAddrs = new uint[](1);
-    // dummyAddrs[0] = 0;
-    // daNode.beacons.push(DS.Beacon(false, 0, 0, dummyAddrs));
-    // 
-    // // Add a dummy 'null' reading as the 1st element to make null-checking easy
-    // daNode.sensorReadings.push(DS.SensorReading(0, false));
+    // Add a dummy 'null' beacon as the 1st element to make null-checking easy
+    uint[] memory dummyAddrs = new uint[](1);
+    dummyAddrs[0] = 0;
+    daNode.beacons.push(DS.Beacon(false, 0, 0, dummyAddrs));
+    
+    // Add a dummy 'null' reading as the 1st element to make null-checking easy
+    daNode.sensorReadings.push(DS.SensorReading(0, false));
   }
   
   // // test func for calling library function
