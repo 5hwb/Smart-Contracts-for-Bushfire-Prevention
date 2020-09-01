@@ -33,13 +33,6 @@ library DS {
     uint numOfJoinRequests;     // N_T
     uint256[] withinRangeNodes; // nodes that are within transmission distance to this node
     
-    // // Backup nodes to communicate with if parent node (cluster head) fails
-    // uint256[] backupCHeads;
-    // 
-    // // temp
-    // uint256[] arrtemp1;
-    // uint256[] arrtemp2;
-    
     // Simulate receiving a beacon from a cluster head 
     DS.Beacon[] beacons;
     uint numOfBeacons;
@@ -47,5 +40,12 @@ library DS {
     // Simulate the sensor reading process
     DS.SensorReading[] sensorReadings;    // Array of SensorReading structs
     uint numOfReadings; // Number of sensor readings held by this node
+
+    // Backup nodes to communicate with if parent node (cluster head) fails
+    uint256[] backupCHeads;
+    // 
+    // // temp
+    // uint256[] arrtemp1;
+    // uint256[] arrtemp2;    
   }
 }

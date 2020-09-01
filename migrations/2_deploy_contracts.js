@@ -9,6 +9,7 @@ var QuickSortContract = artifacts.require("QuickSortContract");
 module.exports = function(deployer) {
   deployer.deploy(IA);
   deployer.link(IA, Listo);
+  deployer.link(IA, SensorNode);
   deployer.link(IA, NetworkFormation);
 
   deployer.deploy(QuickSort);

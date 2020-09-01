@@ -56,7 +56,8 @@ function toStruct(val) {
     numOfBeacons: parseInt(val[13]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[15])
+    numOfReadings: parseInt(val[15]),
+    backupCHeads: val[16].map(i => parseInt(i))
   };
 }
 

@@ -55,7 +55,8 @@ function toStruct(val) {
     numOfBeacons: parseInt(val[13]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[15])
+    numOfReadings: parseInt(val[15]),
+    backupCHeads: val[16].map(i => parseInt(i))
   };
 }
 
@@ -374,6 +375,33 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node2_1 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[1]));
     assert.equal(node2_0.nodeAddress, 222014);
     assert.equal(node2_1.nodeAddress, 222015);
+    
+    // TODO Add redundancy - put it in SensorNode perhaps?
+    /*
+    CLUSTER HED NODE02 withinRangeNodes:
+    [0, 1, 3, 6, 7]
+    CLUSTER HED NODE04 withinRangeNodes:
+    [0, 3, 5, 7, 8, 9, 10, 11]
+    NODE07 (which received beacons from 02 and 04):
+    [2, 3, 4, 6, 8, 12, 13, 14]
+
+    OVERLAP of 02 and 07:
+    [3, 6]
+
+    OVERLAP of 04 and 07:
+    [3, 8]
+
+    OVERLAP of 02, 04 and 07:
+    [3]
+    */
+    
+    console.log("::::: NODE 222002! :::::");
+    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222002), null, '  '));
+    console.log("::::: NODE 222004! :::::");
+    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222004), null, '  '));
+    console.log("::::: NODE 222007! :::::");
+    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222007), null, '  '));
+    console.log("::::: END ALL NODES! :::::");
   });
   
   it("should elect cluster heads for Layer 3 nodes", async () => {
@@ -486,25 +514,5 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node111000.sensorReadings[13].reading, 9013);
     assert.equal(node111000.sensorReadings[14].reading, 9014);
     assert.equal(node111000.sensorReadings[15].reading, 9015);
-  });
-
-  // TODO Add redundancy - put it in SensorNode perhaps?
-  /*
-CLUSTER HED NODE02:
-[0, 1, 3, 6, 7]
-CLUSTER HED NODE04:
-[0, 3, 5, 7, 8, 9, 10, 11]
-NODE07 (which received beacons from 02 and 04):
-[2, 3, 4, 6, 8, 12, 13, 14]
-
-OVERLAP of 02 and 07:
-[3, 6]
-
-OVERLAP of 04 and 07:
-[3, 8]
-
-OVERLAP of 02, 04 and 07:
-[3]
-  */
-    
+  });    
 });

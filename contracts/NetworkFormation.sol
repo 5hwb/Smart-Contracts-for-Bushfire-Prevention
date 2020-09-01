@@ -23,10 +23,10 @@ contract NetworkFormation {
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
   
   // TODO Solidity compiler whinges that 'Only libraries are allowed to use the mapping type in public or external functions'. Find a way around this later! 
-  // // Get array of all DS.Node instances.
-  // function getAllNodes() view public returns(DS.Node[] memory) {
-  //   return nodes;
-  // }
+  // Get array of all DS.Node instances.
+  function getAllNodes() view public returns(DS.Node[] memory) {
+    return nodes;
+  }
   
   // Get array of addresses of all DS.Node instances.
   function getAllNodeAddresses() view public returns(uint[] memory) {
@@ -146,6 +146,9 @@ contract NetworkFormation {
     // Add this node to cluster head's list of nodes that sent join requests
     assert(cHeadNode.nodeID != 0); // make sure the cluster head node exists
     SensorNode.addJoinRequestNode(cHeadNode, nodes[nodeIndex].nodeAddress);
+    
+    // Identify the backup cluster heads
+    SensorNode.identifyBackups(nodes[nodeIndex]);
   }
   
   event SentJoinRequest(uint256 _addr, uint _i);

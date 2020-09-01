@@ -125,14 +125,21 @@ library SensorNode {
   // Get backup cluster heads from beacons
   ////////////////////////////////////////
   
+  /**
+   * @notice Identify the nodes which can serve as a backup in case the current cluster head fails by going through the list of withinRangeNodes on all received beacons and then saving the results to the list of backup cluster head addresses for that node.
+   * @param daNode The node to identify backup cluster heads for
+   */
   function identifyBackups(DS.Node storage daNode) public {
-    // TODO implement this setup (as an iterative function) in SensorNode!
-    // IDEA: manually loop thru each array I guess - just use the length of the shortest array (since the size of the intersection cannot be larger than the shortest array)?
-
+    uint256[] memory result = daNode.withinRangeNodes;
     
-    // delete arrtemp1;
-    // IA.inter(arrtemp2, daNode.withinRangeNodes, arrtemp1);
-  
+    // Need to have at least 2 beacons (1st one is the 'null' beacon)
+    if (daNode.beacons.length > 1) {
+      for (uint i = 1; i < daNode.beacons.length; i++) {
+        result = IA.inter(result, daNode.beacons[i].withinRangeNodes);
+      }
+      
+      daNode.backupCHeads = result;
+    }
   }
     
   ////////////////////////////////////////

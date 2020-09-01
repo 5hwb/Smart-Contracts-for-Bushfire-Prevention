@@ -14,6 +14,7 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
+* Add test cases for newly added backup cluster heads (ensure the correct ones are being nominated)
 * Refactor the code to allow for further expansion. Idea: split up NetworkFormation into several, smaller contracts.
 * Make new contract for managing the node roles and for bushfire detecting operations.
 * Make approval automatic.
