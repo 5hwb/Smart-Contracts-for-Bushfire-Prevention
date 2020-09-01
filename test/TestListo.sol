@@ -166,61 +166,58 @@ contract TestListo {
   uint[] arrtemp1; // temp array to store the results
   uint[] arrtemp2; // need 2 temp storage arrays as Solidity won't let me do shit with memory arrays
 
-  // // Test the inter() function with four 7-element arrays whose total intersection is [7]. 
-  // function testInter4Arrays() public {
-  //   arr1245679.push(0);
-  //   arr1245679.push(1);
-  //   arr1245679.push(2);
-  //   arr1245679.push(4);
-  //   arr1245679.push(5);
-  //   arr1245679.push(6);
-  //   arr1245679.push(7);
-  //   arr1245679.push(9);
-  // 
-  //   arr2345780.push(0);
-  //   arr2345780.push(2);
-  //   arr2345780.push(3);
-  //   arr2345780.push(4);
-  //   arr2345780.push(5);
-  //   arr2345780.push(7);
-  //   arr2345780.push(8);
-  //   arr2345780.push(10);
-  // 
-  //   arr4679012.push(0);
-  //   arr4679012.push(4);
-  //   arr4679012.push(6);
-  //   arr4679012.push(7);
-  //   arr4679012.push(9);
-  //   arr4679012.push(10);
-  //   arr4679012.push(11);
-  //   arr4679012.push(12);
-  // 
-  //   arr5789023.push(0);
-  //   arr5789023.push(5);
-  //   arr5789023.push(7);
-  //   arr5789023.push(8);
-  //   arr5789023.push(9);
-  //   arr5789023.push(10);
-  //   arr5789023.push(12);
-  //   arr5789023.push(13);
-  // 
-  //   // TODO implement this setup (as an iterative function) in SensorNode!
-  //   delete arrtemp1;
-  //   IA.inter(arr1245679, arr2345780, arrtemp1);
-  //   Assert.equal(arrtemp1[0], 2, "It should be 2");
-  //   Assert.equal(arrtemp1[1], 4, "It should be 4");
-  //   Assert.equal(arrtemp1[2], 5, "It should be 5");
-  //   Assert.equal(arrtemp1[3], 7, "It should be 7");
-  // 
-  //   delete arrtemp2;
-  //   IA.inter(arrtemp1, arr4679012, arrtemp2);
-  //   Assert.equal(arrtemp2[0], 4, "It should be 4");
-  //   Assert.equal(arrtemp2[1], 7, "It should be 7");
-  // 
-  //   delete arrtemp1;
-  //   IA.inter(arrtemp2, arr5789023, arrtemp1);
-  //   Assert.equal(arrtemp1[0], 7, "It should be 7");    
-  // }
+  // Test the inter() function with four 7-element arrays whose total intersection is [7]. 
+  function testInter4Arrays() public {
+    arr1245679.push(0);
+    arr1245679.push(1);
+    arr1245679.push(2);
+    arr1245679.push(4);
+    arr1245679.push(5);
+    arr1245679.push(6);
+    arr1245679.push(7);
+    arr1245679.push(9);
+  
+    arr2345780.push(0);
+    arr2345780.push(2);
+    arr2345780.push(3);
+    arr2345780.push(4);
+    arr2345780.push(5);
+    arr2345780.push(7);
+    arr2345780.push(8);
+    arr2345780.push(10);
+  
+    arr4679012.push(0);
+    arr4679012.push(4);
+    arr4679012.push(6);
+    arr4679012.push(7);
+    arr4679012.push(9);
+    arr4679012.push(10);
+    arr4679012.push(11);
+    arr4679012.push(12);
+  
+    arr5789023.push(0);
+    arr5789023.push(5);
+    arr5789023.push(7);
+    arr5789023.push(8);
+    arr5789023.push(9);
+    arr5789023.push(10);
+    arr5789023.push(12);
+    arr5789023.push(13);
+  
+    // TODO implement this setup (as an iterative function) in SensorNode!
+    uint256[] memory interResult1 = IA.inter(arr1245679, arr2345780);
+    Assert.equal(interResult1[0], 2, "It should be 2");
+    Assert.equal(interResult1[1], 4, "It should be 4");
+    Assert.equal(interResult1[2], 5, "It should be 5");
+    Assert.equal(interResult1[3], 7, "It should be 7");
+  
+    uint256[] memory interResult2 = IA.inter(interResult1, arr4679012);
+    Assert.equal(interResult2[0], 4, "It should be 4");
+    Assert.equal(interResult2[1], 7, "It should be 7");
+  
+    uint256[] memory interResult3 = IA.inter(interResult2, arr5789023);
+    Assert.equal(interResult3[0], 7, "It should be 7");
+  }
   
   event ShowHash(bytes32 hash);
   
