@@ -211,12 +211,12 @@ contract TestListo {
     Assert.equal(interResult1[2], 5, "It should be 5");
     Assert.equal(interResult1[3], 7, "It should be 7");
   
-    uint256[] memory interResult2 = IA.inter(interResult1, arr4679012);
-    Assert.equal(interResult2[0], 4, "It should be 4");
-    Assert.equal(interResult2[1], 7, "It should be 7");
+    interResult1 = IA.inter(interResult1, arr4679012);
+    Assert.equal(interResult1[0], 4, "It should be 4");
+    Assert.equal(interResult1[1], 7, "It should be 7");
   
-    uint256[] memory interResult3 = IA.inter(interResult2, arr5789023);
-    Assert.equal(interResult3[0], 7, "It should be 7");
+    interResult1 = IA.inter(interResult1, arr5789023);
+    Assert.equal(interResult1[0], 7, "It should be 7");
   }
   
   event ShowHash(bytes32 hash);
