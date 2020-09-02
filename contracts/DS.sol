@@ -43,9 +43,20 @@ library DS {
 
     // Backup nodes to communicate with if parent node (cluster head) fails
     uint256[] backupCHeads;
-    // 
-    // // temp
+    
+    // Indicate if node is active and ready to transfer data
+    bool isActive;
+
+    // temp
     // uint256[] arrtemp1;
     // uint256[] arrtemp2;    
+    // uint256[] arrtemp3;
+    // uint256[] arrtemp4;    
+    // uint256[] arrtemp5;
+    // uint256[] arrtemp6;    
+    // uint256[] arrtemp7;
+    // uint256[] arrtemp8;    
+    // uint256[] arrtemp9;
+    // uint256[] arrtemp0;    
   }
 }

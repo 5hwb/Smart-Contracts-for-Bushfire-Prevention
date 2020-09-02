@@ -26,6 +26,9 @@ library SensorNode {
     
     // Add a dummy 'null' reading as the 1st element to make null-checking easy
     daNode.sensorReadings.push(DS.SensorReading(0, false));
+    
+    // Mark the node as active
+    daNode.isActive = true;
   }
   
   // // test func for calling library function
@@ -175,6 +178,16 @@ library SensorNode {
 
   function addWithinRangeNode(DS.Node storage daNode, uint256 _addr) public {
     daNode.withinRangeNodes.push(_addr);
+  }
+    
+  function deactivateNode(DS.Node storage daNode) public {
+    require(daNode.isActive == true);
+    daNode.isActive = false;
+  }
+    
+  function activateNode(DS.Node storage daNode) public {
+    require(daNode.isActive == false);
+    daNode.isActive = true;
   }
     
   ////////////////////////////////////////

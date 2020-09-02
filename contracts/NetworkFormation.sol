@@ -246,5 +246,17 @@ contract NetworkFormation {
     sReadings[0] = DS.SensorReading(_sReading, true);
     SensorNode.readSensorInput(nodes, addrToNodeIndex, nodes[nodeIndex], sReadings);
   }
+
+  // Mark the node with the givven address as inactive
+  function deactivateNode(uint256 _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    SensorNode.deactivateNode(nodes[nodeIndex]);
+  }
+  
+  // Mark the node with the givven address as active
+  function activateNode(uint256 _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    SensorNode.activateNode(nodes[nodeIndex]);
+  }
   
 }
