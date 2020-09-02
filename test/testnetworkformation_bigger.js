@@ -376,13 +376,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node2_0.nodeAddress, 222014);
     assert.equal(node2_1.nodeAddress, 222015);
     
-    // TODO Separate this into its own test case.
+  });
+  
+  it("should find the backup cluster heads for Layer 3 nodes to connect to", async () => {
     /*
-    CLUSTER HED NODE02 withinRangeNodes:
+    CLUSTER HED NODE 02 withinRangeNodes:
     [0, 1, 3, 6, 7]
-    CLUSTER HED NODE04 withinRangeNodes:
+    CLUSTER HED NODE 04 withinRangeNodes:
     [0, 3, 5, 7, 8, 9, 10, 11]
-    NODE07 (which received beacons from 02 and 04):
+    NODE 07 withinRangeNodes (which received beacons from 02 and 04):
     [2, 3, 4, 6, 8, 12, 13, 14]
 
     OVERLAP of 02 and 07:
@@ -394,14 +396,19 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     OVERLAP of 02, 04 and 07:
     [3]
     */
+    await networkFormation.identifyBackupClusterHeads();
     
     console.log("::::: NODE 222002! :::::");
-    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222002), null, '  '));
+    let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    assert.equal(node222002.backupCHeads[0], 222001);
+    assert.equal(node222002.backupCHeads[1], 222003);
     console.log("::::: NODE 222004! :::::");
-    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222004), null, '  '));
+    let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    assert.equal(node222004.backupCHeads[0], 222003);
+    assert.equal(node222004.backupCHeads[1], 222005);
     console.log("::::: NODE 222007! :::::");
-    console.log(JSON.stringify(await networkFormation.getNodeAsMemory(222007), null, '  '));
-    console.log("::::: END ALL NODES! :::::");
+    let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
+    assert.equal(node222007.backupCHeads[0], 222003);
   });
   
   it("should elect cluster heads for Layer 3 nodes", async () => {
