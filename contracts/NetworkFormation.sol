@@ -146,9 +146,6 @@ contract NetworkFormation {
     // Add this node to cluster head's list of nodes that sent join requests
     assert(cHeadNode.nodeID != 0); // make sure the cluster head node exists
     SensorNode.addJoinRequestNode(cHeadNode, nodes[nodeIndex].nodeAddress);
-    
-    // Identify the backup cluster heads
-    SensorNode.identifyBackups(nodes[nodeIndex]);
   }
   
   event SentJoinRequest(uint256 _addr, uint _i);
@@ -163,6 +160,13 @@ contract NetworkFormation {
       if (SensorNode.getBeacon(nodes[i]).isSent) {
         sendJoinRequest(nodes[i].nodeAddress, SensorNode.getBeacon(nodes[i]).senderNodeAddr);
       }
+    }
+  }
+  
+  // Identify the backup cluster heads for each node
+  function identifyBackupClusterHeads() public {
+    for (uint i = 0; i < numOfNodes; i++) {
+      SensorNode.identifyBackupClusterHeads(nodes[i]);
     }
   }
   

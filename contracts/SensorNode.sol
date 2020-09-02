@@ -132,7 +132,7 @@ library SensorNode {
    * @notice Identify the nodes which can serve as a backup in case the current cluster head fails by going through the list of withinRangeNodes on all received beacons and then saving the results to the list of backup cluster head addresses for that node.
    * @param daNode The node to identify backup cluster heads for
    */
-  function identifyBackups(DS.Node storage daNode) public {
+  function identifyBackupClusterHeads(DS.Node storage daNode) public {
     uint256[] memory result = daNode.withinRangeNodes;
     
     // Need to have at least 2 beacons (1st one is the 'null' beacon)

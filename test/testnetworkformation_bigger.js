@@ -376,7 +376,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node2_0.nodeAddress, 222014);
     assert.equal(node2_1.nodeAddress, 222015);
     
-    // TODO Add redundancy - put it in SensorNode perhaps?
+    // TODO Separate this into its own test case.
     /*
     CLUSTER HED NODE02 withinRangeNodes:
     [0, 1, 3, 6, 7]
