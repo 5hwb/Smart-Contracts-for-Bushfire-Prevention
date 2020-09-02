@@ -251,13 +251,13 @@ contract NetworkFormation {
     SensorNode.readSensorInput(nodes, addrToNodeIndex, nodes[nodeIndex], sReadings);
   }
 
-  // Mark the node with the givven address as inactive
+  // Mark the node with the given address as inactive
   function deactivateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     SensorNode.deactivateNode(nodes[nodeIndex]);
   }
   
-  // Mark the node with the givven address as active
+  // Mark the node with the given address as active
   function activateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     SensorNode.activateNode(nodes[nodeIndex]);
