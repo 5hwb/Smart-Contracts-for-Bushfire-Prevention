@@ -432,6 +432,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node6_13.isMemberNode, false);
     assert.equal(node8_14.isMemberNode, true);
     assert.equal(node8_15.isMemberNode, false);
+    
   });
   
   it("should send sensor readings to sink node", async () => {
@@ -521,5 +522,12 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node111000.sensorReadings[13].reading, 9013);
     assert.equal(node111000.sensorReadings[14].reading, 9014);
     assert.equal(node111000.sensorReadings[15].reading, 9015);
+
+    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+      return {
+        nodeAddress: nodeStruct.nodeAddress, 
+        backupCHeads: nodeStruct.backupCHeads
+      };
+    }));
   });    
 });
