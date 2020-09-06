@@ -131,6 +131,7 @@ App = {
                   <p>isClusterHead: ${data[4]}</p>
                   <p>isMemberNode: ${data[5]}</p>
                   <p>Sensor readings: [${data[6]}]</p>
+                  <p>isActive: ${data[7]}</p>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">

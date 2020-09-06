@@ -127,17 +127,27 @@ library IA {
    * @notice Calculate the intersection between 2 arrays and output the results in a 3rd array.
    * @param arr1 The 1st array to check
    * @param arr2 The 2nd array to check
-   * @param res The array to put the results in
    */
-  function inter(uint256[] storage arr1, uint256[] storage arr2, uint256[] storage res) public {
+  function inter(uint256[] memory arr1, uint256[] memory arr2) public returns(uint256[] memory) {
+    // Check which arr to use as the shortest array
+    bool usingArr2 = (arr2.length < arr1.length);
+    uint256[] memory shortArray = (usingArr2) ? arr2 : arr1;
+    uint256[] memory longArray = (usingArr2) ? arr1 : arr2;
     
-    for (uint i = 0; i < arr1.length; i++) {
-      for (uint j = 0; j < arr2.length; j++) {
+    // Result will be no longer than the length of the shortest array
+    uint256[] memory result = new uint256[](shortArray.length);
+    uint k = 0;
+    
+    for (uint i = 0; i < longArray.length; i++) {
+      for (uint j = 0; j < shortArray.length; j++) {
         // Get non-zero elements in both arrays
-        if (arr1[i] == arr2[j] && arr1[i] != 0) {
-          res.push(arr1[i]);
+        if (longArray[i] == shortArray[j] && longArray[i] != 0) {
+          result[k] = longArray[i];
+          k++;
         }
       }
     }
+    
+    return result;
   }
 }

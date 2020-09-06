@@ -89,11 +89,11 @@ contract TestListo {
     arr2.push(7);
     arr2.push(10);
 
-    IA.inter(arr1, arr2, resa);
-    Assert.equal(resa[0], 3, "It should be 3");
-    Assert.equal(resa[1], 4, "It should be 4");
-    Assert.equal(resa[2], 10, "It should be 10");
-    Assert.equal(resa[3], 8, "It should be 8");
+    resa = IA.inter(arr1, arr2);
+    Assert.equal(resa[0], 4, "It should be 4");
+    Assert.equal(resa[1], 8, "It should be 8");
+    Assert.equal(resa[2], 3, "It should be 3");
+    Assert.equal(resa[3], 10, "It should be 10");
     
   }
   
@@ -151,13 +151,12 @@ contract TestListo {
     arr07.push(13);
     arr07.push(14);
 
-    IA.inter(arr02, arr04, resb);
-    Assert.equal(resb[0], 3, "It should be 3");
-    Assert.equal(resb[1], 7, "It should be 7");
+    uint256[] memory result = IA.inter(arr02, arr04);
+    Assert.equal(result[0], 3, "It should be 3");
+    Assert.equal(result[1], 7, "It should be 7");
 
-    IA.inter(resb, arr07, resc);
-    Assert.equal(resc[0], 3, "It should be 3");
-    delete resb;
+    result = IA.inter(result, arr07);
+    Assert.equal(result[0], 3, "It should be 3");
   }
   
   uint[] arr1245679; // [1,2,4,5,6,7,9]
@@ -177,7 +176,7 @@ contract TestListo {
     arr1245679.push(6);
     arr1245679.push(7);
     arr1245679.push(9);
-
+  
     arr2345780.push(0);
     arr2345780.push(2);
     arr2345780.push(3);
@@ -186,7 +185,7 @@ contract TestListo {
     arr2345780.push(7);
     arr2345780.push(8);
     arr2345780.push(10);
-
+  
     arr4679012.push(0);
     arr4679012.push(4);
     arr4679012.push(6);
@@ -195,7 +194,7 @@ contract TestListo {
     arr4679012.push(10);
     arr4679012.push(11);
     arr4679012.push(12);
-
+  
     arr5789023.push(0);
     arr5789023.push(5);
     arr5789023.push(7);
@@ -204,23 +203,20 @@ contract TestListo {
     arr5789023.push(10);
     arr5789023.push(12);
     arr5789023.push(13);
-
+  
     // TODO implement this setup (as an iterative function) in SensorNode!
-    delete arrtemp1;
-    IA.inter(arr1245679, arr2345780, arrtemp1);
-    Assert.equal(arrtemp1[0], 2, "It should be 2");
-    Assert.equal(arrtemp1[1], 4, "It should be 4");
-    Assert.equal(arrtemp1[2], 5, "It should be 5");
-    Assert.equal(arrtemp1[3], 7, "It should be 7");
-    
-    delete arrtemp2;
-    IA.inter(arrtemp1, arr4679012, arrtemp2);
-    Assert.equal(arrtemp2[0], 4, "It should be 4");
-    Assert.equal(arrtemp2[1], 7, "It should be 7");
-
-    delete arrtemp1;
-    IA.inter(arrtemp2, arr5789023, arrtemp1);
-    Assert.equal(arrtemp1[0], 7, "It should be 7");    
+    uint256[] memory interResult1 = IA.inter(arr1245679, arr2345780);
+    Assert.equal(interResult1[0], 2, "It should be 2");
+    Assert.equal(interResult1[1], 4, "It should be 4");
+    Assert.equal(interResult1[2], 5, "It should be 5");
+    Assert.equal(interResult1[3], 7, "It should be 7");
+  
+    interResult1 = IA.inter(interResult1, arr4679012);
+    Assert.equal(interResult1[0], 4, "It should be 4");
+    Assert.equal(interResult1[1], 7, "It should be 7");
+  
+    interResult1 = IA.inter(interResult1, arr5789023);
+    Assert.equal(interResult1[0], 7, "It should be 7");
   }
   
   event ShowHash(bytes32 hash);
