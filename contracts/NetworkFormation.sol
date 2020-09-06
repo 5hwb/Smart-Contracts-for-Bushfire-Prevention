@@ -198,7 +198,7 @@ contract NetworkFormation {
     SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);
   }
   
-  // // Get the sorted nodes 
+  // Get the sorted nodes 
   function getSortedNodes() public returns(DS.Node[] memory) {
     return QuickSort.sort(nodes);
   }
