@@ -156,14 +156,25 @@ library SensorNode {
   function setNetworkLevel(DS.Node storage daNode, uint _nLevel) public {
     daNode.networkLevel = _nLevel;
   }
-  
+
+    
+  /**
+   * @notice Set the given node as a cluster head.
+   * @param daNode The node to set
+   */
   function setAsClusterHead(DS.Node storage daNode) public {
-    assert(daNode.isMemberNode == false);
+    //assert(daNode.isMemberNode == false);
     daNode.isClusterHead = true;
+    daNode.isMemberNode = false;
   }
   
+  /**
+   * @notice Set the given node as a member node.
+   * @param daNode The node to set
+   */
   function setAsMemberNode(DS.Node storage daNode) public {
-    assert(daNode.isClusterHead == false);
+    //assert(daNode.isClusterHead == false);
+    daNode.isClusterHead = false;
     daNode.isMemberNode = true;
   }
   
