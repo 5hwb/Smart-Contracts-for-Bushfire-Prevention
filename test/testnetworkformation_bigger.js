@@ -56,7 +56,8 @@ function toStruct(val) {
 
     sensorReadings: convertedSReadings,
     numOfReadings: parseInt(val[15]),
-    backupCHeads: val[16].map(i => parseInt(i))
+    backupCHeads: val[16].map(i => parseInt(i)),
+    isActive: val[17]
   };
 }
 
@@ -452,7 +453,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     await networkFormation.readSensorInput(9013, 222013);
     await networkFormation.readSensorInput(9014, 222014);
     await networkFormation.readSensorInput(9015, 222015);
-  
+
     let node111000 = toStruct(await networkFormation.getNodeAsMemory(111000));
     let node222001 = toStruct(await networkFormation.getNodeAsMemory(222001));
     let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
@@ -529,5 +530,47 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
         backupCHeads: nodeStruct.backupCHeads
       };
     }));
-  });    
+  });
+  
+  it("should be able to send reading to sink node even if its cluster head has become inactive", async () => {
+    // Disable node 222002
+    await networkFormation.deactivateNode(222002);
+    
+    // Send sensor reading from node 222007
+    await networkFormation.readSensorInput(700700, 222007);
+
+    let node111000 = toStruct(await networkFormation.getNodeAsMemory(111000));
+    let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    let node222003 = toStruct(await networkFormation.getNodeAsMemory(222003));
+    let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
+
+    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+      return {
+        nodeAddress: nodeStruct.nodeAddress, 
+        parentNode: nodeStruct.parentNode, 
+        sensorReadings: nodeStruct.sensorReadings.map(sReading => sReading.reading),
+        isClusterHead: nodeStruct.isClusterHead,
+        isMemberNode: nodeStruct.isMemberNode,
+        isActive: nodeStruct.isActive
+      };
+    }));
+
+  
+    assert.equal(node222007.sensorReadings[2].reading, 700700);
+    
+    // should be untouched
+    assert.equal(node222002.sensorReadings[5].reading, 9013);
+    assert.equal(node222004.sensorReadings[7].reading, 9015);
+    //assert.equal(node222002.sensorReadings[6].reading, 700700); // should NOT happen
+    //assert.equal(node222004.sensorReadings[8].reading, 700700); // should NOT happen
+    
+    // new cluster head should get the reading
+    assert.equal(node222003.sensorReadings[2].reading, 9007); // actually a duplicate, should not be in (need to re-do this one)
+    assert.equal(node222003.sensorReadings[3].reading, 700700);
+    
+    // sink node should get the reading too
+    assert.equal(node111000.sensorReadings[16].reading, 700700);
+  });
+    
 });

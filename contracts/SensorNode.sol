@@ -4,6 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import "./DS.sol";
 import "./IA.sol";
+import "./QuickSort.sol";
 // import "./SomeLib.sol";
 
 library SensorNode {
@@ -102,6 +103,32 @@ library SensorNode {
   }
   
   ////////////////////////////////////////
+  // Redundancy fuinctions
+  ////////////////////////////////////////
+
+  function setBackupAsClusterHead(
+      DS.Node storage _daNode,
+      DS.Node[] storage _allNodes, 
+      mapping(uint => uint) storage _addrToNodeIndex) public {
+    // find backup with highest energy level
+    
+    // Convert list of backup node addresses into their corresponding nodes
+    DS.Node[] memory backupCHeadNodes = nodeAddrsToNodes(_allNodes, _addrToNodeIndex, _daNode.backupCHeads);
+    
+    // Sort the backup cluster head candidates by their current energy level in descending order
+    // NOTE: doesn't work - 1st element is null (?)
+    //backupCHeadNodes = QuickSort.sort(backupCHeadNodes);
+
+    // TODO: find out way to re-instate the original cluster head if it is active again (?)
+    // Set the backup candidate with highest energy level as the new cluster head
+    if (backupCHeadNodes[0].nodeAddress != 0) {
+      DS.Node storage backupCHead = getNode(_allNodes, _addrToNodeIndex, backupCHeadNodes[0].nodeAddress);
+      setAsClusterHead(backupCHead);
+      setParentNode(_daNode, backupCHead.nodeAddress);
+    }
+  }
+
+  ////////////////////////////////////////
   // Simulate receiving input from sensors!
   ////////////////////////////////////////
 
@@ -141,6 +168,13 @@ library SensorNode {
     // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
     if (_daNode.parentNode != 0) {
       DS.Node storage parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.parentNode);
+      
+      // Elect backup cluster head node if current cluster head is unavailable
+      if (!parentDsnode.isActive) {
+        setBackupAsClusterHead(_daNode, _allNodes, _addrToNodeIndex);
+        parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.parentNode);
+      }
+      
       readSensorInput(_allNodes, _addrToNodeIndex, parentDsnode, _daNode.sensorReadings);
     }
   }

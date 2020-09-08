@@ -13,6 +13,7 @@ module.exports = function(deployer) {
   deployer.link(IA, NetworkFormation);
 
   deployer.deploy(QuickSort);
+  deployer.link(QuickSort, SensorNode);
   deployer.link(QuickSort, NetworkFormation);
   deployer.link(QuickSort, QuickSortContract);
 
