@@ -4,14 +4,22 @@
 }
 
 /* Node description styles for different node types */
-.node-description.node-unassigned {
+.node-unassigned {
   background: lightcoral;
 }
-.node-description.node-clusterhead {
+.node-clusterhead {
   background: lightcyan;
 }
-.node-description.node-membernode {
+.node-membernode {
   background: lightyellow;
+}
+
+.node-active {
+  text-decoration-line: none;
+}
+
+.node-inactive {
+  text-decoration-line: line-through;
 }
 
 /* Input labels */

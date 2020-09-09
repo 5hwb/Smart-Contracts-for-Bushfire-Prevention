@@ -121,17 +121,28 @@ App = {
                 // Red = unassigned node.
                 var isClusterHead = data[4];
                 var isMemberNode = data[5];
+                var isActive = data[7];
                 var chosenStyle = (isClusterHead) ? "node-clusterhead" :
                     (isMemberNode) ? "node-membernode" : 
                     "node-unassigned";
-                $(".sensornode-box").append(`<div class="node-description ${chosenStyle}">
+                var chosenTextStyle = (isActive) ? "node-active" :
+                    "node-inactive";
+                var buttonLabel = (isActive) ? "Deactivate" :
+                    "Activate";
+                var buttonFunc = (isActive) ? "deactivateNode" :
+                    "activateNode";
+
+                $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle}">
                   <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>isClusterHead: ${data[4]}</p>
                   <p>isMemberNode: ${data[5]}</p>
                   <p>Sensor readings: [${data[6]}]</p>
-                  <p>isActive: ${data[7]}</p>
+                  <div class="input-group">
+                    <label for="id-input-setactive">isActive: ${data[7]}</label>
+                    <button class="btn btn-primary" onclick="App.${buttonFunc}(${data[1]})" id="btn2-${data[1]}">${buttonLabel}</button>
+                  </div>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
@@ -272,6 +283,32 @@ App = {
       })
     }).catch(function(err) {
       console.error("readSensorInput ERROR! " + err.message)
+    });
+  },
+
+  deactivateNode: function(nodeAddr) {
+    console.log("FLOW: deactivateNode()");
+
+    // Call the smart contract function
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.deactivateNode(nodeAddr).then(function(result) {
+        console.log("Node " + nodeAddr + " was deactivated.");
+      })
+    }).catch(function(err) {
+      console.error("deactivateNode ERROR! " + err.message)
+    });
+  },
+
+  activateNode: function(nodeAddr) {
+    console.log("FLOW: activateNode()");
+
+    // Call the smart contract function
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.activateNode(nodeAddr).then(function(result) {
+        console.log("Node " + nodeAddr + " was REactivated.");
+      })
+    }).catch(function(err) {
+      console.error("activateNode ERROR! " + err.message)
     });
   }
 };
