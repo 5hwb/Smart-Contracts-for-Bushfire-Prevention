@@ -143,6 +143,9 @@ App = {
                     <label for="id-input-setactive">isActive: ${data[7]}</label>
                     <button class="btn btn-primary" onclick="App.${buttonFunc}(${data[1]})" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
+                  <p>Parent node: ${data[8]}</p>
+                  <p>Nodes within range: [${data[9]}]</p>
+                  <p>Backup cluster heads: [${data[10]}]</p>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
@@ -283,6 +286,19 @@ App = {
       })
     }).catch(function(err) {
       console.error("readSensorInput ERROR! " + err.message)
+    });
+  },
+
+  identifyBackupClusterHeads: function() {
+    console.log("FLOW: identifyBackupClusterHeads()");
+
+    // Call the smart contract function
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.identifyBackupClusterHeads().then(function(result) {
+        console.log("Backup cluster heads for all nodes were identified.");
+      })
+    }).catch(function(err) {
+      console.error("identifyBackupClusterHeads ERROR! " + err.message)
     });
   },
 
