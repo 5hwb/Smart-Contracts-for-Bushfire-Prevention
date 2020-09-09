@@ -77,14 +77,16 @@ contract NetworkFormation {
     uint, uint,
     bool, bool,
     uint256[] memory,
-    bool) {
+    bool, uint,
+    uint256[] memory, uint256[] memory) {
       
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return (nodes[nIdx].nodeID, nodes[nIdx].nodeAddress,
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel,
         nodes[nIdx].isClusterHead, nodes[nIdx].isMemberNode,
         SensorNode.getSensorReadings(nodes[nIdx]), 
-        nodes[nIdx].isActive);
+        nodes[nIdx].isActive, nodes[nIdx].parentNode, 
+        nodes[nIdx].withinRangeNodes, nodes[nIdx].backupCHeads);
   }
   
   // Get a node's beacon data
