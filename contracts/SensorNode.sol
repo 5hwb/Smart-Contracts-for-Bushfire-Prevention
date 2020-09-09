@@ -134,15 +134,15 @@ library SensorNode {
 
   /**
    * @notice Read sensor input.
+   * @param _daNode Node to read readings from 
    * @param _allNodes List of all DS.Node instances
    * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
-   * @param _daNode Node to read readings from 
    * @param _sReadings List of sensor readings to input 
    */
   function readSensorInput(
+    DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex, 
-      DS.Node storage _daNode, 
       DS.SensorReading[] memory _sReadings) public {
     
     // Add incoming sensor readings to this node's list of sensor readings
@@ -175,7 +175,7 @@ library SensorNode {
         parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.parentNode);
       }
       
-      readSensorInput(_allNodes, _addrToNodeIndex, parentDsnode, _daNode.sensorReadings);
+      readSensorInput(parentDsnode, _allNodes, _addrToNodeIndex, _daNode.sensorReadings);
     }
   }
   

@@ -250,7 +250,7 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
     sReadings[0] = DS.SensorReading(_sReading, true);
-    SensorNode.readSensorInput(nodes, addrToNodeIndex, nodes[nodeIndex], sReadings);
+    SensorNode.readSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, sReadings);
   }
 
   // Mark the node with the given address as inactive
