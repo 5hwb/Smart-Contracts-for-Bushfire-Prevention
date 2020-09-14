@@ -17,6 +17,8 @@ library DS {
     uint256[] withinRangeNodes; // Addresses of nodes within range of the beacon-sending node
   }
   
+  enum NodeType { Unassigned, Sensor, Controller, Actuator }
+
   struct Node {
     uint nodeID;         // ID of the node
     uint256 nodeAddress; // Address of the node
@@ -46,9 +48,13 @@ library DS {
     
     // Indicate if node is active and ready to transfer data
     bool isActive;
-
+    
+    
+    //NodeType nodeType; ???
+    // this happens: YulException: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.
+    
     // temp
-    // uint256[] arrtemp1;
+    uint256 arrtemp1;
     // uint256[] arrtemp2;    
     // uint256[] arrtemp3;
     // uint256[] arrtemp4;    
