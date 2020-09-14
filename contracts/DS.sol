@@ -51,10 +51,10 @@ library DS {
     
     
     //NodeType nodeType; ???
-    // this happens: YulException: Stack too deep when compiling inline assembly: Variable headStart is 1 slot(s) too deep inside the stack.
+    // this happens: YulException: Stack too deep when compiling inline assembly: Variable value0 is 1 slot(s) too deep inside the stack.
     
     // temp
-    uint256 arrtemp1;
+    //bool arrtemp1;
     // uint256[] arrtemp2;    
     // uint256[] arrtemp3;
     // uint256[] arrtemp4;    

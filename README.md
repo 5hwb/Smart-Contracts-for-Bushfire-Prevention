@@ -14,7 +14,8 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
-* Add new flag to indicate if ndoe is actuator, sensor, or controller. This can be done as an enum if possible.
+* Refactor the 'isClusterHead' and 'isMemberNode' as an enum. 
+* Add new flag to indicate if node is actuator, sensor, or controller. This can be done as an enum if possible.
     - Idea: sensor and actuator are leaf nodes (or cluster heads with no children). The remaining cluster heads are the controller nodes.
 * Make new contract for bushfire detecting operations and managing the node roles.
 * [DONE] Implement the actual redundancy - when a node's cluster head fails, make that node connect to its backup cluster head.
