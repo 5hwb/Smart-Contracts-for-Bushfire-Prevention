@@ -157,6 +157,13 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node3.nodeAddress, 222004);
     assert.equal(node4.nodeAddress, 222005);
   });
+  
+  // NodeType enum values 
+  const NodeType = {
+    Unassigned: '0',
+    MemberNode: '1',
+    ClusterHead: '2'
+  };
 
   it("should elect cluster heads", async () => {
     // 40% chance of being elected?
@@ -169,17 +176,17 @@ contract("NetworkFormation test cases", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.nodeType == '2', false);
-    assert.equal(node2.nodeType == '2', true);
-    assert.equal(node3.nodeType == '2', false);
-    assert.equal(node4.nodeType == '2', true);
-    assert.equal(node5.nodeType == '2', false);
+    assert.equal(node1.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node2.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node3.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node4.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node5.nodeType == NodeType.ClusterHead, false);
     
-    assert.equal(node1.nodeType == '1', true);
-    assert.equal(node2.nodeType == '1', false);
-    assert.equal(node3.nodeType == '1', true);
-    assert.equal(node4.nodeType == '1', false);
-    assert.equal(node5.nodeType == '1', true);
+    assert.equal(node1.nodeType == NodeType.MemberNode, true);
+    assert.equal(node2.nodeType == NodeType.MemberNode, false);
+    assert.equal(node3.nodeType == NodeType.MemberNode, true);
+    assert.equal(node4.nodeType == NodeType.MemberNode, false);
+    assert.equal(node5.nodeType == NodeType.MemberNode, true);
   });
   
   it("should send sensor readings to sink node", async () => {

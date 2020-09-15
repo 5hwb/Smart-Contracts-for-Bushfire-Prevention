@@ -185,9 +185,12 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node4.nodeAddress, 222005);
   });
   
-  // const NodeType = {
-  // 
-  // };
+  // NodeType enum values 
+  const NodeType = {
+    Unassigned: '0',
+    MemberNode: '1',
+    ClusterHead: '2'
+  };
   
   it("should elect cluster heads for Layer 1 nodes", async () => {
     // 50% chance of cluster head being elected
@@ -200,17 +203,17 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.nodeType == '2', false);
-    assert.equal(node2.nodeType == '2', true);
-    assert.equal(node3.nodeType == '2', false);
-    assert.equal(node4.nodeType == '2', true);
-    assert.equal(node5.nodeType == '2', false);
+    assert.equal(node1.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node2.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node3.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node4.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node5.nodeType == NodeType.ClusterHead, false);
     
-    assert.equal(node1.nodeType == '1', true);
-    assert.equal(node2.nodeType == '1', false);
-    assert.equal(node3.nodeType == '1', true);
-    assert.equal(node4.nodeType == '1', false);
-    assert.equal(node5.nodeType == '1', true);
+    assert.equal(node1.nodeType == NodeType.MemberNode, true);
+    assert.equal(node2.nodeType == NodeType.MemberNode, false);
+    assert.equal(node3.nodeType == NodeType.MemberNode, true);
+    assert.equal(node4.nodeType == NodeType.MemberNode, false);
+    assert.equal(node5.nodeType == NodeType.MemberNode, true);
   });
   
   it("should send beacon for Layer 2 nodes", async () => {
@@ -312,19 +315,19 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4_10 = toStruct(await networkFormation.getNodeAsMemory(222010));
     let node4_11 = toStruct(await networkFormation.getNodeAsMemory(222011));
   
-    assert.equal(node2_06.nodeType == '2', true);
-    assert.equal(node2_07.nodeType == '2', false);
-    assert.equal(node4_08.nodeType == '2', true);
-    assert.equal(node4_09.nodeType == '2', true);
-    assert.equal(node4_10.nodeType == '2', false);
-    assert.equal(node4_11.nodeType == '2', false);
+    assert.equal(node2_06.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node2_07.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node4_08.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node4_09.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node4_10.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node4_11.nodeType == NodeType.ClusterHead, false);
   
-    assert.equal(node2_06.nodeType == '1', false);
-    assert.equal(node2_07.nodeType == '1', true);
-    assert.equal(node4_08.nodeType == '1', false);
-    assert.equal(node4_09.nodeType == '1', false);
-    assert.equal(node4_10.nodeType == '1', true);
-    assert.equal(node4_11.nodeType == '1', true);
+    assert.equal(node2_06.nodeType == NodeType.MemberNode, false);
+    assert.equal(node2_07.nodeType == NodeType.MemberNode, true);
+    assert.equal(node4_08.nodeType == NodeType.MemberNode, false);
+    assert.equal(node4_09.nodeType == NodeType.MemberNode, false);
+    assert.equal(node4_10.nodeType == NodeType.MemberNode, true);
+    assert.equal(node4_11.nodeType == NodeType.MemberNode, true);
   });
   
   it("should send beacon for Layer 3 nodes", async () => {
@@ -427,15 +430,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node8_14 = toStruct(await networkFormation.getNodeAsMemory(222014));
     let node8_15 = toStruct(await networkFormation.getNodeAsMemory(222015));
   
-    assert.equal(node6_12.nodeType == '2', false);
-    assert.equal(node6_13.nodeType == '2', true);
-    assert.equal(node8_14.nodeType == '2', false);
-    assert.equal(node8_15.nodeType == '2', true);
+    assert.equal(node6_12.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node6_13.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node8_14.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node8_15.nodeType == NodeType.ClusterHead, true);
   
-    assert.equal(node6_12.nodeType == '1', true);
-    assert.equal(node6_13.nodeType == '1', false);
-    assert.equal(node8_14.nodeType == '1', true);
-    assert.equal(node8_15.nodeType == '1', false);
+    assert.equal(node6_12.nodeType == NodeType.MemberNode, true);
+    assert.equal(node6_13.nodeType == NodeType.MemberNode, false);
+    assert.equal(node8_14.nodeType == NodeType.MemberNode, true);
+    assert.equal(node8_15.nodeType == NodeType.MemberNode, false);
     
   });
   
