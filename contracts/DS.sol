@@ -18,7 +18,15 @@ library DS {
   }
   
   enum NodeType { Unassigned, MemberNode, ClusterHead }
-  enum Role { Default, Sensor, Controller, Actuator }
+  enum NodeRole { Default, Sensor, Controller, Actuator }
+
+  // struct ExtraVars {
+  //   // Put extra variables here when the 'YulException: Stack too deep when compiling inline assembly' issue turns up.
+  //   bool arrtemp1;
+  //   uint256 arrtemp2;    
+  //   uint256 arrtemp3;
+  //   // ...
+  // }
 
   struct Node {
     uint nodeID;         // ID of the node
@@ -51,20 +59,6 @@ library DS {
     // Indicate if node is active and ready to transfer data
     bool isActive;
     
-    
-    //NodeRole nodeRole; ???
-    // this happens: YulException: Stack too deep when compiling inline assembly: Variable value0 is 1 slot(s) too deep inside the stack.
-    
-    // temp
-    //bool arrtemp1;
-    // uint256[] arrtemp2;    
-    // uint256[] arrtemp3;
-    // uint256[] arrtemp4;    
-    // uint256[] arrtemp5;
-    // uint256[] arrtemp6;    
-    // uint256[] arrtemp7;
-    // uint256[] arrtemp8;    
-    // uint256[] arrtemp9;
-    // uint256[] arrtemp0;    
+    NodeRole nodeRole;
   }
 }
