@@ -176,17 +176,12 @@ contract("NetworkFormation test cases", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node2.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node3.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node4.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node5.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node2.nodeType, NodeType.ClusterHead);
+    assert.equal(node4.nodeType, NodeType.ClusterHead);
     
-    assert.equal(node1.nodeType == NodeType.MemberNode, true);
-    assert.equal(node2.nodeType == NodeType.MemberNode, false);
-    assert.equal(node3.nodeType == NodeType.MemberNode, true);
-    assert.equal(node4.nodeType == NodeType.MemberNode, false);
-    assert.equal(node5.nodeType == NodeType.MemberNode, true);
+    assert.equal(node1.nodeType, NodeType.MemberNode);
+    assert.equal(node3.nodeType, NodeType.MemberNode);
+    assert.equal(node5.nodeType, NodeType.MemberNode);
   });
   
   it("should send sensor readings to sink node", async () => {

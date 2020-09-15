@@ -203,17 +203,12 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node2.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node3.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node4.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node5.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node2.nodeType, NodeType.ClusterHead);
+    assert.equal(node4.nodeType, NodeType.ClusterHead);
     
-    assert.equal(node1.nodeType == NodeType.MemberNode, true);
-    assert.equal(node2.nodeType == NodeType.MemberNode, false);
-    assert.equal(node3.nodeType == NodeType.MemberNode, true);
-    assert.equal(node4.nodeType == NodeType.MemberNode, false);
-    assert.equal(node5.nodeType == NodeType.MemberNode, true);
+    assert.equal(node1.nodeType, NodeType.MemberNode);
+    assert.equal(node3.nodeType, NodeType.MemberNode);
+    assert.equal(node5.nodeType, NodeType.MemberNode);
   });
   
   it("should send beacon for Layer 2 nodes", async () => {
@@ -315,19 +310,13 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4_10 = toStruct(await networkFormation.getNodeAsMemory(222010));
     let node4_11 = toStruct(await networkFormation.getNodeAsMemory(222011));
   
-    assert.equal(node2_06.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node2_07.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node4_08.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node4_09.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node4_10.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node4_11.nodeType == NodeType.ClusterHead, false);
+    assert.equal(node2_06.nodeType, NodeType.ClusterHead);
+    assert.equal(node4_08.nodeType, NodeType.ClusterHead);
+    assert.equal(node4_09.nodeType, NodeType.ClusterHead);
   
-    assert.equal(node2_06.nodeType == NodeType.MemberNode, false);
-    assert.equal(node2_07.nodeType == NodeType.MemberNode, true);
-    assert.equal(node4_08.nodeType == NodeType.MemberNode, false);
-    assert.equal(node4_09.nodeType == NodeType.MemberNode, false);
-    assert.equal(node4_10.nodeType == NodeType.MemberNode, true);
-    assert.equal(node4_11.nodeType == NodeType.MemberNode, true);
+    assert.equal(node2_07.nodeType, NodeType.MemberNode);
+    assert.equal(node4_10.nodeType, NodeType.MemberNode);
+    assert.equal(node4_11.nodeType, NodeType.MemberNode);
   });
   
   it("should send beacon for Layer 3 nodes", async () => {
@@ -430,15 +419,11 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node8_14 = toStruct(await networkFormation.getNodeAsMemory(222014));
     let node8_15 = toStruct(await networkFormation.getNodeAsMemory(222015));
   
-    assert.equal(node6_12.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node6_13.nodeType == NodeType.ClusterHead, true);
-    assert.equal(node8_14.nodeType == NodeType.ClusterHead, false);
-    assert.equal(node8_15.nodeType == NodeType.ClusterHead, true);
+    assert.equal(node6_13.nodeType, NodeType.ClusterHead);
+    assert.equal(node8_15.nodeType, NodeType.ClusterHead);
   
-    assert.equal(node6_12.nodeType == NodeType.MemberNode, true);
-    assert.equal(node6_13.nodeType == NodeType.MemberNode, false);
-    assert.equal(node8_14.nodeType == NodeType.MemberNode, true);
-    assert.equal(node8_15.nodeType == NodeType.MemberNode, false);
+    assert.equal(node6_12.nodeType, NodeType.MemberNode);
+    assert.equal(node8_14.nodeType, NodeType.MemberNode);
     
   });
   
