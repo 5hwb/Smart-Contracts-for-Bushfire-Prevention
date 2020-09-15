@@ -56,7 +56,8 @@ function toStruct(val) {
     sensorReadings: convertedSReadings,
     numOfReadings: parseInt(val[14]),
     backupCHeads: val[15].map(i => parseInt(i)),
-    isActive: val[16]
+    isActive: val[16],
+    nodeRole: val[17]
   };
 }
 
@@ -190,6 +191,14 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     Unassigned: '0',
     MemberNode: '1',
     ClusterHead: '2'
+  };
+  
+  // NodeRole enum values 
+  const NodeRole = {
+    Default: '0',
+    Sensor: '1',
+    Controller: '2',
+    Actuator: '3'
   };
   
   it("should elect cluster heads for Layer 1 nodes", async () => {
@@ -521,6 +530,59 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
         backupCHeads: nodeStruct.backupCHeads
       };
     }));
+  });
+  
+  it("should be able to assign roles to nodes", async () => {
+    await networkFormation.assignAsController(111000);
+    await networkFormation.assignAsSensor(222001);
+    await networkFormation.assignAsController(222002);
+    await networkFormation.assignAsSensor(222003);
+    await networkFormation.assignAsController(222004);
+    await networkFormation.assignAsActuator(222005);
+    await networkFormation.assignAsController(222006);
+    await networkFormation.assignAsActuator(222007);
+    await networkFormation.assignAsController(222008);
+    await networkFormation.assignAsSensor(222009);
+    await networkFormation.assignAsActuator(222010);
+    await networkFormation.assignAsActuator(222011);
+    await networkFormation.assignAsSensor(222012);
+    await networkFormation.assignAsSensor(222013);
+    await networkFormation.assignAsSensor(222014);
+    await networkFormation.assignAsSensor(222015);
+
+    let node111000 = toStruct(await networkFormation.getNodeAsMemory(111000));
+    let node222001 = toStruct(await networkFormation.getNodeAsMemory(222001));
+    let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
+    let node222003 = toStruct(await networkFormation.getNodeAsMemory(222003));
+    let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
+    let node222005 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    let node222006 = toStruct(await networkFormation.getNodeAsMemory(222006));
+    let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
+    let node222008 = toStruct(await networkFormation.getNodeAsMemory(222008));
+    let node222009 = toStruct(await networkFormation.getNodeAsMemory(222009));
+    let node222010 = toStruct(await networkFormation.getNodeAsMemory(222010));
+    let node222011 = toStruct(await networkFormation.getNodeAsMemory(222011));
+    let node222012 = toStruct(await networkFormation.getNodeAsMemory(222012));
+    let node222013 = toStruct(await networkFormation.getNodeAsMemory(222013));
+    let node222014 = toStruct(await networkFormation.getNodeAsMemory(222014));
+    let node222015 = toStruct(await networkFormation.getNodeAsMemory(222015));
+
+    assert.equal(node111000.nodeRole, NodeRole.Controller);
+    assert.equal(node222001.nodeRole, NodeRole.Sensor);
+    assert.equal(node222002.nodeRole, NodeRole.Controller);
+    assert.equal(node222003.nodeRole, NodeRole.Sensor);
+    assert.equal(node222004.nodeRole, NodeRole.Controller);
+    assert.equal(node222005.nodeRole, NodeRole.Actuator);
+    assert.equal(node222006.nodeRole, NodeRole.Controller);
+    assert.equal(node222007.nodeRole, NodeRole.Actuator);
+    assert.equal(node222008.nodeRole, NodeRole.Controller);
+    assert.equal(node222009.nodeRole, NodeRole.Sensor);
+    assert.equal(node222010.nodeRole, NodeRole.Actuator);
+    assert.equal(node222011.nodeRole, NodeRole.Actuator);
+    assert.equal(node222012.nodeRole, NodeRole.Sensor);
+    assert.equal(node222013.nodeRole, NodeRole.Sensor);
+    assert.equal(node222014.nodeRole, NodeRole.Sensor);
+    assert.equal(node222015.nodeRole, NodeRole.Sensor);
   });
   
   it("should be able to send reading to sink node even if its cluster head has become inactive", async () => {

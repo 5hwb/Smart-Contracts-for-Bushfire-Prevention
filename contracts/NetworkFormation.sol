@@ -198,6 +198,24 @@ contract NetworkFormation {
     SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);
   }
   
+  // Assign the sensor role to the given node.
+  function assignAsSensor(uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    SensorNode.setAsSensorRole(nodes[nodeIndex]);
+  }
+  
+  // Assign the controller role to the given node.
+  function assignAsController(uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    SensorNode.setAsControllerRole(nodes[nodeIndex]);
+  }
+  
+  // Assign the actuator role to the given node.
+  function assignAsActuator(uint _nodeAddr) public {
+    uint nodeIndex = getNodeIndex(_nodeAddr);
+    SensorNode.setAsActuatorRole(nodes[nodeIndex]);
+  }
+  
   // Get the sorted nodes 
   function getSortedNodes() public returns(DS.Node[] memory) {
     return QuickSort.sort(nodes);
