@@ -14,12 +14,12 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
-* Add new flag to indicate if node is actuator, sensor, or controller. This can be done as an enum if possible.
-    - Idea: sensor and actuator are leaf nodes (or cluster heads with no children). The remaining cluster heads are the controller nodes.
-* Make network react to different stimuli: 
+* [DOTHISNOW!!!!] Make network react to different stimuli: 
     - If sensor detects temp is > 37 degrees, alert controller, which in turn alerts the actuator and makes it trigger a device (sprinkler, alert fire services, etc).
     - If sensor temp is > 45 degrees, deactivate the sensor!
 * Make new contract for bushfire detecting operations and managing the node roles.
+* [DONE] Add new flag to indicate if node is actuator, sensor, or controller. This can be done as an enum if possible.
+    - Idea: sensor and actuator are leaf nodes (or cluster heads with no children). The remaining cluster heads are the controller nodes.
 * [DONE] Implement the actual redundancy - when a node's cluster head fails, make that node connect to its backup cluster head.
 * [DONE] Add test cases for newly added backup cluster heads (ensure the correct ones are being nominated)
 * Refactor the code to allow for further expansion. Idea: split up NetworkFormation into several, smaller contracts.
