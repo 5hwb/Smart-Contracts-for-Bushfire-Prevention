@@ -47,19 +47,19 @@ contract TestNetworkFormation {
    ***********************************************/
   function testNodeRegistration() public {
     // Register dummyAddr1 node as cluster head
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).isClusterHead, false, "Cluster head has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).isMemberNode, false, "Cluster head has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.ClusterHead, false, "Cluster head has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head has issues");
     contAddr.registerAsClusterHead(0, dummyAddr1);
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).isClusterHead, true, "Cluster head registration has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).isMemberNode, false, "Cluster head registration has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.ClusterHead, true, "Cluster head registration has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head registration has issues");
     // this should fail: contAddr.registerAsMemberNode(dummyAddr2, dummyAddr1);
   
     // Register dummyAddr2 node as member node of cluster with dummyAddr1 as cluster head
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).isClusterHead, false, "Node has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).isMemberNode, false, "Node has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Node has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.MemberNode, false, "Node has issues");
     contAddr.registerAsMemberNode(dummyAddr1, dummyAddr2);
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).isClusterHead, false, "Member node registration has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).isMemberNode, true, "Member node registration has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Member node registration has issues");
+    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.MemberNode, true, "Member node registration has issues");
     // this should fail: contAddr.registerAsClusterHead(dummyAddr2);
   }
 

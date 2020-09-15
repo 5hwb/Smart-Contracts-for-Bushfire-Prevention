@@ -17,8 +17,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[12].length; i++) {
-    var currBeacon = val[12][i];
+  for (var i = 0; i < val[11].length; i++) {
+    var currBeacon = val[11][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -28,8 +28,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[14].length; i++) {
-    var currSReading = val[14][i];
+  for (var i = 0; i < val[13].length; i++) {
+    var currSReading = val[13][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -42,22 +42,21 @@ function toStruct(val) {
     energyLevel: parseInt(val[2]),
     networkLevel: parseInt(val[3]),
     numOfOneHopClusterHeads: parseInt(val[4]),
-    isClusterHead: val[5],
-    isMemberNode: val[6],
-
-    parentNode: parseInt(val[7]),
-    childNodes: val[8].map(i => parseInt(i)),
-    joinRequestNodes: val[9].map(i => parseInt(i)),
-    numOfJoinRequests: parseInt(val[10]),
-    withinRangeNodes: val[11].map(i => parseInt(i)),
+    nodeType: val[5],
+    
+    parentNode: parseInt(val[6]),
+    childNodes: val[7].map(i => parseInt(i)),
+    joinRequestNodes: val[8].map(i => parseInt(i)),
+    numOfJoinRequests: parseInt(val[9]),
+    withinRangeNodes: val[10].map(i => parseInt(i)),
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[13]),
+    numOfBeacons: parseInt(val[12]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[15]),
-    backupCHeads: val[16].map(i => parseInt(i)),
-    isActive: val[17]
+    numOfReadings: parseInt(val[14]),
+    backupCHeads: val[15].map(i => parseInt(i)),
+    isActive: val[16]
   };
 }
 
@@ -186,6 +185,10 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node4.nodeAddress, 222005);
   });
   
+  // const NodeType = {
+  // 
+  // };
+  
   it("should elect cluster heads for Layer 1 nodes", async () => {
     // 50% chance of cluster head being elected
     await networkFormation.electClusterHeads(111000, 50);
@@ -197,17 +200,17 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.isClusterHead, false);
-    assert.equal(node2.isClusterHead, true);
-    assert.equal(node3.isClusterHead, false);
-    assert.equal(node4.isClusterHead, true);
-    assert.equal(node5.isClusterHead, false);
+    assert.equal(node1.nodeType == '2', false);
+    assert.equal(node2.nodeType == '2', true);
+    assert.equal(node3.nodeType == '2', false);
+    assert.equal(node4.nodeType == '2', true);
+    assert.equal(node5.nodeType == '2', false);
     
-    assert.equal(node1.isMemberNode, true);
-    assert.equal(node2.isMemberNode, false);
-    assert.equal(node3.isMemberNode, true);
-    assert.equal(node4.isMemberNode, false);
-    assert.equal(node5.isMemberNode, true);
+    assert.equal(node1.nodeType == '1', true);
+    assert.equal(node2.nodeType == '1', false);
+    assert.equal(node3.nodeType == '1', true);
+    assert.equal(node4.nodeType == '1', false);
+    assert.equal(node5.nodeType == '1', true);
   });
   
   it("should send beacon for Layer 2 nodes", async () => {
@@ -309,19 +312,19 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node4_10 = toStruct(await networkFormation.getNodeAsMemory(222010));
     let node4_11 = toStruct(await networkFormation.getNodeAsMemory(222011));
   
-    assert.equal(node2_06.isClusterHead, true);
-    assert.equal(node2_07.isClusterHead, false);
-    assert.equal(node4_08.isClusterHead, true);
-    assert.equal(node4_09.isClusterHead, true);
-    assert.equal(node4_10.isClusterHead, false);
-    assert.equal(node4_11.isClusterHead, false);
+    assert.equal(node2_06.nodeType == '2', true);
+    assert.equal(node2_07.nodeType == '2', false);
+    assert.equal(node4_08.nodeType == '2', true);
+    assert.equal(node4_09.nodeType == '2', true);
+    assert.equal(node4_10.nodeType == '2', false);
+    assert.equal(node4_11.nodeType == '2', false);
   
-    assert.equal(node2_06.isMemberNode, false);
-    assert.equal(node2_07.isMemberNode, true);
-    assert.equal(node4_08.isMemberNode, false);
-    assert.equal(node4_09.isMemberNode, false);
-    assert.equal(node4_10.isMemberNode, true);
-    assert.equal(node4_11.isMemberNode, true);
+    assert.equal(node2_06.nodeType == '1', false);
+    assert.equal(node2_07.nodeType == '1', true);
+    assert.equal(node4_08.nodeType == '1', false);
+    assert.equal(node4_09.nodeType == '1', false);
+    assert.equal(node4_10.nodeType == '1', true);
+    assert.equal(node4_11.nodeType == '1', true);
   });
   
   it("should send beacon for Layer 3 nodes", async () => {
@@ -424,15 +427,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node8_14 = toStruct(await networkFormation.getNodeAsMemory(222014));
     let node8_15 = toStruct(await networkFormation.getNodeAsMemory(222015));
   
-    assert.equal(node6_12.isClusterHead, false);
-    assert.equal(node6_13.isClusterHead, true);
-    assert.equal(node8_14.isClusterHead, false);
-    assert.equal(node8_15.isClusterHead, true);
+    assert.equal(node6_12.nodeType == '2', false);
+    assert.equal(node6_13.nodeType == '2', true);
+    assert.equal(node8_14.nodeType == '2', false);
+    assert.equal(node8_15.nodeType == '2', true);
   
-    assert.equal(node6_12.isMemberNode, true);
-    assert.equal(node6_13.isMemberNode, false);
-    assert.equal(node8_14.isMemberNode, true);
-    assert.equal(node8_15.isMemberNode, false);
+    assert.equal(node6_12.nodeType == '1', true);
+    assert.equal(node6_13.nodeType == '1', false);
+    assert.equal(node8_14.nodeType == '1', true);
+    assert.equal(node8_15.nodeType == '1', false);
     
   });
   
@@ -550,8 +553,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
         nodeAddress: nodeStruct.nodeAddress, 
         parentNode: nodeStruct.parentNode, 
         sensorReadings: nodeStruct.sensorReadings.map(sReading => sReading.reading),
-        isClusterHead: nodeStruct.isClusterHead,
-        isMemberNode: nodeStruct.isMemberNode,
+        nodeType: nodeStruct.nodeType,
         isActive: nodeStruct.isActive
       };
     }));

@@ -243,8 +243,9 @@ library SensorNode {
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
     //assert(_daNode.isMemberNode == false);
-    _daNode.isClusterHead = true;
-    _daNode.isMemberNode = false;
+    // _daNode.isClusterHead = true;
+    // _daNode.isMemberNode = false;
+    _daNode.nodeType = DS.NodeType.ClusterHead;
   }
   
   /**
@@ -253,8 +254,9 @@ library SensorNode {
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
     //assert(_daNode.isClusterHead == false);
-    _daNode.isClusterHead = false;
-    _daNode.isMemberNode = true;
+    // _daNode.isClusterHead = false;
+    // _daNode.isMemberNode = true;
+    _daNode.nodeType = DS.NodeType.MemberNode;
   }
   
   /**

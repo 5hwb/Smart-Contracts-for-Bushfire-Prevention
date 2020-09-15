@@ -19,7 +19,7 @@ contract NetworkFormation {
   uint public numOfLevels; // How many levels the network is consisted of
   
   // Events
-  event AddedNode(uint nodeID, uint256 addr, uint energyLevel, uint networkLevel, bool isClusterHead, bool isMemberNode);
+  event AddedNode(uint nodeID, uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
   
   // TODO Solidity compiler whinges that 'Only libraries are allowed to use the mapping type in public or external functions'. Find a way around this later! 
@@ -52,7 +52,7 @@ contract NetworkFormation {
     addrToNodeIndex[_addr] = numOfNodes;
     numOfNodes++;
 
-    emit AddedNode(_id, _addr, _energyLevel, node.networkLevel, node.isClusterHead, node.isMemberNode);
+    emit AddedNode(_id, _addr, _energyLevel, node.networkLevel, node.nodeType);
   }
   
   // Get the index of the node with the given address
@@ -75,7 +75,7 @@ contract NetworkFormation {
   function getNodeInfo(uint _nodeAddr) public view returns (
     uint, uint256,
     uint, uint,
-    bool, bool,
+    DS.NodeType,
     uint256[] memory,
     bool, uint,
     uint256[] memory, uint256[] memory) {
@@ -83,7 +83,7 @@ contract NetworkFormation {
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return (nodes[nIdx].nodeID, nodes[nIdx].nodeAddress,
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel,
-        nodes[nIdx].isClusterHead, nodes[nIdx].isMemberNode,
+        nodes[nIdx].nodeType,
         SensorNode.getSensorReadings(nodes[nIdx]), 
         nodes[nIdx].isActive, nodes[nIdx].parentNode, 
         nodes[nIdx].withinRangeNodes, nodes[nIdx].backupCHeads);
@@ -112,7 +112,7 @@ contract NetworkFormation {
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(uint _cHeadAddr) public {
     uint chIndex = getNodeIndex(_cHeadAddr);
-    require(nodes[chIndex].isClusterHead == true, "Given node is not cluster head");
+    require(nodes[chIndex].nodeType == DS.NodeType.ClusterHead, "Given node is not cluster head");
 
     // Get network level of this cluster head to calculate next level
     uint nextNetLevel = nodes[chIndex].networkLevel;
@@ -124,7 +124,7 @@ contract NetworkFormation {
       
       // Ignore this node if it's a cluster head or if the network level is 
       // already set between 1 and the current cluster head's network level 
-      if (currNode.isClusterHead || (currNode.networkLevel > 0
+      if (currNode.nodeType == DS.NodeType.ClusterHead || (currNode.networkLevel > 0
           && currNode.networkLevel <= nodes[chIndex].networkLevel)) {
         emit SomethingHappened(i, nodes[chIndex].nodeAddress, currNode.nodeAddress, SensorNode.numOfWithinRangeNodes(nodes[chIndex]), "Node was ignored");
         continue;
@@ -178,8 +178,8 @@ contract NetworkFormation {
   function registerAsClusterHead(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].isClusterHead == false);
-    assert(nodes[nodeIndex].isMemberNode == false);
+    assert(nodes[nodeIndex].nodeType != DS.NodeType.ClusterHead);
+    assert(nodes[nodeIndex].nodeType != DS.NodeType.MemberNode);
     
     SensorNode.setAsClusterHead(nodes[nodeIndex]);
     
@@ -193,8 +193,8 @@ contract NetworkFormation {
   function registerAsMemberNode(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].isClusterHead == false);
-    assert(nodes[nodeIndex].isMemberNode == false);
+    assert(nodes[nodeIndex].nodeType != DS.NodeType.ClusterHead);
+    assert(nodes[nodeIndex].nodeType != DS.NodeType.MemberNode);
 
     SensorNode.setAsMemberNode(nodes[nodeIndex]);
     SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);

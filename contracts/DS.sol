@@ -17,7 +17,8 @@ library DS {
     uint256[] withinRangeNodes; // Addresses of nodes within range of the beacon-sending node
   }
   
-  enum NodeType { Unassigned, Sensor, Controller, Actuator }
+  enum NodeType { Unassigned, MemberNode, ClusterHead }
+  enum Role { Default, Sensor, Controller, Actuator }
 
   struct Node {
     uint nodeID;         // ID of the node
@@ -26,8 +27,9 @@ library DS {
     uint energyLevel;    // give it when initialising.
     uint networkLevel;          // Tree level this node is located at
     uint numOfOneHopClusterHeads; // init to 1
-    bool isClusterHead;           // init to false
-    bool isMemberNode;            // init to false
+    // bool isClusterHead;           // init to false
+    // bool isMemberNode;            // init to false
+    NodeType nodeType;
     
     uint256 parentNode;         // (CHANGED FROM SensorNode) parent (cluster head) of this node
     uint256[] childNodes;       // (CHANGED FROM SensorNode) children of this node (if cluster head)
@@ -50,7 +52,7 @@ library DS {
     bool isActive;
     
     
-    //NodeType nodeType; ???
+    //NodeRole nodeRole; ???
     // this happens: YulException: Stack too deep when compiling inline assembly: Variable value0 is 1 slot(s) too deep inside the stack.
     
     // temp

@@ -18,8 +18,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[12].length; i++) {
-    var currBeacon = val[12][i];
+  for (var i = 0; i < val[11].length; i++) {
+    var currBeacon = val[11][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -29,8 +29,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[14].length; i++) {
-    var currSReading = val[14][i];
+  for (var i = 0; i < val[13].length; i++) {
+    var currSReading = val[13][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -43,21 +43,21 @@ function toStruct(val) {
     energyLevel: parseInt(val[2]),
     networkLevel: parseInt(val[3]),
     numOfOneHopClusterHeads: parseInt(val[4]),
-    isClusterHead: val[5],
-    isMemberNode: val[6],
-
-    parentNode: parseInt(val[7]),
-    childNodes: val[8].map(i => parseInt(i)),
-    joinRequestNodes: val[9].map(i => parseInt(i)),
-    numOfJoinRequests: parseInt(val[10]),
-    withinRangeNodes: val[11].map(i => parseInt(i)),
+    nodeType: val[5],
+    
+    parentNode: parseInt(val[6]),
+    childNodes: val[7].map(i => parseInt(i)),
+    joinRequestNodes: val[8].map(i => parseInt(i)),
+    numOfJoinRequests: parseInt(val[9]),
+    withinRangeNodes: val[10].map(i => parseInt(i)),
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[13]),
+    numOfBeacons: parseInt(val[12]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[15]),
-    backupCHeads: val[16].map(i => parseInt(i))
+    numOfReadings: parseInt(val[14]),
+    backupCHeads: val[15].map(i => parseInt(i)),
+    isActive: val[16]
   };
 }
 
@@ -169,17 +169,17 @@ contract("NetworkFormation test cases", async accounts => {
     let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
     
-    assert.equal(node1.isClusterHead, false);
-    assert.equal(node2.isClusterHead, true);
-    assert.equal(node3.isClusterHead, false);
-    assert.equal(node4.isClusterHead, true);
-    assert.equal(node5.isClusterHead, false);
+    assert.equal(node1.nodeType == '2', false);
+    assert.equal(node2.nodeType == '2', true);
+    assert.equal(node3.nodeType == '2', false);
+    assert.equal(node4.nodeType == '2', true);
+    assert.equal(node5.nodeType == '2', false);
     
-    assert.equal(node1.isMemberNode, true);
-    assert.equal(node2.isMemberNode, false);
-    assert.equal(node3.isMemberNode, true);
-    assert.equal(node4.isMemberNode, false);
-    assert.equal(node5.isMemberNode, true);
+    assert.equal(node1.nodeType == '1', true);
+    assert.equal(node2.nodeType == '1', false);
+    assert.equal(node3.nodeType == '1', true);
+    assert.equal(node4.nodeType == '1', false);
+    assert.equal(node5.nodeType == '1', true);
   });
   
   it("should send sensor readings to sink node", async () => {
