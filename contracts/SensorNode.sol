@@ -305,6 +305,30 @@ library SensorNode {
     _daNode.isActive = true;
   }
     
+  /**
+   * @notice Set the given node's role as a sensor node.
+   * @param _daNode The node to set
+   */
+  function setAsSensorRole(DS.Node storage _daNode) public {
+    _daNode.nodeRole = DS.NodeRole.Sensor;
+  }
+  
+  /**
+   * @notice Set the given node's role as a controller.
+   * @param _daNode The node to set
+   */
+  function setAsControllerRole(DS.Node storage _daNode) public {
+    _daNode.nodeRole = DS.NodeRole.Controller;
+  }
+  
+  /**
+   * @notice Set the given node's role as an actuator.
+   * @param _daNode The node to set
+   */
+  function setAsActuatorRole(DS.Node storage _daNode) public {
+    _daNode.nodeRole = DS.NodeRole.Actuator;
+  }
+  
   ////////////////////////////////////////
   // childNodes GETTER FUNCTIONS
   ////////////////////////////////////////
