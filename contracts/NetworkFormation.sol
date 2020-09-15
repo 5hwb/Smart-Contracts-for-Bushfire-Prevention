@@ -178,8 +178,7 @@ contract NetworkFormation {
   function registerAsClusterHead(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].nodeType != DS.NodeType.ClusterHead);
-    assert(nodes[nodeIndex].nodeType != DS.NodeType.MemberNode);
+    assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
     
     SensorNode.setAsClusterHead(nodes[nodeIndex]);
     
@@ -193,8 +192,7 @@ contract NetworkFormation {
   function registerAsMemberNode(uint _cHeadAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint cHeadIndex = getNodeIndex(_cHeadAddr);
-    assert(nodes[nodeIndex].nodeType != DS.NodeType.ClusterHead);
-    assert(nodes[nodeIndex].nodeType != DS.NodeType.MemberNode);
+    assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
 
     SensorNode.setAsMemberNode(nodes[nodeIndex]);
     SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);
