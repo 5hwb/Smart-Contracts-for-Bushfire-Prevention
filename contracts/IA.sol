@@ -94,7 +94,7 @@ library IA {
    * @param arr2 The 2nd array to check
    * @return True if length of both arrays are identical and all elements match 
    */
-  function equals(uint256[] storage arr1, uint256[] storage arr2) public returns(bool) {
+  function equals(uint256[] storage arr1, uint256[] storage arr2) public view returns(bool) {
     // If the lengths match...
     if (arr1.length == arr2.length) {
       bool isMatch = true;
@@ -128,7 +128,7 @@ library IA {
    * @param arr1 The 1st array to check
    * @param arr2 The 2nd array to check
    */
-  function inter(uint256[] memory arr1, uint256[] memory arr2) public returns(uint256[] memory) {
+  function inter(uint256[] memory arr1, uint256[] memory arr2) public pure returns(uint256[] memory) {
     // Check which arr to use as the shortest array
     bool usingArr2 = (arr2.length < arr1.length);
     uint256[] memory shortArray = (usingArr2) ? arr2 : arr1;

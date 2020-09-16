@@ -638,7 +638,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     
     (await networkFormation.getAllNodes()).map(
       function(node) {
-        console.log(toReadableString(node)); 
+        console.log(toStruct(node)); 
       }
     );
 
