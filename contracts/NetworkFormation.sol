@@ -177,25 +177,31 @@ contract NetworkFormation {
   // Register the given node as a cluster head.
   function registerAsClusterHead(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    uint cHeadIndex = getNodeIndex(_parentAddr);
+    uint parentIndex = getNodeIndex(_parentAddr);
     assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
     
     SensorNode.setAsClusterHead(nodes[nodeIndex]);
     
-    // Set the cluster head as the parent node (only if valid address!)
+    // Set the parent node (only if valid address!) and add this node as the child node of the parent
     if (_parentAddr != 0) {
-      SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);
+      SensorNode.setParentNode(nodes[nodeIndex], nodes[parentIndex].nodeAddress);
+      SensorNode.addChildNode(nodes[parentIndex], nodes[nodeIndex].nodeAddress);
     }
   }
   
   // Register the given node as a member node of the given cluster head.
   function registerAsMemberNode(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    uint cHeadIndex = getNodeIndex(_parentAddr);
+    uint parentIndex = getNodeIndex(_parentAddr);
     assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
 
     SensorNode.setAsMemberNode(nodes[nodeIndex]);
-    SensorNode.setParentNode(nodes[nodeIndex], nodes[cHeadIndex].nodeAddress);
+
+    // Set the parent node (only if valid address!) and add this node as the child node of the parent
+    if (_parentAddr != 0) {
+      SensorNode.setParentNode(nodes[nodeIndex], nodes[parentIndex].nodeAddress);
+      SensorNode.addChildNode(nodes[parentIndex], nodes[nodeIndex].nodeAddress);
+    }
   }
   
   // Assign the sensor role to the given node.

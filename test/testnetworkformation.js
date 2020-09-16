@@ -57,7 +57,8 @@ function toStruct(val) {
     sensorReadings: convertedSReadings,
     numOfReadings: parseInt(val[14]),
     backupCHeads: val[15].map(i => parseInt(i)),
-    isActive: val[16]
+    isActive: val[16],
+    nodeRole: val[17]
   };
 }
 

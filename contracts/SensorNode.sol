@@ -269,6 +269,15 @@ library SensorNode {
   }
   
   /**
+   * @notice Add the address of a child node to this node.
+   * @param _daNode The node to modify
+   * @param _nodeAddr The address of the child node
+   */
+  function addChildNode(DS.Node storage _daNode, uint256 _nodeAddr) public {
+    _daNode.childNodes.push(_nodeAddr);
+  }
+
+  /**
    * @notice Add the address of a join request node to this node.
    * @param _daNode The node to modify
    * @param _nodeAddr The address of the node that sent a join request to this node
