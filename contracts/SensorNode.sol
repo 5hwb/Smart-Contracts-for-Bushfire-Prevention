@@ -201,12 +201,13 @@ library SensorNode {
           DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.childNodes[i]);
           respondToSensorInput(childNode, _allNodes, _addrToNodeIndex);
         }
-      }
-      
-      // Otherwise, if this node is an actuator, simulate triggering the device
-      else if (_daNode.ev.nodeRole == DS.NodeRole.Actuator) {
-        _daNode.ev.gotIt = "Received the message.";
-      }
+      }      
+    }
+    
+    
+    // Otherwise, if this node is an actuator, simulate triggering the device
+    if (_daNode.ev.nodeRole == DS.NodeRole.Actuator) {
+      _daNode.ev.gotIt = "Received the message.";
     }
 
   }
