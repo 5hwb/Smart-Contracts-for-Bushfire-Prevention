@@ -140,7 +140,7 @@ library SensorNode {
    * @param _sReadings List of sensor readings to input 
    */
   function readSensorInput(
-    DS.Node storage _daNode, 
+      DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex, 
       DS.SensorReading[] memory _sReadings) public {

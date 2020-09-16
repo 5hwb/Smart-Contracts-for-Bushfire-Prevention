@@ -4,11 +4,11 @@ pragma experimental ABIEncoderV2;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "../contracts/Listo.sol";
+import "../contracts/IA.sol";
 
 contract TestListo {
   // The address of the contract to be tested
-  Listo contAddr = Listo(DeployedAddresses.Listo());
+  //Listo contAddr = Listo(DeployedAddresses.Listo());
 
   // Address of this contract
   address contractAddress = address(this);
@@ -23,7 +23,7 @@ contract TestListo {
   
   // Test the get() and contains() IA functions
   function testGetAndContains() public {
-    contAddr.testThingo();
+    //contAddr.testThingo();
 
     IA.initIndexedArray(ia);
     IA.add(ia, 5);
