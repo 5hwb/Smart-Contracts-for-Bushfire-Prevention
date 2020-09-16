@@ -111,7 +111,7 @@ function toReadableString(val) {
   + "numOfReadings: " +  parseInt(val[14]) + "\n"
   + "backupCHeads: " +  val[15].map(i => parseInt(i)) + "\n"
   + "isActive: " +  val[16] + "\n"
-  + "nodeRole: " +  val[17] + "\n";
+  + "TODO: fix this !!! nodeRole: " +  val[17] + "\n";
 
   return result;
 }
@@ -493,7 +493,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   
   it("should send sensor readings to sink node", async () => {
     // Simulate reading values from each sensor node
-    await networkFormation.readSensorInput(9001, 222001);
+    await networkFormation.readSensorInput(37011, 222001); // just to trigger the response
     await networkFormation.readSensorInput(9002, 222002);
     await networkFormation.readSensorInput(9003, 222003);
     await networkFormation.readSensorInput(9004, 222004);
@@ -528,7 +528,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   
     // Check that all sensor nodes got their readings
     // node: sensorReadings[0] is a dummy reading to help detect null values,
-    assert.equal(node222001.sensorReadings[1].reading, 9001);
+    assert.equal(node222001.sensorReadings[1].reading, 37011);
     assert.equal(node222003.sensorReadings[1].reading, 9003);
     assert.equal(node222005.sensorReadings[1].reading, 9005);
     assert.equal(node222007.sensorReadings[1].reading, 9007);
@@ -563,7 +563,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node222004.sensorReadings[7].reading, 9015);
   
     // Check that the sink node had received the sensor readings
-    assert.equal(node111000.sensorReadings[1].reading, 9001);
+    assert.equal(node111000.sensorReadings[1].reading, 37011);
     assert.equal(node111000.sensorReadings[2].reading, 9002);
     assert.equal(node111000.sensorReadings[3].reading, 9003);
     assert.equal(node111000.sensorReadings[4].reading, 9004);
@@ -639,13 +639,29 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node222014.ev.nodeRole, NodeRole.Sensor);
     assert.equal(node222015.ev.nodeRole, NodeRole.Sensor);
     
-    (await networkFormation.getAllNodes()).map(
-      function(node) {
-        console.log(toStruct(node)); 
-      }
-    );
+  });
+  
+  it("should be able to respond to sensor input", async () => {
+    await networkFormation.respondToSensorInput(111000);
+
+    // (await networkFormation.getAllNodes()).map(
+    //   function(node) {
+    //     console.log(toStruct(node)); 
+    //   }
+    // );
+    
+    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+      return {
+        nodeAddress: nodeStruct.nodeAddress, 
+        sensorReadings: nodeStruct.sensorReadings.map(x => x.reading),
+        nodeRole: nodeStruct.ev.nodeRole,
+        gotIt: nodeStruct.ev.gotIt
+      };
+    }));
+
 
   });
+
   
   it("should be able to send reading to sink node even if its cluster head has become inactive", async () => {
     // Disable node 222002
