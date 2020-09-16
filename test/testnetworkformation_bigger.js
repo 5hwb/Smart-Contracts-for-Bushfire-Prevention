@@ -57,7 +57,10 @@ function toStruct(val) {
     numOfReadings: parseInt(val[14]),
     backupCHeads: val[15].map(i => parseInt(i)),
     isActive: val[16],
-    nodeRole: val[17]
+    ev: {
+      nodeRole: val[17][0],
+      gotIt: val[17][1]
+    }
   };
 }
 
@@ -619,22 +622,22 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node222014 = toStruct(await networkFormation.getNodeAsMemory(222014));
     let node222015 = toStruct(await networkFormation.getNodeAsMemory(222015));
 
-    assert.equal(node111000.nodeRole, NodeRole.Controller);
-    assert.equal(node222001.nodeRole, NodeRole.Sensor);
-    assert.equal(node222002.nodeRole, NodeRole.Controller);
-    assert.equal(node222003.nodeRole, NodeRole.Sensor);
-    assert.equal(node222004.nodeRole, NodeRole.Controller);
-    assert.equal(node222005.nodeRole, NodeRole.Actuator);
-    assert.equal(node222006.nodeRole, NodeRole.Controller);
-    assert.equal(node222007.nodeRole, NodeRole.Actuator);
-    assert.equal(node222008.nodeRole, NodeRole.Controller);
-    assert.equal(node222009.nodeRole, NodeRole.Sensor);
-    assert.equal(node222010.nodeRole, NodeRole.Actuator);
-    assert.equal(node222011.nodeRole, NodeRole.Actuator);
-    assert.equal(node222012.nodeRole, NodeRole.Sensor);
-    assert.equal(node222013.nodeRole, NodeRole.Sensor);
-    assert.equal(node222014.nodeRole, NodeRole.Sensor);
-    assert.equal(node222015.nodeRole, NodeRole.Sensor);
+    assert.equal(node111000.ev.nodeRole, NodeRole.Controller);
+    assert.equal(node222001.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222002.ev.nodeRole, NodeRole.Controller);
+    assert.equal(node222003.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222004.ev.nodeRole, NodeRole.Controller);
+    assert.equal(node222005.ev.nodeRole, NodeRole.Actuator);
+    assert.equal(node222006.ev.nodeRole, NodeRole.Controller);
+    assert.equal(node222007.ev.nodeRole, NodeRole.Actuator);
+    assert.equal(node222008.ev.nodeRole, NodeRole.Controller);
+    assert.equal(node222009.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222010.ev.nodeRole, NodeRole.Actuator);
+    assert.equal(node222011.ev.nodeRole, NodeRole.Actuator);
+    assert.equal(node222012.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222013.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222014.ev.nodeRole, NodeRole.Sensor);
+    assert.equal(node222015.ev.nodeRole, NodeRole.Sensor);
     
     (await networkFormation.getAllNodes()).map(
       function(node) {

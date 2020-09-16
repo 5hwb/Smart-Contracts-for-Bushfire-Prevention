@@ -180,6 +180,38 @@ library SensorNode {
   }
   
   /**
+   * @notice Make the given cluster head node send a response to sensor input.
+   * @param _daNode Node to read readings from 
+   * @param _allNodes List of all DS.Node instances
+   * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
+   */
+  function respondToSensorInput(
+      DS.Node storage _daNode, 
+      DS.Node[] storage _allNodes, 
+      mapping(uint => uint) storage _addrToNodeIndex) public {
+
+    // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
+    // TODO make this more flexible
+    if (_daNode.sensorReadings[1].reading > 37000) {
+      
+      // If this node is a controller, go thru each of its children nodes
+      // and call this function on each of them      
+      if (_daNode.ev.nodeRole == DS.NodeRole.Controller) {
+        for (uint i = 0; i < _daNode.childNodes.length; i++) {
+          DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.childNodes[i]);
+          respondToSensorInput(childNode, _allNodes, _addrToNodeIndex);
+        }
+      }
+      
+      // Otherwise, if this node is an actuator, simulate triggering the device
+      else if (_daNode.ev.nodeRole == DS.NodeRole.Actuator) {
+        _daNode.ev.gotIt = "Received the message.";
+      }
+    }
+
+  }
+  
+  /**
    * @notice Get all sensor readings sent to this node.
    * @param _daNode The node to get the sensor readings from
    * @return The sensor readings sent to the given node
@@ -319,7 +351,7 @@ library SensorNode {
    * @param _daNode The node to set
    */
   function setAsSensorRole(DS.Node storage _daNode) public {
-    _daNode.nodeRole = DS.NodeRole.Sensor;
+    _daNode.ev.nodeRole = DS.NodeRole.Sensor;
   }
   
   /**
@@ -327,7 +359,7 @@ library SensorNode {
    * @param _daNode The node to set
    */
   function setAsControllerRole(DS.Node storage _daNode) public {
-    _daNode.nodeRole = DS.NodeRole.Controller;
+    _daNode.ev.nodeRole = DS.NodeRole.Controller;
   }
   
   /**
@@ -335,7 +367,7 @@ library SensorNode {
    * @param _daNode The node to set
    */
   function setAsActuatorRole(DS.Node storage _daNode) public {
-    _daNode.nodeRole = DS.NodeRole.Actuator;
+    _daNode.ev.nodeRole = DS.NodeRole.Actuator;
   }
   
   ////////////////////////////////////////

@@ -20,13 +20,18 @@ library DS {
   enum NodeType { Unassigned, MemberNode, ClusterHead }
   enum NodeRole { Default, Sensor, Controller, Actuator }
 
-  // struct ExtraVars {
-  //   // Put extra variables here when the 'YulException: Stack too deep when compiling inline assembly' issue turns up.
-  //   bool arrtemp1;
-  //   uint256 arrtemp2;    
-  //   uint256 arrtemp3;
-  //   // ...
-  // }
+  struct ExtraVars {
+    // Put extra variables here when the 'YulException: Stack too deep when compiling inline assembly' issue turns up.
+    
+    NodeRole nodeRole;
+    
+    string gotIt;
+    
+    // bool arrtemp1;
+    // uint256 arrtemp2;    
+    // uint256 arrtemp3;
+    // ...
+  }
 
   struct Node {
     uint nodeID;         // ID of the node
@@ -58,7 +63,7 @@ library DS {
     
     // Indicate if node is active and ready to transfer data
     bool isActive;
-    
-    NodeRole nodeRole;
+        
+    ExtraVars ev;
   }
 }
