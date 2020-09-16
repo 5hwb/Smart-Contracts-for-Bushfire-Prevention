@@ -61,6 +61,58 @@ function toStruct(val) {
   };
 }
 
+// Convert the raw array returned by NetworkFormation into a console-readable string format
+function toReadableString(val) {
+  var result = "";
+  convertedBeacons = "";
+  convertedSReadings = "";
+
+  // Convert the beacons
+  for (var i = 0; i < val[11].length; i++) {
+    var currBeacon = val[11][i];
+    convertedBeacons = convertedBeacons + "\n"
+    + "\t--------------------\n"
+    + "\tisSent: " +  currBeacon[0] + "\n"
+    + "\tnextNetLevel: " +  parseInt(currBeacon[1]) + "\n"
+    + "\tsenderNodeAddr: " +  parseInt(currBeacon[2]) + "\n"
+    + "\twithinRangeNodes: " +  currBeacon[3].map(i => parseInt(i));
+  }
+
+  // Convert the sensor readings
+  for (var i = 0; i < val[13].length; i++) {
+    var currSReading = val[13][i];
+    convertedSReadings = convertedSReadings + "\n"
+    + "\t--------------------\n"
+    + "\treading: " +  parseInt(currSReading[0]) + "\n"
+    + "\texists: " +  currSReading[1];
+  }
+  
+  result = "==============================\n"
+  + "nodeID: " + parseInt(val[0]) + "\n"
+  + "nodeAddress:" + parseInt(val[1]) + "\n"
+  + "energyLevel: " +  parseInt(val[2]) + "\n"
+  + "networkLevel: " +  parseInt(val[3]) + "\n"
+  + "numOfOneHopClusterHeads: " +  parseInt(val[4]) + "\n"
+  + "nodeType: " +  val[5] + "\n\n"
+
+  + "parentNode: " +  parseInt(val[6]) + "\n"
+  + "childNodes: " +  val[7].map(i => parseInt(i)) + "\n"
+  + "joinRequestNodes: " +  val[8].map(i => parseInt(i)) + "\n"
+  + "numOfJoinRequests: " +  parseInt(val[9]) + "\n"
+  + "withinRangeNodes: " +  val[10].map(i => parseInt(i)) + "\n\n"
+
+  + "beacons: {\n" +  convertedBeacons + "\n}\n"
+  + "numOfBeacons: " +  parseInt(val[12]) + "\n\n"
+
+  + "sensorReadings: {\n" +  convertedSReadings + "\n}\n"
+  + "numOfReadings: " +  parseInt(val[14]) + "\n"
+  + "backupCHeads: " +  val[15].map(i => parseInt(i)) + "\n"
+  + "isActive: " +  val[16] + "\n"
+  + "nodeRole: " +  val[17] + "\n";
+
+  return result;
+}
+
 contract("NetworkFormation - 3-layer network test case", async accounts => {
   let networkFormation;
   
@@ -524,12 +576,12 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node111000.sensorReadings[14].reading, 9014);
     assert.equal(node111000.sensorReadings[15].reading, 9015);
 
-    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
-      return {
-        nodeAddress: nodeStruct.nodeAddress, 
-        backupCHeads: nodeStruct.backupCHeads
-      };
-    }));
+    // console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+    //   return {
+    //     nodeAddress: nodeStruct.nodeAddress, 
+    //     backupCHeads: nodeStruct.backupCHeads
+    //   };
+    // }));
   });
   
   it("should be able to assign roles to nodes", async () => {
@@ -583,6 +635,13 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node222013.nodeRole, NodeRole.Sensor);
     assert.equal(node222014.nodeRole, NodeRole.Sensor);
     assert.equal(node222015.nodeRole, NodeRole.Sensor);
+    
+    (await networkFormation.getAllNodes()).map(
+      function(node) {
+        console.log(toReadableString(node)); 
+      }
+    );
+
   });
   
   it("should be able to send reading to sink node even if its cluster head has become inactive", async () => {
@@ -598,15 +657,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
     let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
 
-    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
-      return {
-        nodeAddress: nodeStruct.nodeAddress, 
-        parentNode: nodeStruct.parentNode, 
-        sensorReadings: nodeStruct.sensorReadings.map(sReading => sReading.reading),
-        nodeType: nodeStruct.nodeType,
-        isActive: nodeStruct.isActive
-      };
-    }));
+    // console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+    //   return {
+    //     nodeAddress: nodeStruct.nodeAddress, 
+    //     parentNode: nodeStruct.parentNode, 
+    //     sensorReadings: nodeStruct.sensorReadings.map(sReading => sReading.reading),
+    //     nodeType: nodeStruct.nodeType,
+    //     isActive: nodeStruct.isActive
+    //   };
+    // }));
 
   
     assert.equal(node222007.sensorReadings[2].reading, 700700);
