@@ -188,25 +188,26 @@ library SensorNode {
   function respondToSensorInput(
       DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
-      mapping(uint => uint) storage _addrToNodeIndex) public {
+      mapping(uint => uint) storage _addrToNodeIndex,
+      bool conditionsAreMatching) public {
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible
-    if (_daNode.sensorReadings[1].reading > 37000) {
+    if (_daNode.sensorReadings[1].reading > 37000 || conditionsAreMatching) {
       
       // If this node is a controller, go thru each of its children nodes
       // and call this function on each of them      
       if (_daNode.ev.nodeRole == DS.NodeRole.Controller) {
         for (uint i = 0; i < _daNode.childNodes.length; i++) {
           DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.childNodes[i]);
-          respondToSensorInput(childNode, _allNodes, _addrToNodeIndex);
+          respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
         }
       }      
     }
     
     
     // Otherwise, if this node is an actuator, simulate triggering the device
-    if (_daNode.ev.nodeRole == DS.NodeRole.Actuator) {
+    if (conditionsAreMatching && _daNode.ev.nodeRole == DS.NodeRole.Actuator) {
       _daNode.ev.gotIt = "Received the message.";
     }
 
