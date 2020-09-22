@@ -59,7 +59,8 @@ function toStruct(val) {
     isActive: val[16],
     ev: {
       nodeRole: val[17][0],
-      gotIt: val[17][1]
+      isTriggeringExternalService: val[17][1],
+      triggerMessage: val[17][2]
     }
   };
 }
@@ -655,7 +656,8 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
         nodeAddress: nodeStruct.nodeAddress, 
         sensorReadings: nodeStruct.sensorReadings.map(x => x.reading),
         nodeRole: nodeStruct.ev.nodeRole,
-        gotIt: nodeStruct.ev.gotIt
+        isTriggeringExternalService: nodeStruct.ev.isTriggeringExternalService,
+        triggerMessage: nodeStruct.ev.triggerMessage
       };
     }));
 

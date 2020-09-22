@@ -202,15 +202,16 @@ library SensorNode {
           DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.childNodes[i]);
           respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
         }
-      }      
+      }
     }
     
     
     // Otherwise, if this node is an actuator, simulate triggering the device
     if (conditionsAreMatching && _daNode.ev.nodeRole == DS.NodeRole.Actuator) {
-      _daNode.ev.gotIt = "Received the message.";
+      _daNode.ev.isTriggeringExternalService = true;
+      _daNode.ev.triggerMessage = "Received the message.";
     }
-
+    
   }
   
   /**

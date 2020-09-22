@@ -17,6 +17,7 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 * [DOTHISNOW!!!!] Make network react to different stimuli: 
     - If sensor detects temp is > 37 degrees, alert controller, which in turn alerts the actuator and makes it trigger a device (sprinkler, alert fire services, etc).
     - If sensor temp is > 45 degrees, deactivate the sensor!
+    - [JUSTDOIT] Update test cases so that it shows that the actuator nodes got the message.
 * Make new contract for bushfire detecting operations and managing the node roles.
 * [DONE] Add new flag to indicate if node is actuator, sensor, or controller. This can be done as an enum if possible.
     - Idea: sensor and actuator are leaf nodes (or cluster heads with no children). The remaining cluster heads are the controller nodes.

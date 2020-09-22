@@ -25,7 +25,10 @@ library DS {
     
     NodeRole nodeRole;
     
-    string gotIt;
+    // Indicate whether this node is triggering the execution of an external service
+    bool isTriggeringExternalService;
+    // The message to show when this node has triggered the external service
+    string triggerMessage;
     
     // bool arrtemp1;
     // uint256 arrtemp2;    
