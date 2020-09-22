@@ -17,6 +17,14 @@ library DS {
     uint256[] withinRangeNodes; // Addresses of nodes within range of the beacon-sending node
   }
   
+  struct Links {
+    uint256 parentNode;         // parent (cluster head) of this node
+    uint256[] childNodes;       // children of this node (if cluster head)
+    uint256[] joinRequestNodes; // nodes that have sent join requests to this node
+    uint numOfJoinRequests;     // N_T
+    uint256[] withinRangeNodes; // nodes that are within transmission distance to this node
+  }
+  
   enum NodeType { Unassigned, MemberNode, ClusterHead }
   enum NodeRole { Default, Sensor, Controller, Actuator }
 
@@ -47,11 +55,7 @@ library DS {
     // bool isMemberNode;            // init to false
     NodeType nodeType;
     
-    uint256 parentNode;         // parent (cluster head) of this node
-    uint256[] childNodes;       // children of this node (if cluster head)
-    uint256[] joinRequestNodes; // nodes that have sent join requests to this node
-    uint numOfJoinRequests;     // N_T
-    uint256[] withinRangeNodes; // nodes that are within transmission distance to this node
+    Links links;
     
     // Simulate receiving a beacon from a cluster head 
     DS.Beacon[] beacons;

@@ -166,13 +166,13 @@ library SensorNode {
     }
   
     // Call this again for parent node (intended effect: send the values all the way up to the sink nodes)
-    if (_daNode.parentNode != 0) {
-      DS.Node storage parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.parentNode);
+    if (_daNode.links.parentNode != 0) {
+      DS.Node storage parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.parentNode);
       
       // Elect backup cluster head node if current cluster head is unavailable
       if (!parentDsnode.isActive) {
         setBackupAsClusterHead(_daNode, _allNodes, _addrToNodeIndex);
-        parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.parentNode);
+        parentDsnode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.parentNode);
       }
       
       readSensorInput(parentDsnode, _allNodes, _addrToNodeIndex, _daNode.sensorReadings);
@@ -198,13 +198,12 @@ library SensorNode {
       // If this node is a controller, go thru each of its children nodes
       // and call this function on each of them      
       if (_daNode.ev.nodeRole == DS.NodeRole.Controller) {
-        for (uint i = 0; i < _daNode.childNodes.length; i++) {
-          DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.childNodes[i]);
+        for (uint i = 0; i < _daNode.links.childNodes.length; i++) {
+          DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[i]);
           respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
         }
       }
     }
-    
     
     // Otherwise, if this node is an actuator, simulate triggering the device
     if (conditionsAreMatching && _daNode.ev.nodeRole == DS.NodeRole.Actuator) {
@@ -233,11 +232,11 @@ library SensorNode {
   ////////////////////////////////////////
   
   /**
-   * @notice Identify the nodes which can serve as a backup in case the current cluster head fails by going through the list of withinRangeNodes on all received beacons and then saving the results to the list of backup cluster head addresses for that node.
+   * @notice Identify the nodes which can serve as a backup in case the current cluster head fails by going through the list of links.withinRangeNodes on all received beacons and then saving the results to the list of backup cluster head addresses for that node.
    * @param _daNode The node to identify backup cluster heads for
    */
   function identifyBackupClusterHeads(DS.Node storage _daNode) public {
-    uint256[] memory result = _daNode.withinRangeNodes;
+    uint256[] memory result = _daNode.links.withinRangeNodes;
     
     // Need to have at least 2 beacons (1st one is the 'null' beacon)
     if (_daNode.beacons.length > 1) {
@@ -299,7 +298,7 @@ library SensorNode {
    * @param _nodeAddr The address of the cluster head that connects to this node
    */
   function setParentNode(DS.Node storage _daNode, uint256 _nodeAddr) public {
-    _daNode.parentNode = _nodeAddr;
+    _daNode.links.parentNode = _nodeAddr;
   }
   
   /**
@@ -308,7 +307,7 @@ library SensorNode {
    * @param _nodeAddr The address of the child node
    */
   function addChildNode(DS.Node storage _daNode, uint256 _nodeAddr) public {
-    _daNode.childNodes.push(_nodeAddr);
+    _daNode.links.childNodes.push(_nodeAddr);
   }
 
   /**
@@ -317,8 +316,8 @@ library SensorNode {
    * @param _nodeAddr The address of the node that sent a join request to this node
    */
   function addJoinRequestNode(DS.Node storage _daNode, uint256 _nodeAddr) public {
-    _daNode.joinRequestNodes.push(_nodeAddr);
-    _daNode.numOfJoinRequests++;
+    _daNode.links.joinRequestNodes.push(_nodeAddr);
+    _daNode.links.numOfJoinRequests++;
   }
 
   /**
@@ -327,7 +326,7 @@ library SensorNode {
    * @param _addr The address of the node within the transmission range of this node
    */
   function addWithinRangeNode(DS.Node storage _daNode, uint256 _addr) public {
-    _daNode.withinRangeNodes.push(_addr);
+    _daNode.links.withinRangeNodes.push(_addr);
   }
     
   /**
@@ -374,7 +373,7 @@ library SensorNode {
   }
   
   ////////////////////////////////////////
-  // childNodes GETTER FUNCTIONS
+  // links.childNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
   /**
@@ -383,11 +382,11 @@ library SensorNode {
    * @return The number of child nodes
    */
   function numOfChildNodes(DS.Node storage _daNode) public view returns (uint) {
-    return _daNode.childNodes.length;
+    return _daNode.links.childNodes.length;
   }
   
   ////////////////////////////////////////
-  // joinRequestNodes GETTER FUNCTIONS
+  // links.joinRequestNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
    /**
@@ -396,11 +395,11 @@ library SensorNode {
     * @return The addresses of the join request nodes
     */
   function getJoinRequestNodes(DS.Node storage _daNode) public view returns (uint256[] memory) {
-    return _daNode.joinRequestNodes;
+    return _daNode.links.joinRequestNodes;
   }
   
   ////////////////////////////////////////
-  // withinRangeNodes GETTER FUNCTIONS
+  // links.withinRangeNodes GETTER FUNCTIONS
   ////////////////////////////////////////
   
   /**
@@ -409,7 +408,7 @@ library SensorNode {
    * @return The addresses of the nodes within range
    */
   function getWithinRangeNodes(DS.Node storage _daNode) public view returns (uint256[] memory) {
-    return _daNode.withinRangeNodes;
+    return _daNode.links.withinRangeNodes;
   }
   
   /**
@@ -418,7 +417,7 @@ library SensorNode {
    * @return The number of nodes within range
    */
   function numOfWithinRangeNodes(DS.Node storage _daNode) public view returns (uint) {
-    return _daNode.withinRangeNodes.length;
+    return _daNode.links.withinRangeNodes.length;
   }
   
   ////////////////////////////////////////

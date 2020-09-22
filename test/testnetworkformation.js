@@ -18,8 +18,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[11].length; i++) {
-    var currBeacon = val[11][i];
+  for (var i = 0; i < val[7].length; i++) {
+    var currBeacon = val[7][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -29,8 +29,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[13].length; i++) {
-    var currSReading = val[13][i];
+  for (var i = 0; i < val[9].length; i++) {
+    var currSReading = val[9][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -45,20 +45,26 @@ function toStruct(val) {
     numOfOneHopClusterHeads: parseInt(val[4]),
     nodeType: val[5],
     
-    parentNode: parseInt(val[6]),
-    childNodes: val[7].map(i => parseInt(i)),
-    joinRequestNodes: val[8].map(i => parseInt(i)),
-    numOfJoinRequests: parseInt(val[9]),
-    withinRangeNodes: val[10].map(i => parseInt(i)),
+    links: {
+      parentNode: parseInt(val[6][0]),
+      childNodes: val[6][1].map(i => parseInt(i)),
+      joinRequestNodes: val[6][2].map(i => parseInt(i)),
+      numOfJoinRequests: parseInt(val[6][3]),
+      withinRangeNodes: val[6][4].map(i => parseInt(i))
+    },
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[12]),
+    numOfBeacons: parseInt(val[8]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[14]),
-    backupCHeads: val[15].map(i => parseInt(i)),
-    isActive: val[16],
-    nodeRole: val[17]
+    numOfReadings: parseInt(val[10]),
+    backupCHeads: val[11].map(i => parseInt(i)),
+    isActive: val[12],
+    ev: {
+      nodeRole: val[13][0],
+      isTriggeringExternalService: val[13][1],
+      triggerMessage: val[13][2]
+    }
   };
 }
 
@@ -147,11 +153,11 @@ contract("NetworkFormation test cases", async accounts => {
     console.log(sinkNode);
   
     // Ensure the node addresses were added to list of join request nodes
-    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[0]));
-    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[1]));
-    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[2]));
-    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[3]));
-    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[4]));
+    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[0]));
+    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[1]));
+    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[2]));
+    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[3]));
+    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[4]));
     assert.equal(node0.nodeAddress, 222001);
     assert.equal(node1.nodeAddress, 222002);
     assert.equal(node2.nodeAddress, 222003);

@@ -85,8 +85,8 @@ contract NetworkFormation {
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel,
         nodes[nIdx].nodeType,
         SensorNode.getSensorReadings(nodes[nIdx]), 
-        nodes[nIdx].isActive, nodes[nIdx].parentNode, 
-        nodes[nIdx].withinRangeNodes, nodes[nIdx].backupCHeads);
+        nodes[nIdx].isActive, nodes[nIdx].links.parentNode, 
+        nodes[nIdx].links.withinRangeNodes, nodes[nIdx].backupCHeads);
   }
   
   // Get a node's beacon data
@@ -120,7 +120,7 @@ contract NetworkFormation {
     
     // Go thru all nodes within range of the cluster head
     for (uint i = 0; i < SensorNode.numOfWithinRangeNodes(nodes[chIndex]); i++) {
-      DS.Node storage currNode = SensorNode.getNode(nodes, addrToNodeIndex, nodes[chIndex].withinRangeNodes[i]);
+      DS.Node storage currNode = SensorNode.getNode(nodes, addrToNodeIndex, nodes[chIndex].links.withinRangeNodes[i]);
       
       // Ignore this node if it's a cluster head or if the network level is 
       // already set between 1 and the current cluster head's network level 
@@ -138,7 +138,7 @@ contract NetworkFormation {
       SensorNode.addBeacon(currNode, beacon);
       
       // IF POSSIBLE: find out how to do callback function (or equivalent)
-      // which shall be: sendJoinRequest(nodes[chIndex].withinRangeNodes[i], _cHeadAddr); 
+      // which shall be: sendJoinRequest(nodes[chIndex].links.withinRangeNodes[i], _cHeadAddr); 
     }
   }
   
@@ -247,11 +247,11 @@ contract NetworkFormation {
     nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
 
     // N_CH calculation:
-    // (probability * numOfJoinRequests * 100) / 10000
+    // (probability * links.numOfJoinRequests * 100) / 10000
     // where probability is an integer representing a percentage (0 < probability <= 100)
-    // and numOfJoinRequests >= 1
+    // and links.numOfJoinRequests >= 1
     numOfClusterHeads = (_probability * 
-        (currClusterHead.numOfJoinRequests*100)) / 10000; 
+        (currClusterHead.links.numOfJoinRequests*100)) / 10000; 
     
     // Select the cluster heads from the nodes with join requests
     uint numOfElectedClusterHeads = 0;

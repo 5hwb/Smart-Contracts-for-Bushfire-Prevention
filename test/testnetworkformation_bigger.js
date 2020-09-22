@@ -17,8 +17,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[11].length; i++) {
-    var currBeacon = val[11][i];
+  for (var i = 0; i < val[7].length; i++) {
+    var currBeacon = val[7][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -28,8 +28,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[13].length; i++) {
-    var currSReading = val[13][i];
+  for (var i = 0; i < val[9].length; i++) {
+    var currSReading = val[9][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -44,75 +44,86 @@ function toStruct(val) {
     numOfOneHopClusterHeads: parseInt(val[4]),
     nodeType: val[5],
     
-    parentNode: parseInt(val[6]),
-    childNodes: val[7].map(i => parseInt(i)),
-    joinRequestNodes: val[8].map(i => parseInt(i)),
-    numOfJoinRequests: parseInt(val[9]),
-    withinRangeNodes: val[10].map(i => parseInt(i)),
+    links: {
+      parentNode: parseInt(val[6][0]),
+      childNodes: val[6][1].map(i => parseInt(i)),
+      joinRequestNodes: val[6][2].map(i => parseInt(i)),
+      numOfJoinRequests: parseInt(val[6][3]),
+      withinRangeNodes: val[6][4].map(i => parseInt(i))
+    },
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[12]),
+    numOfBeacons: parseInt(val[8]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[14]),
-    backupCHeads: val[15].map(i => parseInt(i)),
-    isActive: val[16],
+    numOfReadings: parseInt(val[10]),
+    backupCHeads: val[11].map(i => parseInt(i)),
+    isActive: val[12],
     ev: {
-      nodeRole: val[17][0],
-      isTriggeringExternalService: val[17][1],
-      triggerMessage: val[17][2]
+      nodeRole: val[13][0],
+      isTriggeringExternalService: val[13][1],
+      triggerMessage: val[13][2]
     }
   };
 }
 
 // Convert the raw array returned by NetworkFormation into a console-readable string format
 function toReadableString(val) {
+  val = toStruct(val);
   var result = "";
   convertedBeacons = "";
   convertedSReadings = "";
 
   // Convert the beacons
-  for (var i = 0; i < val[11].length; i++) {
-    var currBeacon = val[11][i];
-    convertedBeacons = convertedBeacons + "\n"
+  for (var i = 0; i < val.beacons.length; i++) {
+    var currBeacon = val.beacons[i];
+    convertedBeacons = convertedBeacons
     + "\t--------------------\n"
-    + "\tisSent: " +  currBeacon[0] + "\n"
-    + "\tnextNetLevel: " +  parseInt(currBeacon[1]) + "\n"
-    + "\tsenderNodeAddr: " +  parseInt(currBeacon[2]) + "\n"
-    + "\twithinRangeNodes: " +  currBeacon[3].map(i => parseInt(i));
+    + "\tisSent: " + currBeacon.isSent + "\n"
+    + "\tnextNetLevel: " + currBeacon.nextNetLevel + "\n"
+    + "\tsenderNodeAddr: " + currBeacon.senderNodeAddr + "\n"
+    + "\twithinRangeNodes: " + currBeacon.withinRangeNodes + "\n";
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[13].length; i++) {
-    var currSReading = val[13][i];
-    convertedSReadings = convertedSReadings + "\n"
+  for (var i = 0; i < val.sensorReadings.length; i++) {
+    var currSReading = val.sensorReadings[i];
+    convertedSReadings = convertedSReadings
     + "\t--------------------\n"
-    + "\treading: " +  parseInt(currSReading[0]) + "\n"
-    + "\texists: " +  currSReading[1];
+    + "\treading: " + currSReading.reading + "\n"
+    + "\texists: " + currSReading.exists + "\n";
   }
-  
+
   result = "==============================\n"
-  + "nodeID: " + parseInt(val[0]) + "\n"
-  + "nodeAddress:" + parseInt(val[1]) + "\n"
-  + "energyLevel: " +  parseInt(val[2]) + "\n"
-  + "networkLevel: " +  parseInt(val[3]) + "\n"
-  + "numOfOneHopClusterHeads: " +  parseInt(val[4]) + "\n"
-  + "nodeType: " +  val[5] + "\n\n"
+  + "nodeID: " + val.nodeID + "\n"
+  + "nodeAddress:" + val.nodeAddress + "\n"
+  + "energyLevel: " + val.energyLevel + "\n"
+  + "networkLevel: " + val.networkLevel + "\n"
+  + "numOfOneHopClusterHeads: " + val.numOfOneHopClusterHeads + "\n"
+  + "nodeType: " + val.nodeType + "\n\n"
 
-  + "parentNode: " +  parseInt(val[6]) + "\n"
-  + "childNodes: " +  val[7].map(i => parseInt(i)) + "\n"
-  + "joinRequestNodes: " +  val[8].map(i => parseInt(i)) + "\n"
-  + "numOfJoinRequests: " +  parseInt(val[9]) + "\n"
-  + "withinRangeNodes: " +  val[10].map(i => parseInt(i)) + "\n\n"
+  + "links: {\n"
+  + "\tparentNode: " + val.links.parentNode + "\n"
+  + "\tchildNodes: " + val.links.childNodes + "\n"
+  + "\tjoinRequestNodes: " + val.links.joinRequestNodes + "\n"
+  + "\tnumOfJoinRequests: " + val.links.numOfJoinRequests + "\n"
+  + "\twithinRangeNodes: " + val.links.withinRangeNodes + "\n"  
+  + "}\n\n"
 
-  + "beacons: {\n" +  convertedBeacons + "\n}\n"
-  + "numOfBeacons: " +  parseInt(val[12]) + "\n\n"
 
-  + "sensorReadings: {\n" +  convertedSReadings + "\n}\n"
-  + "numOfReadings: " +  parseInt(val[14]) + "\n"
-  + "backupCHeads: " +  val[15].map(i => parseInt(i)) + "\n"
-  + "isActive: " +  val[16] + "\n"
-  + "TODO: fix this !!! nodeRole: " +  val[17] + "\n";
+  + "beacons: {\n" + convertedBeacons + "\n}\n"
+  + "numOfBeacons: " + val.numOfBeacons + "\n\n"
+
+  + "sensorReadings: {\n" + convertedSReadings + "\n}\n"
+  + "numOfReadings: " + val.numOfReadings + "\n"
+  + "backupCHeads: " + val.backupCHeads + "\n"
+  + "isActive: " + val.isActive + "\n\n"
+
+  + "ev: {\n"
+  + "\tnodeRole: " + val.ev.nodeRole + "\n"
+  + "\tisTriggeringExternalService: " + val.ev.isTriggeringExternalService + "\n"
+  + "\ttriggerMessage: " + val.ev.triggerMessage + "\n"
+  + "}\n";
 
   return result;
 }
@@ -230,11 +241,11 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let sinkNode = toStruct(await networkFormation.getNodeAsMemory(111000));
 
     // Ensure the node addresses were added to list of join request nodes
-    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[0]));
-    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[1]));
-    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[2]));
-    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[3]));
-    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.joinRequestNodes[4]));
+    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[0]));
+    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[1]));
+    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[2]));
+    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[3]));
+    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[4]));
     assert.equal(node0.nodeAddress, 222001);
     assert.equal(node1.nodeAddress, 222002);
     assert.equal(node2.nodeAddress, 222003);
@@ -345,10 +356,10 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let cHead2 = toStruct(await networkFormation.getNodeAsMemory(222004));
   
     // Ensure the node addresses were added to list of join request nodes
-    let cHead1joinRequestNodes = await cHead1.joinRequestNodes;
+    let cHead1joinRequestNodes = await cHead1.links.joinRequestNodes;
     let node1_0 = toStruct(await networkFormation.getNodeAsMemory(cHead1joinRequestNodes[0]));
     let node1_1 = toStruct(await networkFormation.getNodeAsMemory(cHead1joinRequestNodes[1]));
-    let cHead2joinRequestNodes = await cHead2.joinRequestNodes;
+    let cHead2joinRequestNodes = await cHead2.links.joinRequestNodes;
     let node2_0 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[0]));
     let node2_1 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[1]));
     let node2_2 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[2]));
@@ -425,13 +436,13 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let cHead3 = toStruct(await networkFormation.getNodeAsMemory(222009)); // this one has no nodes to rule over as 222008 has taken the last one
   
     // Ensure the node addresses were added to list of join request nodes
-    let cHead1joinRequestNodes = cHead1.joinRequestNodes;
+    let cHead1joinRequestNodes = cHead1.links.joinRequestNodes;
     let node1_0 = toStruct(await networkFormation.getNodeAsMemory(cHead1joinRequestNodes[0]));
     let node1_1 = toStruct(await networkFormation.getNodeAsMemory(cHead1joinRequestNodes[1]));
     assert.equal(node1_0.nodeAddress, 222012);
     assert.equal(node1_1.nodeAddress, 222013);
   
-    let cHead2joinRequestNodes = cHead2.joinRequestNodes;
+    let cHead2joinRequestNodes = cHead2.links.joinRequestNodes;
     let node2_0 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[0]));
     let node2_1 = toStruct(await networkFormation.getNodeAsMemory(cHead2joinRequestNodes[1]));
     assert.equal(node2_0.nodeAddress, 222014);
@@ -655,6 +666,8 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node222007.ev.isTriggeringExternalService, true);
     assert.equal(node222010.ev.isTriggeringExternalService, true);
     assert.equal(node222011.ev.isTriggeringExternalService, true);
+    
+    console.log(toReadableString(await networkFormation.getNodeAsMemory(222005)));
     
     // (await networkFormation.getAllNodes()).map(
     //   function(node) {
