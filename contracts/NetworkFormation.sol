@@ -217,9 +217,9 @@ contract NetworkFormation {
   }
   
   // Assign the actuator role to the given node.
-  function assignAsActuator(uint _nodeAddr) public {
+  function assignAsActuator(uint _nodeAddr, string  memory _triggerMessage) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.setAsActuatorRole(nodes[nodeIndex]);
+    SensorNode.setAsActuatorRole(nodes[nodeIndex], _triggerMessage);
   }
   
   // Get the sorted nodes 

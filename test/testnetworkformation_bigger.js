@@ -594,13 +594,13 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     await networkFormation.assignAsController(222002);
     await networkFormation.assignAsSensor(222003);
     await networkFormation.assignAsController(222004);
-    await networkFormation.assignAsActuator(222005);
+    await networkFormation.assignAsActuator(222005, "Activating sprinklers!");
     await networkFormation.assignAsController(222006);
-    await networkFormation.assignAsActuator(222007);
+    await networkFormation.assignAsActuator(222007, "Contacting the RFS.");
     await networkFormation.assignAsController(222008);
     await networkFormation.assignAsSensor(222009);
-    await networkFormation.assignAsActuator(222010);
-    await networkFormation.assignAsActuator(222011);
+    await networkFormation.assignAsActuator(222010, "Activating emergency sirens!");
+    await networkFormation.assignAsActuator(222011, "Send evacuation SMS to all phones");
     await networkFormation.assignAsSensor(222012);
     await networkFormation.assignAsSensor(222013);
     await networkFormation.assignAsSensor(222014);
@@ -645,6 +645,17 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   it("should be able to respond to sensor input", async () => {
     await networkFormation.respondToSensorInput(111000);
 
+    let node222005 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
+    let node222010 = toStruct(await networkFormation.getNodeAsMemory(222010));
+    let node222011 = toStruct(await networkFormation.getNodeAsMemory(222011));
+
+    // These actuators should be triggering an external service (in this simulation, just set isTriggeringExternalService to true)
+    assert.equal(node222005.ev.isTriggeringExternalService, true);
+    assert.equal(node222007.ev.isTriggeringExternalService, true);
+    assert.equal(node222010.ev.isTriggeringExternalService, true);
+    assert.equal(node222011.ev.isTriggeringExternalService, true);
+    
     // (await networkFormation.getAllNodes()).map(
     //   function(node) {
     //     console.log(toStruct(node)); 

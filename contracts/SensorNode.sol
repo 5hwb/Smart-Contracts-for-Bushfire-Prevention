@@ -209,7 +209,6 @@ library SensorNode {
     // Otherwise, if this node is an actuator, simulate triggering the device
     if (conditionsAreMatching && _daNode.ev.nodeRole == DS.NodeRole.Actuator) {
       _daNode.ev.isTriggeringExternalService = true;
-      _daNode.ev.triggerMessage = "Received the message.";
     }
     
   }
@@ -369,8 +368,9 @@ library SensorNode {
    * @notice Set the given node's role as an actuator.
    * @param _daNode The node to set
    */
-  function setAsActuatorRole(DS.Node storage _daNode) public {
+  function setAsActuatorRole(DS.Node storage _daNode, string memory _triggerMessage) public {
     _daNode.ev.nodeRole = DS.NodeRole.Actuator;
+    _daNode.ev.triggerMessage = _triggerMessage;
   }
   
   ////////////////////////////////////////
