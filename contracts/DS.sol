@@ -47,9 +47,9 @@ library DS {
     // bool isMemberNode;            // init to false
     NodeType nodeType;
     
-    uint256 parentNode;         // (CHANGED FROM SensorNode) parent (cluster head) of this node
-    uint256[] childNodes;       // (CHANGED FROM SensorNode) children of this node (if cluster head)
-    uint256[] joinRequestNodes; // (CHANGED FROM SensorNode) nodes that have sent join requests to this node
+    uint256 parentNode;         // parent (cluster head) of this node
+    uint256[] childNodes;       // children of this node (if cluster head)
+    uint256[] joinRequestNodes; // nodes that have sent join requests to this node
     uint numOfJoinRequests;     // N_T
     uint256[] withinRangeNodes; // nodes that are within transmission distance to this node
     
