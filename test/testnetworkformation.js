@@ -12,6 +12,13 @@ const QuickSortContract = artifacts.require("QuickSortContract");
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
 
+// NodeType enum values 
+const NodeType = {
+  Unassigned: 0,
+  MemberNode: 1,
+  ClusterHead: 2
+};
+
 // Convert the raw array returned by NetworkFormation into a Node struct format
 function toStruct(val) {
   convertedBeacons = [];
@@ -165,13 +172,6 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node4.nodeAddress, 222005);
   });
   
-  // NodeType enum values 
-  const NodeType = {
-    Unassigned: '0',
-    MemberNode: '1',
-    ClusterHead: '2'
-  };
-
   it("should elect cluster heads", async () => {
     // 40% chance of being elected?
     await networkFormation.electClusterHeads(111000, 40);

@@ -11,6 +11,21 @@ const SensorNode = artifacts.require("SensorNode");
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
 
+// NodeType enum values 
+const NodeType = {
+  Unassigned: 0,
+  MemberNode: 1,
+  ClusterHead: 2
+};
+
+// NodeRole enum values 
+const NodeRole = {
+  Default: 0,
+  Sensor: 1,
+  Controller: 2,
+  Actuator: 3
+};
+
 // Convert the raw array returned by NetworkFormation into a Node struct format
 function toStruct(val) {
   convertedBeacons = [];
@@ -252,21 +267,6 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     assert.equal(node3.nodeAddress, 222004);
     assert.equal(node4.nodeAddress, 222005);
   });
-  
-  // NodeType enum values 
-  const NodeType = {
-    Unassigned: '0',
-    MemberNode: '1',
-    ClusterHead: '2'
-  };
-  
-  // NodeRole enum values 
-  const NodeRole = {
-    Default: '0',
-    Sensor: '1',
-    Controller: '2',
-    Actuator: '3'
-  };
   
   it("should elect cluster heads for Layer 1 nodes", async () => {
     // 50% chance of cluster head being elected
