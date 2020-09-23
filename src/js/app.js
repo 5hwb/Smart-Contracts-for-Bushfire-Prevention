@@ -1,9 +1,4 @@
-// NodeType enum values 
-const NodeType = {
-  Unassigned: 0,
-  MemberNode: 1,
-  ClusterHead: 2
-};
+import { NodeType } from "./solidity_enums.js";
 
 function toNodeType(enumVal) {
   // need to convert the BigNumber returned by Solidity into a JS number
@@ -15,7 +10,7 @@ function toNodeType(enumVal) {
   }
 }
 
-App = {
+var App = {
   web3Provider: null,
   contracts: {},
 
