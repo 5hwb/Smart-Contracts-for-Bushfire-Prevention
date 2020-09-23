@@ -1,3 +1,20 @@
+// NodeType enum values 
+const NodeType = {
+  Unassigned: 0,
+  MemberNode: 1,
+  ClusterHead: 2
+};
+
+function toNodeType(enumVal) {
+  // need to convert the BigNumber returned by Solidity into a JS number
+  switch (enumVal.toNumber()) {
+    case NodeType.Unassigned: return "Unassigned";
+    case NodeType.MemberNode: return "MemberNode";
+    case NodeType.ClusterHead: return "ClusterHead";
+    default: return "default";
+  }
+}
+
 App = {
   web3Provider: null,
   contracts: {},
@@ -119,9 +136,9 @@ App = {
                 // Cyan = cluster head.
                 // Yellow = member node.
                 // Red = unassigned node.
-                var isClusterHead = data[4];
-                var isMemberNode = data[5];
-                var isActive = data[7];
+                var isClusterHead = (data[4] == NodeType.ClusterHead);
+                var isMemberNode = (data[4] == NodeType.MemberNode);
+                var isActive = data[6];
                 var chosenStyle = (isClusterHead) ? "node-clusterhead" :
                     (isMemberNode) ? "node-membernode" : 
                     "node-unassigned";
@@ -136,16 +153,15 @@ App = {
                   <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
-                  <p>isClusterHead: ${data[4]}</p>
-                  <p>isMemberNode: ${data[5]}</p>
-                  <p>Sensor readings: [${data[6]}]</p>
+                  <p>nodeType: ${toNodeType(data[4])}</p>
+                  <p>Sensor readings: [${data[5]}]</p>
                   <div class="input-group">
-                    <label for="id-input-setactive">isActive: ${data[7]}</label>
+                    <label for="id-input-setactive">isActive: ${data[6]}</label>
                     <button class="btn btn-primary" onclick="App.${buttonFunc}(${data[1]})" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
-                  <p>Parent node: ${data[8]}</p>
-                  <p>Nodes within range: [${data[9]}]</p>
-                  <p>Backup cluster heads: [${data[10]}]</p>
+                  <p>Parent node: ${data[7]}</p>
+                  <p>Nodes within range: [${data[8]}]</p>
+                  <p>Backup cluster heads: [${data[9]}]</p>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
