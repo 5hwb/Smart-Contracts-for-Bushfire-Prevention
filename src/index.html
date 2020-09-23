@@ -42,7 +42,7 @@
             <label for="id-input-wrnodes">Nodes within range: </label>
             <input type="string" class="form-control" id="id-input-wrnodes" placeholder="e.g. '222001,222002'">
           </div>
-          <button class="btn btn-primary" onclick="App.addNewNode()">Add node</button>
+          <button class="btn btn-primary" id="btn-addNewNode">Add node</button>
           <div class="msg"></div>
 
           <h1>Existing nodes</h1>
@@ -52,19 +52,19 @@
         </div>
         <div class="col-md-6">
           <div>
-            <button class="btn btn-primary" onclick="App.registerAsClusterHead()">Register sink node as cluster head</button>
+            <button class="btn btn-primary" id="btn-registerAsClusterHead">Register sink node as cluster head</button>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="App.sendBeacon()">Send beacon</button>
+            <button class="btn btn-primary" id="btn-sendBeacon">Send beacon</button>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="App.sendJoinRequests()">Send join requests</button>
+            <button class="btn btn-primary" id="btn-sendJoinRequests">Send join requests</button>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="App.electClusterHeads()">Elect cluster heads</button>
+            <button class="btn btn-primary" id="btn-electClusterHeads">Elect cluster heads</button>
           </div>
           <div>
-            <button class="btn btn-primary" onclick="App.identifyBackupClusterHeads()">Identify backup cluster heads</button>
+            <button class="btn btn-primary" id="btn-identifyBackupClusterHeads">Identify backup cluster heads</button>
           </div>
           <div id="thing-box"></div>
         </div>
@@ -80,6 +80,16 @@
     <!-- Custom Scripts -->
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
-    <script type="module" src="js/app.js"></script>
+    <script type="module">
+    import { App } from "./js/app.js";
+    
+    document.querySelector('#btn-addNewNode').addEventListener('click', App.addNewNode);
+    document.querySelector('#btn-registerAsClusterHead').addEventListener('click', App.registerAsClusterHead);
+    document.querySelector('#btn-sendBeacon').addEventListener('click', App.sendBeacon);
+    document.querySelector('#btn-sendJoinRequests').addEventListener('click', App.sendJoinRequests);
+    document.querySelector('#btn-electClusterHeads').addEventListener('click', App.electClusterHeads);
+    document.querySelector('#btn-identifyBackupClusterHeads').addEventListener('click', App.identifyBackupClusterHeads);
+    </script>
+    
   </body>
 </html>

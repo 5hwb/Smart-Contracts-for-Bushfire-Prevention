@@ -10,7 +10,7 @@ function toNodeType(enumVal) {
   }
 }
 
-var App = {
+export const App = {
   web3Provider: null,
   contracts: {},
 
