@@ -4,3 +4,11 @@ export const NodeType = {
   MemberNode: 1,
   ClusterHead: 2
 };
+
+// NodeRole enum values 
+const NodeRole = {
+  Default: 0,
+  Sensor: 1,
+  Controller: 2,
+  Actuator: 3
+};

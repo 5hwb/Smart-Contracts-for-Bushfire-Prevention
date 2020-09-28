@@ -10,6 +10,17 @@ function toNodeType(enumVal) {
   }
 }
 
+function toNodeRole(enumVal) {
+  // need to convert the BigNumber returned by Solidity into a JS number
+  switch (enumVal.toNumber()) {
+    case NodeRole.Default: return "Default";
+    case NodeRole.Sensor: return "Sensor";
+    case NodeRole.Actuator: return "Actuator";
+    case NodeRole.Controller: return "Controller";
+    default: return "default";
+  }
+}
+
 export const App = {
   web3Provider: null,
   contracts: {},
@@ -148,7 +159,7 @@ export const App = {
                   <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
-                  <p>nodeType: ${toNodeType(data[4])}</p>
+                  <p>Node type: ${toNodeType(data[4])}</p>
                   <p>Sensor readings: [${data[5]}]</p>
                   <div class="input-group">
                     <label for="id-input-setactive">isActive: ${data[6]}</label>
@@ -162,7 +173,8 @@ export const App = {
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
                   </div>
                   <button class="btn btn-primary" onclick="App.readSensorInput(${data[0]}, ${data[1]})" id="btn-${data[1]}">Simulate sensor reading</button>
-                  </div>`)
+                  </div>
+                  <p>Node role: ${toNodeRole(data[10])}</p>`)
               }).catch(function(err) {
                 console.error("getting node ERROR! " + err.message)
               });
