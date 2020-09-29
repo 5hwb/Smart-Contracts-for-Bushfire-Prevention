@@ -25,8 +25,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[7].length; i++) {
-    var currBeacon = val[7][i];
+  for (var i = 0; i < val[6].length; i++) {
+    var currBeacon = val[6][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -36,8 +36,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[9].length; i++) {
-    var currSReading = val[9][i];
+  for (var i = 0; i < val[8].length; i++) {
+    var currSReading = val[8][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -49,28 +49,27 @@ function toStruct(val) {
     nodeAddress: parseInt(val[1]),
     energyLevel: parseInt(val[2]),
     networkLevel: parseInt(val[3]),
-    numOfOneHopClusterHeads: parseInt(val[4]),
-    nodeType: val[5],
+    nodeType: val[4],
     
     links: {
-      parentNode: parseInt(val[6][0]),
-      childNodes: val[6][1].map(i => parseInt(i)),
-      joinRequestNodes: val[6][2].map(i => parseInt(i)),
-      numOfJoinRequests: parseInt(val[6][3]),
-      withinRangeNodes: val[6][4].map(i => parseInt(i))
+      parentNode: parseInt(val[5][0]),
+      childNodes: val[5][1].map(i => parseInt(i)),
+      joinRequestNodes: val[5][2].map(i => parseInt(i)),
+      numOfJoinRequests: parseInt(val[5][3]),
+      withinRangeNodes: val[5][4].map(i => parseInt(i))
     },
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[8]),
+    numOfBeacons: parseInt(val[7]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[10]),
-    backupCHeads: val[11].map(i => parseInt(i)),
-    isActive: val[12],
+    numOfReadings: parseInt(val[9]),
+    backupCHeads: val[10].map(i => parseInt(i)),
+    isActive: val[11],
     ev: {
-      nodeRole: val[13][0],
-      isTriggeringExternalService: val[13][1],
-      triggerMessage: val[13][2]
+      nodeRole: val[12][0],
+      isTriggeringExternalService: val[12][1],
+      triggerMessage: val[12][2]
     }
   };
 }

@@ -50,9 +50,6 @@ library DS {
     // TODO eventually: Make the energy level based on the battery current and voltage available 
     uint energyLevel;    // give it when initialising.
     uint networkLevel;          // Tree level this node is located at
-    uint numOfOneHopClusterHeads; // init to 1
-    // bool isClusterHead;           // init to false
-    // bool isMemberNode;            // init to false
     NodeType nodeType;
     
     Links links;
