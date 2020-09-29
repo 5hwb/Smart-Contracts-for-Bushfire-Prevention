@@ -174,7 +174,7 @@ export const App = {
                   </div>
                   <button class="btn btn-primary" onclick="App.readSensorInput(${data[0]}, ${data[1]})" id="btn-${data[1]}">Simulate sensor reading</button>
                   </div>
-                  <p>Node role: ${toNodeRole(data[10])}</p>`)
+                  <p>Node role: ${data[10]}</p>`)
               }).catch(function(err) {
                 console.error("getting node ERROR! " + err.message)
               });
