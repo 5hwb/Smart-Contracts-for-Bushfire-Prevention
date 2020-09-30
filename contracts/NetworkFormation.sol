@@ -76,18 +76,16 @@ contract NetworkFormation {
     uint, uint256,
     uint, uint,
     DS.NodeType, DS.NodeRole,
-    uint256[] memory,
-    bool, uint,
-    uint256[] memory, uint256[] memory
+    bool, bool, 
+    string memory, uint256[] memory
     ) {
       
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return (nodes[nIdx].nodeID, nodes[nIdx].nodeAddress,
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel,
         nodes[nIdx].nodeType, nodes[nIdx].ev.nodeRole,
-        SensorNode.getSensorReadings(nodes[nIdx]), 
-        nodes[nIdx].isActive, nodes[nIdx].links.parentNode, 
-        nodes[nIdx].links.withinRangeNodes, nodes[nIdx].backupCHeads
+        nodes[nIdx].isActive, nodes[nIdx].ev.isTriggeringExternalService, 
+        nodes[nIdx].ev.triggerMessage, SensorNode.getSensorReadings(nodes[nIdx])
         );
   }
   
@@ -219,7 +217,7 @@ contract NetworkFormation {
   }
   
   // Assign the actuator role to the given node.
-  function assignAsActuator(uint _nodeAddr, string  memory _triggerMessage) public {
+  function assignAsActuator(uint _nodeAddr, string memory _triggerMessage) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     SensorNode.setAsActuatorRole(nodes[nodeIndex], _triggerMessage);
   }

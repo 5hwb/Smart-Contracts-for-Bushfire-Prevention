@@ -155,7 +155,7 @@ export const App = {
                     (isMemberNode) ? "node-membernode" : 
                     "node-unassigned";
                 
-                var isActive = data[7];
+                var isActive = data[6];
                 var chosenTextStyle = (isActive) ? "node-active" :
                     "node-inactive";
                 var buttonLabel = (isActive) ? "Deactivate" :
@@ -169,14 +169,16 @@ export const App = {
                   <p>Network level: ${data[3]}</p>
                   <p>Node type: ${toNodeType(data[4])}</p>
                   <p>Node role: ${toNodeRole(data[5])}</p>
-                  <p>Sensor readings: [${data[6]}]</p>
+
                   <div class="input-group">
-                    <label for="id-input-setactive">isActive: ${data[7]}</label>
+                    <label for="id-input-setactive">Is currently active: ${data[6]}</label>
                     <button class="btn btn-primary" id="btn-${buttonFunc}-${data[1]}" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
-                  <p>Parent node: ${data[8]}</p>
-                  <p>Nodes within range: [${data[9]}]</p>
-                  <p>Backup cluster heads: [${data[10]}]</p>
+
+                  <p>Is triggering an external service: ${data[7]}</p>
+                  <p>Message: ${data[8]}</p>
+
+                  <p>Sensor readings: [${data[9]}]</p>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
@@ -395,7 +397,7 @@ export const App = {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsSensor(nodeAddr).then(function(result) {
-        console.log("FLOW: assignNodeAsSensor()");
+        console.log("FLOW: assignNodeAsSensor("+nodeAddr+") success");
       }).catch(function(err) {
         console.error("assignNodeAsSensor ERROR! " + err.message)
       });
@@ -409,7 +411,7 @@ export const App = {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsController(nodeAddr).then(function(result) {
-        console.log("FLOW: assignNodeAsController()");
+        console.log("FLOW: assignNodeAsController("+nodeAddr+") success");
       }).catch(function(err) {
         console.error("assignNodeAsController ERROR! " + err.message)
       });
@@ -423,12 +425,26 @@ export const App = {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsActuator(nodeAddr, "Test message").then(function(result) {
-        console.log("FLOW: assignNodeAsActuator()");
+        console.log("FLOW: assignNodeAsActuator("+nodeAddr+") success");
       }).catch(function(err) {
         console.error("assignNodeAsActuator ERROR! " + err.message)
       });
     }).catch(function(err) {
       console.error("NetworkFormation.deployed() assignNodeAsActuator ERROR! " + err.message)
+    });
+  },
+
+  respondToSensorInput: function(nodeAddr) {
+    console.log("FLOW: respondToSensorInput("+nodeAddr+")");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.respondToSensorInput(nodeAddr).then(function(result) {
+        console.log("FLOW: respondToSensorInput("+nodeAddr+") success");
+      }).catch(function(err) {
+        console.error("respondToSensorInput ERROR! " + err.message)
+      });
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() respondToSensorInput ERROR! " + err.message)
     });
   }
 };
