@@ -260,14 +260,29 @@ export const App = {
     });
   },
   
+  // basically runClusterHeadElection() but for the sink node only
   electClusterHeads: function() {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.electClusterHeads(111000, 65).then(function(result) {
+      instance.electClusterHeads(111000, 50).then(function(result) {
         console.log("FLOW: electClusterHeads()");
       }).catch(function(err) {
         console.error("electClusterHeads ERROR! " + err.message)
+      });
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+    });
+  },
+  
+  runClusterHeadElection: function(nodeAddr) {
+    console.log("FLOW: runClusterHeadElection("+nodeAddr+")");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.electClusterHeads(nodeAddr, 50).then(function(result) {
+        console.log("FLOW: runClusterHeadElection()");
+      }).catch(function(err) {
+        console.error("runClusterHeadElection ERROR! " + err.message)
       });
     }).catch(function(err) {
       console.error("NetworkFormation.deployed() ERROR! " + err.message)
@@ -373,8 +388,52 @@ export const App = {
     }).catch(function(err) {
       console.error("activateNode ERROR! " + err.message)
     });
+  },
+  
+  assignNodeAsSensor: function(nodeAddr) {
+    console.log("FLOW: assignNodeAsSensor("+nodeAddr+")");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.assignAsSensor(nodeAddr).then(function(result) {
+        console.log("FLOW: assignNodeAsSensor()");
+      }).catch(function(err) {
+        console.error("assignNodeAsSensor ERROR! " + err.message)
+      });
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() assignNodeAsSensor ERROR! " + err.message)
+    });
+  },
+
+  assignNodeAsController: function(nodeAddr) {
+    console.log("FLOW: assignNodeAsController("+nodeAddr+")");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.assignAsController(nodeAddr).then(function(result) {
+        console.log("FLOW: assignNodeAsController()");
+      }).catch(function(err) {
+        console.error("assignNodeAsController ERROR! " + err.message)
+      });
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() assignNodeAsController ERROR! " + err.message)
+    });
+  },
+
+  assignNodeAsActuator: function(nodeAddr) {
+    console.log("FLOW: assignNodeAsActuator("+nodeAddr+")");
+    // Call the smart contract functions
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.assignAsActuator(nodeAddr, "Test message").then(function(result) {
+        console.log("FLOW: assignNodeAsActuator()");
+      }).catch(function(err) {
+        console.error("assignNodeAsActuator ERROR! " + err.message)
+      });
+    }).catch(function(err) {
+      console.error("NetworkFormation.deployed() assignNodeAsActuator ERROR! " + err.message)
+    });
   }
 };
+
+
 
 $(function() {
   $(window).load(function() {

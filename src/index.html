@@ -51,6 +51,8 @@
           </div>
         </div>
         <div class="col-md-6">
+          <h1>Set up the sample WSN</h1>
+          
           <div>
             <button class="btn btn-primary" id="btn-registerAsClusterHead">Register sink node as cluster head</button>
           </div>
@@ -66,6 +68,30 @@
           <div>
             <button class="btn btn-primary" id="btn-identifyBackupClusterHeads">Identify backup cluster heads</button>
           </div>
+
+          <h1>Additional functions</h1>
+          
+          <div class="input-group">
+            <button class="btn btn-primary" id="btn-runClusterHeadElection">Elect cluster heads for child nodes of: </button>
+            <input type="string" class="form-control" id="id-input-runClusterHeadElection" placeholder="Node address">
+          </div>
+
+          <h2>Assign node roles</h2>
+          
+          <div class="input-group">
+            <button class="btn btn-primary" id="btn-assignNodeAsSensor">Assign as sensor: </button>
+            <input type="string" class="form-control" id="id-input-assignNodeAsSensor" placeholder="Node address">
+          </div>
+          <div class="input-group">
+            <button class="btn btn-primary" id="btn-assignNodeAsController">Assign as controller: </button>
+            <input type="string" class="form-control" id="id-input-assignNodeAsController" placeholder="Node address">
+          </div>
+          <div class="input-group">
+            <button class="btn btn-primary" id="btn-assignNodeAsActuator">Assign as actuator: </button>
+            <input type="string" class="form-control" id="id-input-assignNodeAsActuator-addr" placeholder="Node address">
+            <input type="string" class="form-control" id="id-input-assignNodeAsActuator-msg" placeholder="Actuator massage">
+          </div>
+          
           <div id="thing-box"></div>
         </div>
       </div>
@@ -89,6 +115,23 @@
     document.querySelector('#btn-sendJoinRequests').addEventListener('click', App.sendJoinRequests);
     document.querySelector('#btn-electClusterHeads').addEventListener('click', App.electClusterHeads);
     document.querySelector('#btn-identifyBackupClusterHeads').addEventListener('click', App.identifyBackupClusterHeads);
+
+    document.querySelector('#btn-runClusterHeadElection')
+        .addEventListener('click',
+            App.runClusterHeadElection.bind(null, $("#id-input-runClusterHeadElection").val()));
+    
+    document.querySelector('#btn-assignNodeAsSensor')
+        .addEventListener('click', 
+            App.assignNodeAsSensor.bind(null, $("#id-input-assignNodeAsSensor").val()));
+    document.querySelector('#btn-assignNodeAsController')
+        .addEventListener('click', 
+            App.assignNodeAsController.bind(null, $("#id-input-assignNodeAsController").val()));
+    
+    var aNAAaddr = $("#id-input-assignNodeAsActuator-addr").val();        
+    var aNAAmsg = $("#id-input-assignNodeAsActuator-msg").val();        
+    document.querySelector('#btn-assignNodeAsActuator')
+        .addEventListener('click', 
+            App.assignNodeAsActuator.bind(null, aNAAaddr, aNAAmsg));
     </script>
     
   </body>
