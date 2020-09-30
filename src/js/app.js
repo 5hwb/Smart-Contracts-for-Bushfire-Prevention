@@ -1,4 +1,4 @@
-import { NodeType } from "./solidity_enums.js";
+import { NodeType, NodeRole } from "./solidity_enums.js";
 
 function toNodeType(enumVal) {
   // need to convert the BigNumber returned by Solidity into a JS number
@@ -134,50 +134,73 @@ export const App = {
         else {
           instance.getAllNodeAddresses().then(function(result) {
             for (var i = 0; i < numOfNodes; i++) {
+              console.log("==================================================");
               console.log(i);
               console.log(result[i]);
+              
+              var currentAddr = result[i];
+              
+              $(".sensornode-box").append(`<div class="node-description id="nodedesc-${currentAddr}">`);
+              
               // gets all nodes and displays them
-              instance.getNodeInfo(result[i]).then(function(data) {
+              instance.getNodeInfo(currentAddr).then(function(data) {
+                console.log("currentAddr in gni: " + currentAddr);
                 // Add colour coding to node background.
                 // Cyan = cluster head.
                 // Yellow = member node.
                 // Red = unassigned node.
                 var isClusterHead = (data[4] == NodeType.ClusterHead);
                 var isMemberNode = (data[4] == NodeType.MemberNode);
-                var isActive = data[6];
                 var chosenStyle = (isClusterHead) ? "node-clusterhead" :
                     (isMemberNode) ? "node-membernode" : 
                     "node-unassigned";
+                
+                var isActive = data[7];
                 var chosenTextStyle = (isActive) ? "node-active" :
                     "node-inactive";
                 var buttonLabel = (isActive) ? "Deactivate" :
                     "Activate";
                 var buttonFunc = (isActive) ? "deactivateNode" :
-                    "activateNode";
+                    "activateNode";            
 
                 $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle}">
                   <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
                   <p>Node type: ${toNodeType(data[4])}</p>
-                  <p>Sensor readings: [${data[5]}]</p>
+                  <p>Node role: ${toNodeRole(data[5])}</p>
+                  <p>Sensor readings: [${data[6]}]</p>
                   <div class="input-group">
-                    <label for="id-input-setactive">isActive: ${data[6]}</label>
-                    <button class="btn btn-primary" onclick="App.${buttonFunc}(${data[1]})" id="btn2-${data[1]}">${buttonLabel}</button>
+                    <label for="id-input-setactive">isActive: ${data[7]}</label>
+                    <button class="btn btn-primary" id="btn-${buttonFunc}-${data[1]}" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
-                  <p>Parent node: ${data[7]}</p>
-                  <p>Nodes within range: [${data[8]}]</p>
-                  <p>Backup cluster heads: [${data[9]}]</p>
+                  <p>Parent node: ${data[8]}</p>
+                  <p>Nodes within range: [${data[9]}]</p>
+                  <p>Backup cluster heads: [${data[10]}]</p>
                   <div class="input-group">
                     <label for="id-input-sreading">Add sensor reading: </label>
                     <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
                   </div>
-                  <button class="btn btn-primary" onclick="App.readSensorInput(${data[0]}, ${data[1]})" id="btn-${data[1]}">Simulate sensor reading</button>
-                  </div>
-                  <p>Node role: ${data[10]}</p>`)
+                  <button class="btn btn-primary" id="btn-readSensorInput-${data[0]}-${data[1]}">Simulate sensor reading</button>
+                  </div>`);
+
+                // Set event listener for 'De/Activate' button
+                if (isActive) {
+                  console.log("Set deactivate node");
+                  document.querySelector("#btn-"+buttonFunc+"-"+data[1]).addEventListener('click', App.deactivateNode.bind(null, data[1]));              
+                } else {
+                  console.log("Set ACTivate node");
+                  document.querySelector("#btn-"+buttonFunc+"-"+data[1]).addEventListener('click', App.activateNode.bind(null, data[1]));
+                }
+                
+                // Set event listener for sensor reading simulation button
+                document.querySelector("#btn-readSensorInput-"+data[0]+"-"+data[1]).addEventListener('click', App.readSensorInput.bind(null, data[0], data[1]));              
+
+
               }).catch(function(err) {
-                console.error("getting node ERROR! " + err.message)
+                console.error("getNodeInfo ERROR! " + err.message)
               });
+              
             }
           }).catch(function(err) {
             console.error("get all nodes ERROR! " + err.message);
@@ -287,7 +310,7 @@ export const App = {
   },
 
   readSensorInput: function(nodeID, nodeAddr) {
-    console.log("FLOW: readSensorInput()");
+    console.log("FLOW: readSensorInput(" + nodeID + ", " + nodeAddr + ")");
 
     // Get integer user input
     var sReading = $("#id-input-sreading-" + nodeID).val();
@@ -326,7 +349,8 @@ export const App = {
   },
 
   deactivateNode: function(nodeAddr) {
-    console.log("FLOW: deactivateNode()");
+    console.log("FLOW: deactivateNode(" + nodeAddr + ")");
+    console.log(nodeAddr);
 
     // Call the smart contract function
     App.contracts.NetworkFormation.deployed().then(function(instance) {
@@ -339,7 +363,7 @@ export const App = {
   },
 
   activateNode: function(nodeAddr) {
-    console.log("FLOW: activateNode()");
+    console.log("FLOW: activateNode(" + nodeAddr + ")");
 
     // Call the smart contract function
     App.contracts.NetworkFormation.deployed().then(function(instance) {

@@ -6,7 +6,7 @@ export const NodeType = {
 };
 
 // NodeRole enum values 
-const NodeRole = {
+export const NodeRole = {
   Default: 0,
   Sensor: 1,
   Controller: 2,
