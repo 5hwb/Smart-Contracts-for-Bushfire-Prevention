@@ -193,14 +193,16 @@ library SensorNode {
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible
-    if (_daNode.sensorReadings[1].reading > 37000 || conditionsAreMatching) {
-      
-      // If this node is a controller, go thru each of its children nodes
-      // and call this function on each of them      
-      if (_daNode.ev.nodeRole == DS.NodeRole.Controller) {
-        for (uint i = 0; i < _daNode.links.childNodes.length; i++) {
-          DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[i]);
-          respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
+    for (uint i = 1; i < _daNode.sensorReadings.length; i++) {
+      if (_daNode.sensorReadings[i].reading > 37000 || conditionsAreMatching) {
+        
+        // If this node is a controller, go thru each of its children nodes
+        // and call this function on each of them      
+        if (_daNode.ev.nodeRole == DS.NodeRole.Controller) {
+          for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
+            DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
+            respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
+          }
         }
       }
     }

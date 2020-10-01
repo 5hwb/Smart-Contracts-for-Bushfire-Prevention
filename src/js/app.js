@@ -195,8 +195,8 @@ export const App = {
                     <button class="btn btn-primary" id="btn-${buttonFunc}-${data[1]}" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
 
-                  <p class="${actuatorMsgStyle}">Is triggering an external service: ${data[7]}</p>
-                  <p>Message: ${data[8]}</p>
+                  <p>Is triggering an external service: ${data[7]}</p>
+                  <p class="${actuatorMsgStyle}">Message: ${data[8]}</p>
 
                   <p>Sensor readings: [${data[9]}]</p>
                   <div class="input-group">
