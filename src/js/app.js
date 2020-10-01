@@ -179,7 +179,11 @@ export const App = {
                 var buttonFunc = (isActive) ? "deactivateNode" :
                     "activateNode";            
 
-                $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle}">
+                var isTriggeringExternalService = data[7];
+                var chosenBorderStyle = (isTriggeringExternalService) ? "node-triggeredactuator" : "";
+                var actuatorMsgStyle = (isTriggeringExternalService) ? "node-msg-triggeredactuator" : "";            
+
+                $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle} ${chosenBorderStyle}">
                   <h2>Node ${data[0]} with address ${data[1]}</h2>
                   <p>Energy level: ${data[2]}</p>
                   <p>Network level: ${data[3]}</p>
@@ -191,7 +195,7 @@ export const App = {
                     <button class="btn btn-primary" id="btn-${buttonFunc}-${data[1]}" id="btn2-${data[1]}">${buttonLabel}</button>
                   </div>
 
-                  <p>Is triggering an external service: ${data[7]}</p>
+                  <p class="${actuatorMsgStyle}">Is triggering an external service: ${data[7]}</p>
                   <p>Message: ${data[8]}</p>
 
                   <p>Sensor readings: [${data[9]}]</p>

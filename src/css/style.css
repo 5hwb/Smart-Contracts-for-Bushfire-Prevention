@@ -22,6 +22,16 @@
   text-decoration-line: line-through;
 }
 
+.node-triggeredactuator {
+  border-color: red;
+  border-style: solid;
+}
+
+.node-msg-triggeredactuator {
+  color: red;
+  font-weight: bold;
+}
+
 /* Input labels */
 .input-group > label {
   padding-right: 5px;
