@@ -113,33 +113,7 @@
     <!-- Custom Scripts -->
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
-    <script type="module">
-    import { App } from "./js/app.js";
-    
-    document.querySelector('#btn-addNewNode').addEventListener('click', App.addNewNode);
-    document.querySelector('#btn-registerAsClusterHead').addEventListener('click', App.registerAsClusterHead);
-    document.querySelector('#btn-sendBeacon').addEventListener('click', App.sendBeacon);
-    document.querySelector('#btn-sendJoinRequests').addEventListener('click', App.sendJoinRequests);
-    document.querySelector('#btn-electClusterHeads').addEventListener('click', App.electClusterHeads);
-    document.querySelector('#btn-identifyBackupClusterHeads').addEventListener('click', App.identifyBackupClusterHeads);
-
-    document.querySelector('#btn-runClusterHeadElection')
-        .addEventListener('click',
-            App.runClusterHeadElection.bind(null, $("#id-input-runClusterHeadElection").val()));
-    
-    document.querySelector('#btn-assignNodeAsSensor')
-        .addEventListener('click', 
-            App.assignNodeAsSensor.bind(null, $("#id-input-assignNodeAsSensor").val()));
-    document.querySelector('#btn-assignNodeAsController')
-        .addEventListener('click', 
-            App.assignNodeAsController.bind(null, $("#id-input-assignNodeAsController").val()));
-    
-    var aNAAaddr = $("#id-input-assignNodeAsActuator-addr").val();        
-    var aNAAmsg = $("#id-input-assignNodeAsActuator-msg").val();        
-    document.querySelector('#btn-assignNodeAsActuator')
-        .addEventListener('click', 
-            App.assignNodeAsActuator.bind(null, aNAAaddr, aNAAmsg));
-    </script>
+    <script type="module" src="js/app.js"></script>
     
   </body>
 </html>
