@@ -14,6 +14,9 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
+* Web app - make the role assigning functions accessible via function arguments.
+    * Separate the button clicking! (make it call a argument-less function that calls the new argument function)
+    * This is so I can automatically assign node roles without having to do it manually. 
 * [SEE IF I CAN DO THIS] Idea: Each actuator behaves differently to the sensor readings - e.g. 1 would trigger at 37000 while another would trigger at 5000.
 * Clean up the code and add comments to make it more presentable.
 * [TODO] Seriously consider using IPFS to store node information and readings.
