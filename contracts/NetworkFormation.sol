@@ -22,7 +22,6 @@ contract NetworkFormation {
   event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
   
-  // TODO Solidity compiler whinges that 'Only libraries are allowed to use the mapping type in public or external functions'. Find a way around this later! 
   // Get array of all DS.Node instances.
   function getAllNodes() view public returns(DS.Node[] memory) {
     return nodes;

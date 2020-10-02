@@ -127,8 +127,6 @@ export const App = {
         
         var currentAddr = result[i];
         
-        $(".sensornode-box").append(`<div class="node-description id="nodedesc-${currentAddr}">`);
-        
         // gets all nodes and displays them
         instance.getNodeInfo(currentAddr).then(function(data) {
           console.log("currentAddr in gni: " + currentAddr);
