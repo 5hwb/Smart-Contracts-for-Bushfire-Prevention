@@ -1,5 +1,8 @@
 import { NodeType, NodeRole } from "./solidity_enums.js";
 
+/**
+ * Convert an integer type into a string representing the corresponding DS.NodeType enum value.
+ */
 function toNodeType(enumVal) {
   // need to convert the BigNumber returned by Solidity into a JS number
   switch (enumVal.toNumber()) {
@@ -10,6 +13,9 @@ function toNodeType(enumVal) {
   }
 }
 
+/**
+ * Convert an integer type into a string representing the corresponding DS.NodeRole enum value.
+ */
 function toNodeRole(enumVal) {
   // need to convert the BigNumber returned by Solidity into a JS number
   switch (enumVal.toNumber()) {
@@ -28,6 +34,9 @@ export const App = {
   //////////////////////////////////////////////////
   // INIT()
   //////////////////////////////////////////////////
+  /**
+   * Initialise the app.
+   */
   init: async function() {
     console.log("FLOW: init()");
     
@@ -41,11 +50,11 @@ export const App = {
 
     document.querySelector('#btn-runClusterHeadElection').addEventListener('click', App.runClusterHeadElection);
     
-    document.querySelector('#btn-assignNodeAsSensor').addEventListener('click', App.assignNodeAsSensor);
-    document.querySelector('#btn-assignNodeAsController').addEventListener('click', App.assignNodeAsController);
-    document.querySelector('#btn-assignNodeAsActuator').addEventListener('click', App.assignNodeAsActuator);
+    document.querySelector('#btn-assignNodeAsSensor').addEventListener('click', App.assignNodeAsSensorEvent);
+    document.querySelector('#btn-assignNodeAsController').addEventListener('click', App.assignNodeAsControllerEvent);
+    document.querySelector('#btn-assignNodeAsActuator').addEventListener('click', App.assignNodeAsActuatorEvent);
 
-    document.querySelector('#btn-respondToSensorInput').addEventListener('click', App.respondToSensorInput);
+    document.querySelector('#btn-respondToSensorInput').addEventListener('click', App.respondToSensorInputEvent);
 
     return await App.initWeb3();
   },
@@ -53,6 +62,9 @@ export const App = {
   //////////////////////////////////////////////////
   // INITWEB3()
   //////////////////////////////////////////////////
+  /**
+   * Initialise the web3 instance to connect to the Ethereum blockchain.
+   */
   initWeb3: async function() {
     console.log("FLOW: initWeb3()");
 
@@ -86,6 +98,9 @@ export const App = {
   //////////////////////////////////////////////////
   // INITCONTRACT()
   //////////////////////////////////////////////////
+  /**
+   * Initialise the smart contracts.
+   */
   initContract: function() {
     console.log("FLOW: initContract()");
 
@@ -103,6 +118,9 @@ export const App = {
     });
   },
   
+  /**
+   * Helper function to add a node into the system.
+   */
   addNode: function(instance, nodeAddr, nodeELevel, nodesWithinRange) {
     instance.addNode(nodeAddr, nodeELevel, nodesWithinRange).then(function(result) {
       console.log("FLOW: adding more nodes - nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodesWithinRange="+nodesWithinRange);
@@ -118,6 +136,17 @@ export const App = {
     });
   },
   
+  /**
+   * Helper function to load the node data into the web GUI. 
+   * Format is roughly like this (TODO update this!):
+   * <div>
+   *   <h2>Node with address 111000</h2>
+   *   <p>Energy level: 22</p>
+   *   <p>Network level: 22</p>
+   *   <p>isClusterHead: true</p>
+   *   <p>isMemberNode: true</p>
+   * </div>
+   */
   loadNodeData: function(instance) {
     instance.getAllNodeAddresses().then(function(result) {
       for (var i = 0; i < result.length; i++) {
@@ -198,15 +227,10 @@ export const App = {
     });
   },
   
-  /* Adds data by inserting directly into the HTML with the following:
-  <div>
-    <h2>Node 10 with address 111000</h2>
-    <p>Energy level: 22</p>
-    <p>Network level: 22</p>
-    <p>isClusterHead: true</p>
-    <p>isMemberNode: true</p>
-  </div>
-  */
+  /**
+   * Initialise the sample WSN with a single sink node and 5 child nodes.
+   * If initialisation has taken place already, then load the node data from the Ethereum blockchain into the web GUI.
+   */
   initialiseData: function() {
     console.log("FLOW: initialiseData()");
     
@@ -236,8 +260,9 @@ export const App = {
     });
   },
   
-  
-  // Carry out the process to elect cluster heads
+  /**
+   * Register the sink node as the 1st cluster head.
+   */
   registerAsClusterHead: function() {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
@@ -250,6 +275,9 @@ export const App = {
     });
   },
   
+  /**
+   * Send beacons to all children of the sink node.
+   */
   sendBeacon: function() {
     console.log("FLOW: sendBeacon()");
     // Call the smart contract functions
@@ -262,6 +290,9 @@ export const App = {
     });
   },
   
+  /**
+   * Make all child nodes send join requests to the cluster head.
+   */
   sendJoinRequests: function() {
     console.log("FLOW: sendJoinRequests()");
     // Call the smart contract functions
@@ -274,7 +305,10 @@ export const App = {
     });
   },
   
-  // basically runClusterHeadElection() but for the sink node only
+  /**
+   * Register child nodes as either cluster heads or member nodes.
+   * Basically runClusterHeadElection() but for the sink node only
+   */
   electClusterHeads: function() {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
@@ -287,6 +321,9 @@ export const App = {
     });
   },
   
+  /**
+   * Register child nodes as either cluster heads or member nodes for the given existing cluster head.
+   */
   runClusterHeadElection: function() {
     console.log("FLOW: runClusterHeadElection()");
     var nodeAddr = $("#id-input-runClusterHeadElection").val();
@@ -303,6 +340,9 @@ export const App = {
     });
   },
   
+  /**
+   * Add a new node using the values provided by the web GUI form.
+   */
   addNewNode: function() {
     console.log("FLOW: addNewNode()");
 
@@ -315,17 +355,14 @@ export const App = {
         .split(",").map(function (str) {  return parseInt(str); });
 
     $(".msg").html("<p>nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodeWRNodes="+nodeWRNodes+"</p>");
-
     console.log(nodeWRNodes[0]);
     console.log(nodeWRNodes[1]);
-    
 
     // Application Logic 
     // if (uid == "") {
     //   $(".msg").html("<p>Please enter id.</p>");
     //   return;
     // }
-    
     
     // Call the smart contract function
     App.contracts.NetworkFormation.deployed().then(function(instance) {
@@ -337,6 +374,9 @@ export const App = {
     });
   },
 
+  /**
+   * Simulate getting data from the sensors of the given node.
+   */
   readSensorInput: function(nodeAddr) {
     console.log("FLOW: readSensorInput(" + nodeAddr + ")");
 
@@ -363,6 +403,9 @@ export const App = {
     });
   },
 
+  /**
+   * Identify the backup cluster heads for each node.
+   */
   identifyBackupClusterHeads: function() {
     console.log("FLOW: identifyBackupClusterHeads()");
 
@@ -376,6 +419,9 @@ export const App = {
     });
   },
 
+  /**
+   * Deactivate the node with the given address.
+   */
   deactivateNode: function(nodeAddr) {
     console.log("FLOW: deactivateNode(" + nodeAddr + ")");
     console.log(nodeAddr);
@@ -390,6 +436,9 @@ export const App = {
     });
   },
 
+  /**
+   * Activate the node with the given address.
+   */
   activateNode: function(nodeAddr) {
     console.log("FLOW: activateNode(" + nodeAddr + ")");
 
@@ -403,9 +452,19 @@ export const App = {
     });
   },
   
-  assignNodeAsSensor: function() {
+  /**
+   * Event function for assignNodeAsSensor().
+   */
+  assignNodeAsSensorEvent: function() {
     var nodeAddr = $("#id-input-assignNodeAsSensor").val();
-    console.log("FLOW: assignNodeAsSensor() "+nodeAddr);
+    console.log("FLOW: assignNodeAsSensorEvent() "+nodeAddr);
+    App.assignNodeAsSensor(nodeAddr);
+  },
+
+  /**
+   * Assign the node with the given address to the Sensor role.
+   */
+  assignNodeAsSensor: function(nodeAddr) {
 
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
@@ -417,10 +476,19 @@ export const App = {
     });
   },
 
-  assignNodeAsController: function() {
+  /**
+   * Event function for assignNodeAsController().
+   */
+  assignNodeAsControllerEvent: function() {
     var nodeAddr = $("#id-input-assignNodeAsController").val();
-    console.log("FLOW: assignNodeAsController() "+nodeAddr);
+    console.log("FLOW: assignNodeAsControllerEvent() "+nodeAddr);
+    App.assignNodeAsController(nodeAddr);
+  },
 
+  /**
+   * Assign the node with the given address to the Controller role.
+   */
+  assignNodeAsController: function(nodeAddr) {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsController(nodeAddr).then(function(result) {
@@ -431,11 +499,20 @@ export const App = {
     });
   },
 
-  assignNodeAsActuator: function() {
+  /**
+   * Event function for assignNodeAsActuator().
+   */
+  assignNodeAsActuatorEvent: function() {
     var nodeAddr = $("#id-input-assignNodeAsActuator-addr").val();
     var actuatorMsg = $("#id-input-assignNodeAsActuator-msg").val();
-    console.log("FLOW: assignNodeAsActuator() "+nodeAddr+" '"+actuatorMsg+"'");
+    console.log("FLOW: assignNodeAsActuatorEvent() "+nodeAddr+" '"+actuatorMsg+"'");
+    App.assignNodeAsActuator(nodeAddr, actuatorMsg);
+  },
 
+  /**
+   * Assign the node with the given address to the Actuator role.
+   */
+  assignNodeAsActuator: function(nodeAddr, actuatorMsg) {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsActuator(nodeAddr, actuatorMsg).then(function(result) {
@@ -446,10 +523,19 @@ export const App = {
     });
   },
 
-  respondToSensorInput: function() {
+  /**
+   * Event function for respondToSensorInput().
+   */
+  respondToSensorInputEvent: function() {
     var nodeAddr = $("#id-input-respondToSensorInput").val();
-    console.log("FLOW: respondToSensorInput() "+nodeAddr);
+    console.log("FLOW: respondToSensorInputEvent() "+nodeAddr);
+    App.respondToSensorInput(nodeAddr);
+  },
 
+  /**
+   * Respond to sensor readings from all children of this node.
+   */
+  respondToSensorInput: function(nodeAddr) {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.respondToSensorInput(nodeAddr).then(function(result) {
