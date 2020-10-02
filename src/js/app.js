@@ -103,11 +103,11 @@ export const App = {
     });
   },
   
-  addNode: function(instance, nodeID, nodeAddr, nodeELevel, nodesWithinRange) {
-    instance.addNode(nodeID, nodeAddr, nodeELevel, nodesWithinRange).then(function(result) {
-      console.log("FLOW: adding more nodes - nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodesWithinRange="+nodesWithinRange);
+  addNode: function(instance, nodeAddr, nodeELevel, nodesWithinRange) {
+    instance.addNode(nodeAddr, nodeELevel, nodesWithinRange).then(function(result) {
+      console.log("FLOW: adding more nodes - nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodesWithinRange="+nodesWithinRange);
       $(".sensornode-box").append(`<div>
-        <h2>Node ${result.logs[0].args.nodeID} with address ${result.logs[0].args.addr}</h2>
+        <h2>Node with address ${result.logs[0].args.addr}</h2>
         <p>Energy level: ${result.logs[0].args.energyLevel}</p>
         <p>Network level: ${result.logs[0].args.networkLevel}</p>
         <p>isClusterHead: ${result.logs[0].args.isClusterHead}</p>
@@ -115,6 +115,88 @@ export const App = {
         </div>`);
     }).catch(function(err) { 
       console.error("add more nodes ERROR! " + err.message);
+    });
+  },
+  
+  loadNodeData: function(instance) {
+    instance.getAllNodeAddresses().then(function(result) {
+      for (var i = 0; i < result.length; i++) {
+        console.log("==================================================");
+        console.log(i);
+        console.log(result[i]);
+        
+        var currentAddr = result[i];
+        
+        $(".sensornode-box").append(`<div class="node-description id="nodedesc-${currentAddr}">`);
+        
+        // gets all nodes and displays them
+        instance.getNodeInfo(currentAddr).then(function(data) {
+          console.log("currentAddr in gni: " + currentAddr);
+          // Add colour coding to node background.
+          // Cyan = cluster head.
+          // Yellow = member node.
+          // Red = unassigned node.
+          var isClusterHead = (data[3] == NodeType.ClusterHead);
+          var isMemberNode = (data[3] == NodeType.MemberNode);
+          var chosenStyle = (isClusterHead) ? "node-clusterhead" :
+              (isMemberNode) ? "node-membernode" : 
+              "node-unassigned";
+          
+          var isActive = data[5];
+          var chosenTextStyle = (isActive) ? "node-active" :
+              "node-inactive";
+          var buttonLabel = (isActive) ? "Deactivate" :
+              "Activate";
+          var buttonFunc = (isActive) ? "deactivateNode" :
+              "activateNode";            
+
+          var isTriggeringExternalService = data[6];
+          var chosenBorderStyle = (isTriggeringExternalService) ? "node-triggeredactuator" : "";
+          var actuatorMsgStyle = (isTriggeringExternalService) ? "node-msg-triggeredactuator" : "";            
+
+          $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle} ${chosenBorderStyle}">
+            <h2>Node with address ${data[0]}</h2>
+            <p>Energy level: ${data[1]}</p>
+            <p>Network level: ${data[2]}</p>
+            <p>Node type: ${toNodeType(data[3])}</p>
+            <p>Node role: ${toNodeRole(data[4])}</p>
+
+            <div class="input-group">
+              <label for="id-input-setactive">Is currently active: ${data[5]}</label>
+              <button class="btn btn-primary" id="btn-${buttonFunc}-${data[0]}" id="btn2-${data[1]}">${buttonLabel}</button>
+            </div>
+
+            <p>Is triggering an external service: ${data[6]}</p>
+            <p class="${actuatorMsgStyle}">Message: ${data[7]}</p>
+
+            <p>Sensor readings: [${data[8]}]</p>
+            <div class="input-group">
+              <label for="id-input-sreading">Add sensor reading: </label>
+              <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
+            </div>
+            <button class="btn btn-primary" id="btn-readSensorInput-${data[0]}">Simulate sensor reading</button>
+            </div>`);
+
+          // Set event listener for 'De/Activate' button
+          if (isActive) {
+            console.log("Set deactivate node");
+            document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.deactivateNode.bind(null, data[0]));              
+          } else {
+            console.log("Set ACTivate node");
+            document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.activateNode.bind(null, data[1]));
+          }
+          
+          // Set event listener for sensor reading simulation button
+          document.querySelector("#btn-readSensorInput-"+data[0]).addEventListener('click', App.readSensorInput.bind(null, data[0]));              
+
+
+        }).catch(function(err) {
+          console.error("getNodeInfo ERROR! " + err.message)
+        });
+        
+      }
+    }).catch(function(err) {
+      console.error("get all nodes ERROR! " + err.message);
     });
   },
   
@@ -136,97 +218,19 @@ export const App = {
         // Add a bunch of sample nodes if the number of nodes is 0
         if (numOfNodes == 0) {
           // Add the sink node (1 of many to come)
-          App.addNode(instance, 10, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+          App.addNode(instance, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
           
           // Add the child nodes
-          App.addNode(instance, 11, 222001, 35, [111000, 222002]);
-          App.addNode(instance, 12, 222002, 66, [111000, 222001, 222003]);
-          App.addNode(instance, 13, 222003, 53, [111000, 222002, 222004]);
-          App.addNode(instance, 14, 222004, 82, [111000, 222003, 222005]);
-          App.addNode(instance, 15, 222005, 65, [111000, 222004]);
+          App.addNode(instance, 222001, 35, [111000, 222002]);
+          App.addNode(instance, 222002, 66, [111000, 222001, 222003]);
+          App.addNode(instance, 222003, 53, [111000, 222002, 222004]);
+          App.addNode(instance, 222004, 82, [111000, 222003, 222005]);
+          App.addNode(instance, 222005, 65, [111000, 222004]);
           
         }
         // Otherwise, load the existing sensor nodes
         else {
-          instance.getAllNodeAddresses().then(function(result) {
-            for (var i = 0; i < numOfNodes; i++) {
-              console.log("==================================================");
-              console.log(i);
-              console.log(result[i]);
-              
-              var currentAddr = result[i];
-              
-              $(".sensornode-box").append(`<div class="node-description id="nodedesc-${currentAddr}">`);
-              
-              // gets all nodes and displays them
-              instance.getNodeInfo(currentAddr).then(function(data) {
-                console.log("currentAddr in gni: " + currentAddr);
-                // Add colour coding to node background.
-                // Cyan = cluster head.
-                // Yellow = member node.
-                // Red = unassigned node.
-                var isClusterHead = (data[4] == NodeType.ClusterHead);
-                var isMemberNode = (data[4] == NodeType.MemberNode);
-                var chosenStyle = (isClusterHead) ? "node-clusterhead" :
-                    (isMemberNode) ? "node-membernode" : 
-                    "node-unassigned";
-                
-                var isActive = data[6];
-                var chosenTextStyle = (isActive) ? "node-active" :
-                    "node-inactive";
-                var buttonLabel = (isActive) ? "Deactivate" :
-                    "Activate";
-                var buttonFunc = (isActive) ? "deactivateNode" :
-                    "activateNode";            
-
-                var isTriggeringExternalService = data[7];
-                var chosenBorderStyle = (isTriggeringExternalService) ? "node-triggeredactuator" : "";
-                var actuatorMsgStyle = (isTriggeringExternalService) ? "node-msg-triggeredactuator" : "";            
-
-                $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle} ${chosenBorderStyle}">
-                  <h2>Node ${data[0]} with address ${data[1]}</h2>
-                  <p>Energy level: ${data[2]}</p>
-                  <p>Network level: ${data[3]}</p>
-                  <p>Node type: ${toNodeType(data[4])}</p>
-                  <p>Node role: ${toNodeRole(data[5])}</p>
-
-                  <div class="input-group">
-                    <label for="id-input-setactive">Is currently active: ${data[6]}</label>
-                    <button class="btn btn-primary" id="btn-${buttonFunc}-${data[1]}" id="btn2-${data[1]}">${buttonLabel}</button>
-                  </div>
-
-                  <p>Is triggering an external service: ${data[7]}</p>
-                  <p class="${actuatorMsgStyle}">Message: ${data[8]}</p>
-
-                  <p>Sensor readings: [${data[9]}]</p>
-                  <div class="input-group">
-                    <label for="id-input-sreading">Add sensor reading: </label>
-                    <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
-                  </div>
-                  <button class="btn btn-primary" id="btn-readSensorInput-${data[0]}-${data[1]}">Simulate sensor reading</button>
-                  </div>`);
-
-                // Set event listener for 'De/Activate' button
-                if (isActive) {
-                  console.log("Set deactivate node");
-                  document.querySelector("#btn-"+buttonFunc+"-"+data[1]).addEventListener('click', App.deactivateNode.bind(null, data[1]));              
-                } else {
-                  console.log("Set ACTivate node");
-                  document.querySelector("#btn-"+buttonFunc+"-"+data[1]).addEventListener('click', App.activateNode.bind(null, data[1]));
-                }
-                
-                // Set event listener for sensor reading simulation button
-                document.querySelector("#btn-readSensorInput-"+data[0]+"-"+data[1]).addEventListener('click', App.readSensorInput.bind(null, data[0], data[1]));              
-
-
-              }).catch(function(err) {
-                console.error("getNodeInfo ERROR! " + err.message)
-              });
-              
-            }
-          }).catch(function(err) {
-            console.error("get all nodes ERROR! " + err.message);
-          });
+          App.loadNodeData(instance);
         }
         
       }).catch(function(err) {
@@ -317,7 +321,6 @@ export const App = {
     console.log("FLOW: addNewNode()");
 
     // Get integer user input
-    var nodeID = $("#id-input-id").val();
     var nodeAddr = $("#id-input-addr").val();
     var nodeELevel = $("#id-input-elevel").val();
 
@@ -325,7 +328,7 @@ export const App = {
     var nodeWRNodes = $("#id-input-wrnodes").val()
         .split(",").map(function (str) {  return parseInt(str); });
 
-    $(".msg").html("<p>nodeID="+nodeID+" nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodeWRNodes="+nodeWRNodes+"</p>");
+    $(".msg").html("<p>nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodeWRNodes="+nodeWRNodes+"</p>");
 
     console.log(nodeWRNodes[0]);
     console.log(nodeWRNodes[1]);
@@ -340,7 +343,7 @@ export const App = {
     
     // Call the smart contract function
     App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.addNode(nodeID, nodeAddr, nodeELevel, nodeWRNodes).then(function(result) {
+      instance.addNode(nodeAddr, nodeELevel, nodeWRNodes).then(function(result) {
         $(".msg").html("<p>Node added successfully.</p>");
       })
     }).catch(function(err) {
@@ -348,11 +351,11 @@ export const App = {
     });
   },
 
-  readSensorInput: function(nodeID, nodeAddr) {
-    console.log("FLOW: readSensorInput(" + nodeID + ", " + nodeAddr + ")");
+  readSensorInput: function(nodeAddr) {
+    console.log("FLOW: readSensorInput(" + nodeAddr + ")");
 
     // Get integer user input
-    var sReading = $("#id-input-sreading-" + nodeID).val();
+    var sReading = $("#id-input-sreading-" + nodeAddr).val();
     
     $(".msg").html("<p>sReading="+sReading+"</p>");
     console.log("sReading = " + sReading);

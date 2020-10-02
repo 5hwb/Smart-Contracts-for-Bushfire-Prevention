@@ -28,16 +28,14 @@ contract TestNetworkFormation {
     dummyAddrs1[0] = dummyAddr2;
     uint[] memory dummyAddrs2 = new uint[](1);
     dummyAddrs2[0] = dummyAddr1;
-    contAddr.addNode(100, dummyAddr1, 50, dummyAddrs1);
-    contAddr.addNode(101, dummyAddr2, 35, dummyAddrs2);
+    contAddr.addNode(dummyAddr1, 50, dummyAddrs1);
+    contAddr.addNode(dummyAddr2, 35, dummyAddrs2);
 
     DS.Node memory node100 = contAddr.getNodeAsMemory(dummyAddr1);
-    Assert.equal(node100.nodeID, 100, "Retrieval error");
     Assert.equal(node100.nodeAddress, dummyAddr1, "Retrieval error");
     Assert.equal(node100.energyLevel, 50, "Retrieval error");
 
     DS.Node memory node101 = contAddr.getNodeAsMemory(dummyAddr2);
-    Assert.equal(node101.nodeID, 101, "Retrieval error");
     Assert.equal(node101.nodeAddress, dummyAddr2, "Retrieval error");
     Assert.equal(node101.energyLevel, 35, "Retrieval error");
   }

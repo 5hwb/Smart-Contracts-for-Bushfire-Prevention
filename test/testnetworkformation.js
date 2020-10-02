@@ -25,8 +25,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[6].length; i++) {
-    var currBeacon = val[6][i];
+  for (var i = 0; i < val[5].length; i++) {
+    var currBeacon = val[5][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -36,8 +36,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[8].length; i++) {
-    var currSReading = val[8][i];
+  for (var i = 0; i < val[7].length; i++) {
+    var currSReading = val[7][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -45,31 +45,30 @@ function toStruct(val) {
   }
 
   return {
-    nodeID: parseInt(val[0]),
-    nodeAddress: parseInt(val[1]),
-    energyLevel: parseInt(val[2]),
-    networkLevel: parseInt(val[3]),
-    nodeType: val[4],
+    nodeAddress: parseInt(val[0]),
+    energyLevel: parseInt(val[1]),
+    networkLevel: parseInt(val[2]),
+    nodeType: val[3],
     
     links: {
-      parentNode: parseInt(val[5][0]),
-      childNodes: val[5][1].map(i => parseInt(i)),
-      joinRequestNodes: val[5][2].map(i => parseInt(i)),
-      numOfJoinRequests: parseInt(val[5][3]),
-      withinRangeNodes: val[5][4].map(i => parseInt(i))
+      parentNode: parseInt(val[4][0]),
+      childNodes: val[4][1].map(i => parseInt(i)),
+      joinRequestNodes: val[4][2].map(i => parseInt(i)),
+      numOfJoinRequests: parseInt(val[4][3]),
+      withinRangeNodes: val[4][4].map(i => parseInt(i))
     },
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[7]),
+    numOfBeacons: parseInt(val[6]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[9]),
-    backupCHeads: val[10].map(i => parseInt(i)),
-    isActive: val[11],
+    numOfReadings: parseInt(val[8]),
+    backupCHeads: val[9].map(i => parseInt(i)),
+    isActive: val[10],
     ev: {
-      nodeRole: val[12][0],
-      isTriggeringExternalService: val[12][1],
-      triggerMessage: val[12][2]
+      nodeRole: val[11][0],
+      isTriggeringExternalService: val[11][1],
+      triggerMessage: val[11][2]
     }
   };
 }
@@ -98,14 +97,14 @@ contract("NetworkFormation test cases", async accounts => {
   
   it("should add SensorNode instances", async () => {
     // Add the 'sink node'
-    await networkFormation.addNode(10, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+    await networkFormation.addNode(111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
     // Add neighbouring nodes
-    await networkFormation.addNode(11, 222001, 35, [111000, 222002]);
-    await networkFormation.addNode(12, 222002, 66, [111000, 222001, 222003]);
-    await networkFormation.addNode(13, 222003, 53, [111000, 222002, 222004]);
-    await networkFormation.addNode(14, 222004, 82, [111000, 222003, 222005]);
-    await networkFormation.addNode(15, 222005, 65, [111000, 222004]);
+    await networkFormation.addNode(222001, 35, [111000, 222002]);
+    await networkFormation.addNode(222002, 66, [111000, 222001, 222003]);
+    await networkFormation.addNode(222003, 53, [111000, 222002, 222004]);
+    await networkFormation.addNode(222004, 82, [111000, 222003, 222005]);
+    await networkFormation.addNode(222005, 65, [111000, 222004]);
     
     // Ensure there are 6 nodes
     assert.equal(await networkFormation.numOfNodes.call(), 6, "Num of nodes is not 6!");
@@ -114,10 +113,8 @@ contract("NetworkFormation test cases", async accounts => {
     
     // Ensure the values within the first DS.Node are as expected
     let firstNode = toStruct(await networkFormation.getNodeAt.call(0));
-    let firstNodeID = firstNode.nodeID;
     let firstNodeAddr = firstNode.nodeAddress;
     let firstNodeEnergyLevel = firstNode.energyLevel;
-    assert.equal(firstNodeID, 10);
     assert.equal(firstNodeAddr, 111000);
     assert.equal(firstNodeEnergyLevel, 100);
   });
@@ -244,12 +241,12 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node4.energyLevel, 53, "Sorting error");
     assert.equal(node5.energyLevel, 35, "Sorting error");
     // Another check to ensure the IDs are correct
-    assert.equal(node0.nodeID, 10, "Sorting error - wrong ID");
-    assert.equal(node1.nodeID, 14, "Sorting error - wrong ID");
-    assert.equal(node2.nodeID, 12, "Sorting error - wrong ID");
-    assert.equal(node3.nodeID, 15, "Sorting error - wrong ID");
-    assert.equal(node4.nodeID, 13, "Sorting error - wrong ID");
-    assert.equal(node5.nodeID, 11, "Sorting error - wrong ID");
+    assert.equal(node0.nodeAddress, 111000, "Sorting error - wrong ID");
+    assert.equal(node1.nodeAddress, 222004, "Sorting error - wrong ID");
+    assert.equal(node2.nodeAddress, 222002, "Sorting error - wrong ID");
+    assert.equal(node3.nodeAddress, 222005, "Sorting error - wrong ID");
+    assert.equal(node4.nodeAddress, 222003, "Sorting error - wrong ID");
+    assert.equal(node5.nodeAddress, 222001, "Sorting error - wrong ID");
   });
   
   /***********************************************

@@ -15,12 +15,10 @@ library SensorNode {
   /**
    * @notice Initialise the given node struct with the given values.
    * @param _daNode The node to modify
-   * @param _id Node ID
    * @param _addr Node address
    * @param _energyLevel Node energy level
    */
-  function initNodeStruct(DS.Node storage _daNode, uint _id, uint256 _addr, uint _energyLevel) public {
-    _daNode.nodeID = _id;
+  function initNodeStruct(DS.Node storage _daNode, uint256 _addr, uint _energyLevel) public {
     _daNode.nodeAddress = _addr;
     _daNode.energyLevel = _energyLevel;
     _daNode.networkLevel = 0; // invalid value for now

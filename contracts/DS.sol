@@ -45,7 +45,6 @@ library DS {
   }
 
   struct Node {
-    uint nodeID;         // ID of the node
     uint256 nodeAddress; // Address of the node
     // TODO eventually: Make the energy level based on the battery current and voltage available 
     uint energyLevel;    // give it when initialising.

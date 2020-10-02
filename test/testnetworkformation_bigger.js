@@ -32,8 +32,8 @@ function toStruct(val) {
   convertedSReadings = [];
 
   // Convert the beacons
-  for (var i = 0; i < val[6].length; i++) {
-    var currBeacon = val[6][i];
+  for (var i = 0; i < val[5].length; i++) {
+    var currBeacon = val[5][i];
     convertedBeacons.push({
       isSent: currBeacon[0],
       nextNetLevel: parseInt(currBeacon[1]),
@@ -43,8 +43,8 @@ function toStruct(val) {
   }
 
   // Convert the sensor readings
-  for (var i = 0; i < val[8].length; i++) {
-    var currSReading = val[8][i];
+  for (var i = 0; i < val[7].length; i++) {
+    var currSReading = val[7][i];
     convertedSReadings.push({
       reading: parseInt(currSReading[0]),
       exists: currSReading[1]
@@ -52,31 +52,30 @@ function toStruct(val) {
   }
 
   return {
-    nodeID: parseInt(val[0]),
-    nodeAddress: parseInt(val[1]),
-    energyLevel: parseInt(val[2]),
-    networkLevel: parseInt(val[3]),
-    nodeType: val[4],
+    nodeAddress: parseInt(val[0]),
+    energyLevel: parseInt(val[1]),
+    networkLevel: parseInt(val[2]),
+    nodeType: val[3],
     
     links: {
-      parentNode: parseInt(val[5][0]),
-      childNodes: val[5][1].map(i => parseInt(i)),
-      joinRequestNodes: val[5][2].map(i => parseInt(i)),
-      numOfJoinRequests: parseInt(val[5][3]),
-      withinRangeNodes: val[5][4].map(i => parseInt(i))
+      parentNode: parseInt(val[4][0]),
+      childNodes: val[4][1].map(i => parseInt(i)),
+      joinRequestNodes: val[4][2].map(i => parseInt(i)),
+      numOfJoinRequests: parseInt(val[4][3]),
+      withinRangeNodes: val[4][4].map(i => parseInt(i))
     },
 
     beacons: convertedBeacons,
-    numOfBeacons: parseInt(val[7]),
+    numOfBeacons: parseInt(val[6]),
 
     sensorReadings: convertedSReadings,
-    numOfReadings: parseInt(val[9]),
-    backupCHeads: val[10].map(i => parseInt(i)),
-    isActive: val[11],
+    numOfReadings: parseInt(val[8]),
+    backupCHeads: val[9].map(i => parseInt(i)),
+    isActive: val[10],
     ev: {
-      nodeRole: val[12][0],
-      isTriggeringExternalService: val[12][1],
-      triggerMessage: val[12][2]
+      nodeRole: val[11][0],
+      isTriggeringExternalService: val[11][1],
+      triggerMessage: val[11][2]
     }
   };
 }
@@ -109,7 +108,6 @@ function toReadableString(val) {
   }
 
   result = "==============================\n"
-  + "nodeID: " + val.nodeID + "\n"
   + "nodeAddress:" + val.nodeAddress + "\n"
   + "energyLevel: " + val.energyLevel + "\n"
   + "networkLevel: " + val.networkLevel + "\n"
@@ -186,36 +184,34 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
      */
   
     // Add the 'sink node'
-    await networkFormation.addNode(1, 111000, 100, [222001, 222002, 222003, 222004, 222005]);
+    await networkFormation.addNode(111000, 100, [222001, 222002, 222003, 222004, 222005]);
   
     // Add neighbouring nodes
     // LAYER 1 NODES
-    await networkFormation.addNode(2, 222001, 82, [111000, 222002, 222003]);
-    await networkFormation.addNode(3, 222002, 88, [111000, 222006, 222007, 222003, 222001]);
-    await networkFormation.addNode(4, 222003, 82, [111000, 222006, 222007, 222008, 222002, 222004, 222001, 222005]);
-    await networkFormation.addNode(5, 222004, 95, [111000, 222007, 222008, 222009, 222003, 222010, 222005, 222011]);
-    await networkFormation.addNode(6, 222005, 87, [111000, 222003, 222004, 222010, 222011]);
+    await networkFormation.addNode(222001, 82, [111000, 222002, 222003]);
+    await networkFormation.addNode(222002, 88, [111000, 222006, 222007, 222003, 222001]);
+    await networkFormation.addNode(222003, 82, [111000, 222006, 222007, 222008, 222002, 222004, 222001, 222005]);
+    await networkFormation.addNode(222004, 95, [111000, 222007, 222008, 222009, 222003, 222010, 222005, 222011]);
+    await networkFormation.addNode(222005, 87, [111000, 222003, 222004, 222010, 222011]);
   
     // LAYER 2 NODES
-    await networkFormation.addNode( 7, 222006, 79, [222012, 222013, 222007, 222002, 222003]);
-    await networkFormation.addNode( 8, 222007, 61, [222012, 222013, 222014, 222006, 222008, 222002, 222003, 222004]);
-    await networkFormation.addNode( 9, 222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222004, 222010]);
-    await networkFormation.addNode(10, 222009, 95, [222014, 222015, 222008, 222004, 222010]);
-    await networkFormation.addNode(11, 222010, 86, [222008, 222009, 222004, 222005, 222011]);
-    await networkFormation.addNode(12, 222011, 93, [222004, 222010, 222005]);
+    await networkFormation.addNode(222006, 79, [222012, 222013, 222007, 222002, 222003]);
+    await networkFormation.addNode(222007, 61, [222012, 222013, 222014, 222006, 222008, 222002, 222003, 222004]);
+    await networkFormation.addNode(222008, 94, [222013, 222014, 222015, 222007, 222009, 222003, 222004, 222010]);
+    await networkFormation.addNode(222009, 95, [222014, 222015, 222008, 222004, 222010]);
+    await networkFormation.addNode(222010, 86, [222008, 222009, 222004, 222005, 222011]);
+    await networkFormation.addNode(222011, 93, [222004, 222010, 222005]);
   
     // LAYER 3 NODES
-    await networkFormation.addNode(13, 222012, 71, [222013, 222006, 222007]);
-    await networkFormation.addNode(14, 222013, 83, [222012, 222014, 222006, 222007, 222008]);
-    await networkFormation.addNode(15, 222014, 78, [222013, 222015, 222007, 222008, 222009]);
-    await networkFormation.addNode(16, 222015, 80, [222014, 222008, 222009]);
+    await networkFormation.addNode(222012, 71, [222013, 222006, 222007]);
+    await networkFormation.addNode(222013, 83, [222012, 222014, 222006, 222007, 222008]);
+    await networkFormation.addNode(222014, 78, [222013, 222015, 222007, 222008, 222009]);
+    await networkFormation.addNode(222015, 80, [222014, 222008, 222009]);
   
-    // Ensure the values within this SensorNode is as expected
+    // Ensure the values within this SensorNode are as expected
     let firstNode = toStruct(await networkFormation.getNodeAt.call(0));
-    let firstNodeID = firstNode.nodeID;
     let firstNodeAddr = firstNode.nodeAddress;
     let firstNodeEnergyLevel = firstNode.energyLevel;
-    assert.equal(firstNodeID, 1);
     assert.equal(firstNodeAddr, 111000);
     assert.equal(firstNodeEnergyLevel, 100);
   });

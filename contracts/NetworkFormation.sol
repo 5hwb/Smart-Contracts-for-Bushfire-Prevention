@@ -19,7 +19,7 @@ contract NetworkFormation {
   uint public numOfLevels; // How many levels the network is consisted of
   
   // Events
-  event AddedNode(uint nodeID, uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
+  event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
   
   // TODO Solidity compiler whinges that 'Only libraries are allowed to use the mapping type in public or external functions'. Find a way around this later! 
@@ -38,12 +38,12 @@ contract NetworkFormation {
   }
   
   // Add a node to the list of all sensor nodes.
-  function addNode(uint _id, uint _addr, uint _energyLevel, uint[] memory _withinRangeNodes) public {
+  function addNode(uint _addr, uint _energyLevel, uint[] memory _withinRangeNodes) public {
     // Push a new DS.Node instance onto the array of nodes
     DS.Node storage node = nodes.push();
 
     // Initialise the empty node's values
-    SensorNode.initNodeStruct(node, _id, _addr, _energyLevel);
+    SensorNode.initNodeStruct(node, _addr, _energyLevel);
     for (uint i = 0; i < _withinRangeNodes.length; i++) {
       SensorNode.addWithinRangeNode(node, _withinRangeNodes[i]);
     }
@@ -52,7 +52,7 @@ contract NetworkFormation {
     addrToNodeIndex[_addr] = numOfNodes;
     numOfNodes++;
 
-    emit AddedNode(_id, _addr, _energyLevel, node.networkLevel, node.nodeType);
+    emit AddedNode(_addr, _energyLevel, node.networkLevel, node.nodeType);
   }
   
   // Get the index of the node with the given address
@@ -73,7 +73,7 @@ contract NetworkFormation {
   
   // Get node information
   function getNodeInfo(uint _nodeAddr) public view returns (
-    uint, uint256,
+    uint256,
     uint, uint,
     DS.NodeType, DS.NodeRole,
     bool, bool, 
@@ -81,11 +81,11 @@ contract NetworkFormation {
     ) {
       
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    return (nodes[nIdx].nodeID, nodes[nIdx].nodeAddress,
-        nodes[nIdx].energyLevel, nodes[nIdx].networkLevel,
-        nodes[nIdx].nodeType, nodes[nIdx].ev.nodeRole,
-        nodes[nIdx].isActive, nodes[nIdx].ev.isTriggeringExternalService, 
-        nodes[nIdx].ev.triggerMessage, SensorNode.getSensorReadings(nodes[nIdx])
+    return (nodes[nIdx].nodeAddress, // 0
+        nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
+        nodes[nIdx].nodeType, nodes[nIdx].ev.nodeRole, // 3, 4
+        nodes[nIdx].isActive, nodes[nIdx].ev.isTriggeringExternalService, // 5, 6
+        nodes[nIdx].ev.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
         );
   }
   
@@ -148,7 +148,7 @@ contract NetworkFormation {
     DS.Node storage cHeadNode = SensorNode.getNode(nodes, addrToNodeIndex, _cHeadAddr);
     
     // Add this node to cluster head's list of nodes that sent join requests
-    assert(cHeadNode.nodeID != 0); // make sure the cluster head node exists
+    assert(cHeadNode.nodeAddress != 0); // make sure the cluster head node exists
     SensorNode.addJoinRequestNode(cHeadNode, nodes[nodeIndex].nodeAddress);
   }
   
