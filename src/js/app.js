@@ -453,15 +453,6 @@ export const App = {
   },
   
   /**
-   * Event function for assignNodeAsSensor().
-   */
-  assignNodeAsSensorEvent: function() {
-    var nodeAddr = $("#id-input-assignNodeAsSensor").val();
-    console.log("FLOW: assignNodeAsSensorEvent() "+nodeAddr);
-    App.assignNodeAsSensor(nodeAddr);
-  },
-
-  /**
    * Assign the node with the given address to the Sensor role.
    */
   assignNodeAsSensor: function(nodeAddr) {
@@ -474,15 +465,6 @@ export const App = {
     }).catch(function(err) {
       console.error("assignNodeAsSensor ERROR! " + err.message);
     });
-  },
-
-  /**
-   * Event function for assignNodeAsController().
-   */
-  assignNodeAsControllerEvent: function() {
-    var nodeAddr = $("#id-input-assignNodeAsController").val();
-    console.log("FLOW: assignNodeAsControllerEvent() "+nodeAddr);
-    App.assignNodeAsController(nodeAddr);
   },
 
   /**
@@ -500,16 +482,6 @@ export const App = {
   },
 
   /**
-   * Event function for assignNodeAsActuator().
-   */
-  assignNodeAsActuatorEvent: function() {
-    var nodeAddr = $("#id-input-assignNodeAsActuator-addr").val();
-    var actuatorMsg = $("#id-input-assignNodeAsActuator-msg").val();
-    console.log("FLOW: assignNodeAsActuatorEvent() "+nodeAddr+" '"+actuatorMsg+"'");
-    App.assignNodeAsActuator(nodeAddr, actuatorMsg);
-  },
-
-  /**
    * Assign the node with the given address to the Actuator role.
    */
   assignNodeAsActuator: function(nodeAddr, actuatorMsg) {
@@ -524,15 +496,6 @@ export const App = {
   },
 
   /**
-   * Event function for respondToSensorInput().
-   */
-  respondToSensorInputEvent: function() {
-    var nodeAddr = $("#id-input-respondToSensorInput").val();
-    console.log("FLOW: respondToSensorInputEvent() "+nodeAddr);
-    App.respondToSensorInput(nodeAddr);
-  },
-
-  /**
    * Respond to sensor readings from all children of this node.
    */
   respondToSensorInput: function(nodeAddr) {
@@ -544,6 +507,47 @@ export const App = {
     }).catch(function(err) {
       console.error("respondToSensorInput ERROR! " + err.message);
     });
+  },
+  
+  //////////////////////////////////////////////////
+  // EVENT FUNCTIONS
+  //////////////////////////////////////////////////
+  
+  /**
+   * Event function for assignNodeAsSensor().
+   */
+  assignNodeAsSensorEvent: function() {
+    var nodeAddr = $("#id-input-assignNodeAsSensor").val();
+    console.log("FLOW: assignNodeAsSensorEvent() "+nodeAddr);
+    App.assignNodeAsSensor(nodeAddr);
+  },
+
+  /**
+   * Event function for assignNodeAsController().
+   */
+  assignNodeAsControllerEvent: function() {
+    var nodeAddr = $("#id-input-assignNodeAsController").val();
+    console.log("FLOW: assignNodeAsControllerEvent() "+nodeAddr);
+    App.assignNodeAsController(nodeAddr);
+  },
+
+  /**
+   * Event function for assignNodeAsActuator().
+   */
+  assignNodeAsActuatorEvent: function() {
+    var nodeAddr = $("#id-input-assignNodeAsActuator-addr").val();
+    var actuatorMsg = $("#id-input-assignNodeAsActuator-msg").val();
+    console.log("FLOW: assignNodeAsActuatorEvent() "+nodeAddr+" '"+actuatorMsg+"'");
+    App.assignNodeAsActuator(nodeAddr, actuatorMsg);
+  },
+
+  /**
+   * Event function for respondToSensorInput().
+   */
+  respondToSensorInputEvent: function() {
+    var nodeAddr = $("#id-input-respondToSensorInput").val();
+    console.log("FLOW: respondToSensorInputEvent() "+nodeAddr);
+    App.respondToSensorInput(nodeAddr);
   }
 };
 
