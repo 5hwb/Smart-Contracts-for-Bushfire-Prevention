@@ -189,7 +189,7 @@ export const App = {
 
 
         }).catch(function(err) {
-          console.error("getNodeInfo ERROR! " + err.message)
+          console.error("getNodeInfo ERROR! " + err.message);
         });
         
       }
@@ -230,13 +230,9 @@ export const App = {
         else {
           App.loadNodeData(instance);
         }
-        
-      }).catch(function(err) {
-        console.error("numOfNodes ERROR! " + err.message)
       });
-      
     }).catch(function(err) { 
-      console.error("ERROR! " + err.message)
+      console.error("numOfNodes ERROR! " + err.message);
     });
   },
   
@@ -248,11 +244,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.registerAsClusterHead(0, 111000).then(function(result) {
         console.log("FLOW: registerAsClusterHead()");
-      }).catch(function(err) {
-        console.error("registerAsClusterHead ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+      console.error("registerAsClusterHead ERROR! " + err.message);
     });
   },
   
@@ -262,11 +256,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.sendBeacon(111000).then(function(result) {
         console.log("FLOW: sendBeacon()");
-      }).catch(function(err) {
-        console.error("sendBeacon ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+      console.error("sendBeacon ERROR! " + err.message);
     });
   },
   
@@ -276,11 +268,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.sendJoinRequests().then(function(result) {
         console.log("FLOW: sendJoinRequests()");
-      }).catch(function(err) {
-        console.error("sendJoinRequests ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+      console.error("sendJoinRequests ERROR! " + err.message);
     });
   },
   
@@ -290,12 +280,10 @@ export const App = {
     // Call the smart contract functions
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.electClusterHeads(111000, 50).then(function(result) {
-        console.log("FLOW: electClusterHeads()");
-      }).catch(function(err) {
-        console.error("electClusterHeads ERROR! " + err.message)
+        console.log("FLOW: electClusterHeads() success");
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+      console.error("electClusterHeads ERROR! " + err.message);
     });
   },
   
@@ -308,10 +296,10 @@ export const App = {
       instance.electClusterHeads(nodeAddr, 50).then(function(result) {
         console.log("FLOW: runClusterHeadElection() success");
       }).catch(function(err) {
-        console.error("runClusterHeadElection ERROR! " + err.message)
+        console.error("runClusterHeadElection ERROR! " + err.message);
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message)
+      console.error("NetworkFormation.deployed() ERROR! " + err.message);
     });
   },
   
@@ -345,7 +333,7 @@ export const App = {
         $(".msg").html("<p>Node added successfully.</p>");
       })
     }).catch(function(err) {
-      console.error("addNode ERROR! " + err.message)
+      console.error("addNode ERROR! " + err.message);
     });
   },
 
@@ -369,9 +357,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.readSensorInput(sReading, nodeAddr).then(function(result) {
         $(".msg").html("<p>Sensor reading simulated successfully.</p>");
-      })
+      });
     }).catch(function(err) {
-      console.error("readSensorInput ERROR! " + err.message)
+      console.error("readSensorInput ERROR! " + err.message);
     });
   },
 
@@ -382,9 +370,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.identifyBackupClusterHeads().then(function(result) {
         console.log("Backup cluster heads for all nodes were identified.");
-      })
+      });
     }).catch(function(err) {
-      console.error("identifyBackupClusterHeads ERROR! " + err.message)
+      console.error("identifyBackupClusterHeads ERROR! " + err.message);
     });
   },
 
@@ -396,9 +384,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.deactivateNode(nodeAddr).then(function(result) {
         console.log("Node " + nodeAddr + " was deactivated.");
-      })
+      });
     }).catch(function(err) {
-      console.error("deactivateNode ERROR! " + err.message)
+      console.error("deactivateNode ERROR! " + err.message);
     });
   },
 
@@ -409,9 +397,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.activateNode(nodeAddr).then(function(result) {
         console.log("Node " + nodeAddr + " was REactivated.");
-      })
+      });
     }).catch(function(err) {
-      console.error("activateNode ERROR! " + err.message)
+      console.error("activateNode ERROR! " + err.message);
     });
   },
   
@@ -423,11 +411,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsSensor(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsSensor() "+nodeAddr+" success");
-      }).catch(function(err) {
-        console.error("assignNodeAsSensor ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() assignNodeAsSensor ERROR! " + err.message)
+      console.error("assignNodeAsSensor ERROR! " + err.message);
     });
   },
 
@@ -439,11 +425,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsController(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsController() "+nodeAddr+" success");
-      }).catch(function(err) {
-        console.error("assignNodeAsController ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() assignNodeAsController ERROR! " + err.message)
+      console.error("assignNodeAsController ERROR! " + err.message);
     });
   },
 
@@ -456,11 +440,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.assignAsActuator(nodeAddr, actuatorMsg).then(function(result) {
         console.log("FLOW: assignNodeAsActuator("+nodeAddr+" '"+actuatorMsg+"' success");
-      }).catch(function(err) {
-        console.error("assignNodeAsActuator ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() assignNodeAsActuator ERROR! " + err.message)
+      console.error("assignNodeAsActuator ERROR! " + err.message);
     });
   },
 
@@ -472,11 +454,9 @@ export const App = {
     App.contracts.NetworkFormation.deployed().then(function(instance) {
       instance.respondToSensorInput(nodeAddr).then(function(result) {
         console.log("FLOW: respondToSensorInput() "+nodeAddr+" success");
-      }).catch(function(err) {
-        console.error("respondToSensorInput ERROR! " + err.message)
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() respondToSensorInput ERROR! " + err.message)
+      console.error("respondToSensorInput ERROR! " + err.message);
     });
   }
 };
