@@ -276,6 +276,7 @@ contract NetworkFormation {
     SensorNode.readSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, sReadings);
   }
   
+  // Respond to sensor readings from all children of this node 
   function respondToSensorInput(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     SensorNode.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, false);
