@@ -343,6 +343,7 @@ library SensorNode {
    */
   function setAsSensorRole(DS.Node storage _daNode) public {
     _daNode.ev.nodeRole = DS.NodeRole.Sensor;
+    _daNode.ev.triggerMessage = ""; // remove the actuator trigger message
   }
   
   /**
@@ -351,6 +352,7 @@ library SensorNode {
    */
   function setAsControllerRole(DS.Node storage _daNode) public {
     _daNode.ev.nodeRole = DS.NodeRole.Controller;
+    _daNode.ev.triggerMessage = ""; // remove the actuator trigger message
   }
   
   /**
