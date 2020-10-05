@@ -23,7 +23,6 @@ library SensorNode {
     _daNode.energyLevel = _energyLevel;
     _daNode.networkLevel = 0; // invalid value for now
 
-    // TODO relocate this to NetworkFormation?
     // Add a dummy 'null' beacon as the 1st element to make null-checking easy
     uint[] memory dummyAddrs = new uint[](1);
     dummyAddrs[0] = 0;
@@ -35,11 +34,6 @@ library SensorNode {
     // Mark the node as active
     _daNode.isActive = true;
   }
-  
-  // // test func for calling library function
-  // function getMeFive(DS.Node storage _daNode) public view returns(uint) {
-  //   return SomeLib.getMeFive();
-  // }
   
   /**
    * @notice Get a node from the given DS.Node[] array and mapping with the given address.
@@ -108,7 +102,6 @@ library SensorNode {
       DS.Node storage _daNode,
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex) public {
-    // find backup with highest energy level
     
     // Convert list of backup node addresses into their corresponding nodes
     DS.Node[] memory backupCHeadNodes = nodeAddrsToNodes(_allNodes, _addrToNodeIndex, _daNode.backupCHeads);
@@ -208,8 +201,7 @@ library SensorNode {
     // Otherwise, if this node is an actuator, simulate triggering the device
     if (conditionsAreMatching && _daNode.ev.nodeRole == DS.NodeRole.Actuator) {
       _daNode.ev.isTriggeringExternalService = true;
-    }
-    
+    }    
   }
   
   /**
@@ -275,9 +267,6 @@ library SensorNode {
    * @param _daNode The node to set
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
-    //assert(_daNode.isMemberNode == false);
-    // _daNode.isClusterHead = true;
-    // _daNode.isMemberNode = false;
     _daNode.nodeType = DS.NodeType.ClusterHead;
   }
   
@@ -286,9 +275,6 @@ library SensorNode {
    * @param _daNode The node to set
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
-    //assert(_daNode.isClusterHead == false);
-    // _daNode.isClusterHead = false;
-    // _daNode.isMemberNode = true;
     _daNode.nodeType = DS.NodeType.MemberNode;
   }
   

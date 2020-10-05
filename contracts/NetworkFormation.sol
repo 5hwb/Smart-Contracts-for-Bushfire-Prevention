@@ -90,23 +90,11 @@ contract NetworkFormation {
   
   // Get a node's beacon data
   function getNodeBeaconData(uint _nodeAddr) public view returns (
-    bool, uint, uint256, uint) {
-      
+    bool, uint, uint256, uint) {      
     DS.Node storage node = SensorNode.getNode(nodes, addrToNodeIndex, _nodeAddr);
     DS.Beacon memory beacon = SensorNode.getBeacon(node);
     return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.numOfBeacons);
   }
-  
-  // Unused function. Does not compile
-  // // Convert a list of addresses into their matching sensor nodes
-  // function addrsToSensorNodes(uint[] memory _listOfNodeAddrs) view public returns(DS.Node[] memory) {
-  //   DS.Node[] memory result = new DS.Node[](_listOfNodeAddrs.length); 
-  //   for (uint i = 0; i < _listOfNodeAddrs.length; i++) {
-  //     result[i] = SensorNode.getNode(nodes, addrToNodeIndex, _listOfNodeAddrs[i]);
-  //   }
-  // 
-  //   return result;
-  // }
 
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(uint _cHeadAddr) public {
@@ -130,14 +118,10 @@ contract NetworkFormation {
       }
 
       // Send the beacon!
-      // (for now, simulate it by setting the network level integer) 
       emit SomethingHappened(i, nodes[chIndex].nodeAddress, currNode.nodeAddress, SensorNode.numOfWithinRangeNodes(nodes[chIndex]), "Gonna set...");
       SensorNode.setNetworkLevel(currNode, nextNetLevel);
       DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress, SensorNode.getWithinRangeNodes(nodes[chIndex]));
       SensorNode.addBeacon(currNode, beacon);
-      
-      // IF POSSIBLE: find out how to do callback function (or equivalent)
-      // which shall be: sendJoinRequest(nodes[chIndex].links.withinRangeNodes[i], _cHeadAddr); 
     }
   }
   
@@ -157,8 +141,7 @@ contract NetworkFormation {
   function sendJoinRequests() public {
     for (uint i = 0; i < numOfNodes; i++) {
       emit SentJoinRequest(nodes[i].nodeAddress, i);
-      // For now: Send join request iff the network level has been changed
-      // to a value other than 0
+      // Send join request to cluster head iff a beacon has been received from that node
       require(nodes[i].beacons.length > 0, "NO BEACONS!??");
       if (SensorNode.getBeacon(nodes[i]).isSent) {
         sendJoinRequest(nodes[i].nodeAddress, SensorNode.getBeacon(nodes[i]).senderNodeAddr);
@@ -293,5 +276,4 @@ contract NetworkFormation {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     SensorNode.activateNode(nodes[nodeIndex]);
   }
-  
 }
