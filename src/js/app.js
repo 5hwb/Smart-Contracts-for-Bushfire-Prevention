@@ -47,6 +47,7 @@ export const App = {
     document.querySelector('#btn-sendJoinRequests').addEventListener('click', App.sendJoinRequests);
     document.querySelector('#btn-electClusterHeads').addEventListener('click', App.electClusterHeads);
     document.querySelector('#btn-identifyBackupClusterHeads').addEventListener('click', App.identifyBackupClusterHeads);
+    document.querySelector('#btn-assignNodeRoles').addEventListener('click', App.assignNodeRoles);
 
     document.querySelector('#btn-runClusterHeadElection').addEventListener('click', App.runClusterHeadElection);
     
@@ -138,14 +139,29 @@ export const App = {
   
   /**
    * Helper function to load the node data into the web GUI. 
-   * Format is roughly like this (TODO update this!):
-   * <div>
-   *   <h2>Node with address 111000</h2>
-   *   <p>Energy level: 22</p>
-   *   <p>Network level: 22</p>
-   *   <p>isClusterHead: true</p>
-   *   <p>isMemberNode: true</p>
-   * </div>
+   * Data is loaded using the following HTML template:
+   <div class="node-description node-membernode node-active ">
+     <h2>Node with address 222001</h2>
+     <p>Energy level: 35</p>
+     <p>Network level: 1</p>
+     <p>Node type: MemberNode</p>
+     <p>Node role: Actuator</p>
+   
+     <div class="input-group">
+       <label for="id-input-setactive">Is currently active: true</label>
+       <button class="btn btn-primary" id="btn-deactivateNode-222001">Deactivate</button>
+     </div>
+   
+     <p>Is triggering an external service: false</p>
+     <p class="">Message: Contacting the RFS and CFA!</p>
+   
+     <p>Sensor readings: []</p>
+     <div class="input-group">
+       <label for="id-input-sreading">Add sensor reading: </label>
+       <input type="string" class="form-control" id="id-input-sreading-222001" placeholder="">
+     </div>
+     <button class="btn btn-primary" id="btn-readSensorInput-222001">Simulate sensor reading</button>
+   </div>
    */
   loadNodeData: function(instance) {
     instance.getAllNodeAddresses().then(function(result) {
@@ -354,6 +370,18 @@ export const App = {
     }).catch(function(err) {
       console.error("identifyBackupClusterHeads ERROR! " + err.message);
     });
+  },
+  
+  /**
+   * Assign node roles for each member node.
+   */
+  assignNodeRoles: function() {
+    console.log("FLOW: assignNodeRoles()");
+
+    // Call the smart contract functions indirectly
+    App.assignNodeAsActuator(222001, "Contacting the RFS and CFA!");
+    App.assignNodeAsActuator(222003, "Activating the sprinklers!");
+    App.assignNodeAsSensor(222005);
   },
   
   /**
