@@ -263,19 +263,23 @@ library SensorNode {
   }
     
   /**
-   * @notice Set the given node as a cluster head.
+   * @notice Set the given node as a cluster head. By default, cluster heads are
+   *         also Controllers, hence they are assigned to the Controller role.
    * @param _daNode The node to set
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.ClusterHead;
+    _daNode.ev.nodeRole = DS.NodeRole.Controller;
   }
   
   /**
-   * @notice Set the given node as a member node.
+   * @notice Set the given node as a member node. Since it is not known what
+   *         role it would take, it also assigns it to the Default role.
    * @param _daNode The node to set
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.MemberNode;
+    _daNode.ev.nodeRole = DS.NodeRole.Default;
   }
   
   /**
@@ -334,7 +338,7 @@ library SensorNode {
   }
     
   /**
-   * @notice Set the given node's role as a sensor node.
+   * @notice Set the given node's role as a Sensor.
    * @param _daNode The node to set
    */
   function setAsSensorRole(DS.Node storage _daNode) public {
@@ -342,7 +346,7 @@ library SensorNode {
   }
   
   /**
-   * @notice Set the given node's role as a controller.
+   * @notice Set the given node's role as a Controller.
    * @param _daNode The node to set
    */
   function setAsControllerRole(DS.Node storage _daNode) public {
@@ -350,8 +354,9 @@ library SensorNode {
   }
   
   /**
-   * @notice Set the given node's role as an actuator.
+   * @notice Set the given node's role as an Actuator.
    * @param _daNode The node to set
+   * @param _triggerMessage The message to show when the actuator is triggered
    */
   function setAsActuatorRole(DS.Node storage _daNode, string memory _triggerMessage) public {
     _daNode.ev.nodeRole = DS.NodeRole.Actuator;

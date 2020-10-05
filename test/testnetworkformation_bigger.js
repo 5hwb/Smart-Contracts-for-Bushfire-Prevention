@@ -594,15 +594,17 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   });
   
   it("should be able to assign roles to nodes", async () => {
-    await networkFormation.assignAsController(111000);
+    // Commented out the assignAsController() calls since cluster heads
+    // should already be assigned as Controllers
+    //await networkFormation.assignAsController(111000);
     await networkFormation.assignAsSensor(222001);
-    await networkFormation.assignAsController(222002);
+    //await networkFormation.assignAsController(222002);
     await networkFormation.assignAsSensor(222003);
-    await networkFormation.assignAsController(222004);
+    //await networkFormation.assignAsController(222004);
     await networkFormation.assignAsActuator(222005, "Activating sprinklers!");
-    await networkFormation.assignAsController(222006);
+    //await networkFormation.assignAsController(222006);
     await networkFormation.assignAsActuator(222007, "Contacting the RFS.");
-    await networkFormation.assignAsController(222008);
+    //await networkFormation.assignAsController(222008);
     await networkFormation.assignAsSensor(222009);
     await networkFormation.assignAsActuator(222010, "Activating emergency sirens!");
     await networkFormation.assignAsActuator(222011, "Send evacuation SMS to all phones");
