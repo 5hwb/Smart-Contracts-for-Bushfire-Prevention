@@ -40,7 +40,7 @@ export const App = {
   init: async function() {
     console.log("FLOW: init()");
     
-    // Set up buttons
+    // Set up button event listeners
     document.querySelector('#btn-addNewNode').addEventListener('click', App.addNewNode);
     document.querySelector('#btn-registerAsClusterHead').addEventListener('click', App.registerAsClusterHead);
     document.querySelector('#btn-sendBeacon').addEventListener('click', App.sendBeacon);
@@ -341,6 +341,22 @@ export const App = {
   },
   
   /**
+   * Identify the backup cluster heads for each node.
+   */
+  identifyBackupClusterHeads: function() {
+    console.log("FLOW: identifyBackupClusterHeads()");
+
+    // Call the smart contract function
+    App.contracts.NetworkFormation.deployed().then(function(instance) {
+      instance.identifyBackupClusterHeads().then(function(result) {
+        console.log("Backup cluster heads for all nodes were identified.");
+      });
+    }).catch(function(err) {
+      console.error("identifyBackupClusterHeads ERROR! " + err.message);
+    });
+  },
+  
+  /**
    * Add a new node using the values provided by the web GUI form.
    */
   addNewNode: function() {
@@ -400,22 +416,6 @@ export const App = {
       });
     }).catch(function(err) {
       console.error("readSensorInput ERROR! " + err.message);
-    });
-  },
-
-  /**
-   * Identify the backup cluster heads for each node.
-   */
-  identifyBackupClusterHeads: function() {
-    console.log("FLOW: identifyBackupClusterHeads()");
-
-    // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
-      instance.identifyBackupClusterHeads().then(function(result) {
-        console.log("Backup cluster heads for all nodes were identified.");
-      });
-    }).catch(function(err) {
-      console.error("identifyBackupClusterHeads ERROR! " + err.message);
     });
   },
 
@@ -511,6 +511,9 @@ export const App = {
   
   //////////////////////////////////////////////////
   // EVENT FUNCTIONS
+  // Thse functions get the values from the associated forms first before
+  // calling the JS functions which actually access the smart contract function.
+  // This allows the JS functions to be re-used for pre-initialising node settings as well.
   //////////////////////////////////////////////////
   
   /**
