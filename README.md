@@ -14,17 +14,13 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
-* Web app - make the role assigning functions accessible via function arguments.
-    * Separate the button clicking! (make it call a argument-less function that calls the new argument function)
-    * This is so I can automatically assign node roles without having to do it manually. 
 * [SEE IF I CAN DO THIS] Idea: Each actuator behaves differently to the sensor readings - e.g. 1 would trigger at 37000 while another would trigger at 5000.
-* Clean up the code and add comments to make it more presentable.
+* [ONGOING] Clean up the code and add comments to make it more presentable.
 * [TODO] Seriously consider using IPFS to store node information and readings.
 * [DONE] Make network react to different stimuli: 
     - If sensor detects temp is > 37 degrees, alert controller, which in turn alerts the actuator and makes it trigger a device (sprinkler, alert fire services, etc).
     - If sensor temp is > 45 degrees, deactivate the sensor!
     - [DONE] Update test cases so that it shows that the actuator nodes got the message.
-* Make new contract for bushfire detecting operations and managing the node roles.
 * [DONE] Add new flag to indicate if node is actuator, sensor, or controller. This can be done as an enum if possible.
     - Idea: sensor and actuator are leaf nodes (or cluster heads with no children). The remaining cluster heads are the controller nodes.
 * [DONE] Implement the actual redundancy - when a node's cluster head fails, make that node connect to its backup cluster head.
