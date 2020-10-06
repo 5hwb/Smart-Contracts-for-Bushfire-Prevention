@@ -10,9 +10,11 @@ import "./SensorNode2.sol";
 // 24KB Ethereum contract size limit.
 contract NetworkFormation2 {
   
-  // Array of all nodes in the network
+  // Array of all node role entries in the network
   DS.NodeRoleStuff[] public allNodes2;
   mapping (uint => uint) addrToNodeIndex2; // node addresses -> node array index
+
+  uint public numOfNodeRoleEntries; // Number of node role entries in this network
 
   // Add a node to the list of all sensor nodes.
   function addNode(uint _addr) public {
@@ -23,7 +25,8 @@ contract NetworkFormation2 {
     SensorNode2.initNodeStruct(nodeRoleStuff, _addr);
         
     // Add mapping of address to node array index 
-    addrToNodeIndex2[_addr] = allNodes2.length - 1;
+    addrToNodeIndex2[_addr] = numOfNodeRoleEntries;
+    numOfNodeRoleEntries++;
   }
 
   // Get the index of the node with the given address

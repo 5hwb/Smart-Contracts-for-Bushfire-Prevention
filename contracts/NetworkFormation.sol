@@ -30,6 +30,10 @@ contract NetworkFormation {
     networkFormation2 = _nf2;
   }
   
+  function addressOfNF2() public returns(address) {
+    return address(networkFormation2);
+  }
+  
   // Get array of all DS.Node instances.
   function getAllNodes() view public returns(DS.Node[] memory) {
     return nodes;
@@ -60,6 +64,9 @@ contract NetworkFormation {
     numOfNodes++;
 
     emit AddedNode(_addr, _energyLevel, node.networkLevel, node.nodeType);
+    
+    // Call NetworkFormation2 - add an entry as well
+    networkFormation2.addNode(_addr);
   }
   
   // Get the index of the node with the given address
