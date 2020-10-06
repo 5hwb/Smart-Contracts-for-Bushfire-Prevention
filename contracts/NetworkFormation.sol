@@ -70,23 +70,24 @@ contract NetworkFormation {
     return nodes[_index];
   }
   
-  // Get node information
-  function getNodeInfo(uint _nodeAddr) public view returns (
-    uint256,
-    uint, uint,
-    DS.NodeType, DS.NodeRole,
-    bool, bool, 
-    string memory, uint256[] memory
-    ) {
-      
-    uint nIdx = addrToNodeIndex[_nodeAddr];
-    return (nodes[nIdx].nodeAddress, // 0
-        nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
-        nodes[nIdx].nodeType, nodes[nIdx].rv.nodeRole, // 3, 4
-        nodes[nIdx].isActive, nodes[nIdx].rv.isTriggeringExternalService, // 5, 6
-        nodes[nIdx].rv.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
-        );
-  }
+  // TODO: make this work later!
+  // // Get node information
+  // function getNodeInfo(uint _nodeAddr) public view returns (
+  //   uint256,
+  //   uint, uint,
+  //   DS.NodeType, DS.NodeRole,
+  //   bool, bool, 
+  //   string memory, uint256[] memory
+  //   ) {
+  // 
+  //   uint nIdx = addrToNodeIndex[_nodeAddr];
+  //   return (nodes[nIdx].nodeAddress, // 0
+  //       nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
+  //       nodes[nIdx].nodeType, nodes[nIdx].rv.nodeRole, // 3, 4
+  //       nodes[nIdx].isActive, nodes[nIdx].rv.isTriggeringExternalService, // 5, 6
+  //       nodes[nIdx].rv.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
+  //       );
+  // }
   
   // Get a node's beacon data
   function getNodeBeaconData(uint _nodeAddr) public view returns (
@@ -184,24 +185,6 @@ contract NetworkFormation {
       SensorNode.setParentNode(nodes[nodeIndex], nodes[parentIndex].nodeAddress);
       SensorNode.addChildNode(nodes[parentIndex], nodes[nodeIndex].nodeAddress);
     }
-  }
-  
-  // Assign the sensor role to the given node.
-  function assignAsSensor(uint _nodeAddr) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.setAsSensorRole(nodes[nodeIndex]);
-  }
-  
-  // Assign the controller role to the given node.
-  function assignAsController(uint _nodeAddr) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.setAsControllerRole(nodes[nodeIndex]);
-  }
-  
-  // Assign the actuator role to the given node.
-  function assignAsActuator(uint _nodeAddr, string memory _triggerMessage) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.setAsActuatorRole(nodes[nodeIndex], _triggerMessage);
   }
   
   // Get the sorted nodes 

@@ -188,20 +188,22 @@ library SensorNode {
       if (_daNode.sensorReadings[i].reading > 37000 || conditionsAreMatching) {
         
         // If this node is a controller, go thru each of its children nodes
-        // and call this function on each of them      
-        if (_daNode.rv.nodeRole == DS.NodeRole.Controller) {
-          for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
-            DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
-            respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
-          }
-        }
+        // and call this function on each of them   
+        // TODO: make this work later!   
+        // if (_daNode.rv.nodeRole == DS.NodeRole.Controller) {
+        //   for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
+        //     DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
+        //     respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
+        //   }
+        // }
       }
     }
     
     // Otherwise, if this node is an actuator, simulate triggering the device
-    if (conditionsAreMatching && _daNode.rv.nodeRole == DS.NodeRole.Actuator) {
-      _daNode.rv.isTriggeringExternalService = true;
-    }    
+    // TODO: make this work later!   
+    // if (conditionsAreMatching && _daNode.rv.nodeRole == DS.NodeRole.Actuator) {
+    //   _daNode.rv.isTriggeringExternalService = true;
+    // }    
   }
   
   /**
@@ -269,7 +271,7 @@ library SensorNode {
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.ClusterHead;
-    _daNode.rv.nodeRole = DS.NodeRole.Controller;
+    //_daNode.rv.nodeRole = DS.NodeRole.Controller;
   }
   
   /**
@@ -279,7 +281,7 @@ library SensorNode {
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.MemberNode;
-    _daNode.rv.nodeRole = DS.NodeRole.Default;
+    //_daNode.rv.nodeRole = DS.NodeRole.Default;
   }
   
   /**
@@ -336,35 +338,7 @@ library SensorNode {
     require(_daNode.isActive == false);
     _daNode.isActive = true;
   }
-    
-  /**
-   * @notice Set the given node's role as a Sensor.
-   * @param _daNode The node to set
-   */
-  function setAsSensorRole(DS.Node storage _daNode) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Sensor;
-    _daNode.rv.triggerMessage = ""; // remove the actuator trigger message
-  }
-  
-  /**
-   * @notice Set the given node's role as a Controller.
-   * @param _daNode The node to set
-   */
-  function setAsControllerRole(DS.Node storage _daNode) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Controller;
-    _daNode.rv.triggerMessage = ""; // remove the actuator trigger message
-  }
-  
-  /**
-   * @notice Set the given node's role as an Actuator.
-   * @param _daNode The node to set
-   * @param _triggerMessage The message to show when the actuator is triggered
-   */
-  function setAsActuatorRole(DS.Node storage _daNode, string memory _triggerMessage) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Actuator;
-    _daNode.rv.triggerMessage = _triggerMessage;
-  }
-  
+      
   ////////////////////////////////////////
   // links.childNodes GETTER FUNCTIONS
   ////////////////////////////////////////
