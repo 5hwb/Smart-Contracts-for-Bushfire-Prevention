@@ -30,7 +30,7 @@ contract NetworkFormation2 {
   }
 
   // Get the index of the node with the given address
-  function getNodeIndex(uint _nodeAddr) view public returns(uint) {
+  function getNodeRoleStuffIndex(uint _nodeAddr) view public returns(uint) {
     return addrToNodeIndex2[_nodeAddr];
   }
   
@@ -42,19 +42,19 @@ contract NetworkFormation2 {
   
   // Assign the sensor role to the given node.
   function assignAsSensor(uint _nodeAddr) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
+    uint nodeIndex = getNodeRoleStuffIndex(_nodeAddr);
     SensorNode2.setAsSensorRole(allNodes2[nodeIndex]);
   }
   
   // Assign the controller role to the given node.
   function assignAsController(uint _nodeAddr) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
+    uint nodeIndex = getNodeRoleStuffIndex(_nodeAddr);
     SensorNode2.setAsControllerRole(allNodes2[nodeIndex]);
   }
   
   // Assign the actuator role to the given node.
   function assignAsActuator(uint _nodeAddr, string memory _triggerMessage) public {
-    uint nodeIndex = getNodeIndex(_nodeAddr);
+    uint nodeIndex = getNodeRoleStuffIndex(_nodeAddr);
     SensorNode2.setAsActuatorRole(allNodes2[nodeIndex], _triggerMessage);
   }
   

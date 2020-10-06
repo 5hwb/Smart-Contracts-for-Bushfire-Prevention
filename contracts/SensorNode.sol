@@ -189,7 +189,7 @@ library SensorNode {
         
         // If this node is a controller, go thru each of its children nodes
         // and call this function on each of them   
-        // TODO: make this work later!   
+        // TODO: make this work later!
         // if (_daNode.rv.nodeRole == DS.NodeRole.Controller) {
         //   for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
         //     DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);

@@ -26,7 +26,7 @@ library SensorNode2 {
    * @param _nodeAddr The address of the node to get
    * @return The node with the given node address
    */
-  function getNode(DS.NodeRoleStuff[] storage _allNodes2, mapping(uint => uint) storage _addrToNodeIndex2, uint _nodeAddr) view public returns(DS.NodeRoleStuff storage) {
+  function getNodeRoleStuff(DS.NodeRoleStuff[] storage _allNodes2, mapping(uint => uint) storage _addrToNodeIndex2, uint _nodeAddr) view public returns(DS.NodeRoleStuff storage) {
     uint nIdx = _addrToNodeIndex2[_nodeAddr];
     return _allNodes2[nIdx];
   }
