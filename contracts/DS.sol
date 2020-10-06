@@ -70,7 +70,7 @@ library DS {
     string triggerMessage;
     
     uint triggerThreshold;
-    //bool triggerCondition;
+    TriggerCondition triggerCondition;
   }
 
 }
