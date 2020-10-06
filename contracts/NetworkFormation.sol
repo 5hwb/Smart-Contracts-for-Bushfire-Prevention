@@ -5,6 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./DS.sol";
 import "./QuickSort.sol";
 import "./SensorNode.sol";
+import "./NetworkFormation2.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 
 contract NetworkFormation {
@@ -18,9 +19,16 @@ contract NetworkFormation {
   uint public numOfNodes; // Number of nodes in this network
   uint public numOfLevels; // How many levels the network is consisted of
   
+  // Smart contract for the node role stuff
+  NetworkFormation2 networkFormation2;
+  
   // Events
   event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
+  
+  function setNetworkFormation2(NetworkFormation2 _nf2) public {
+    networkFormation2 = _nf2;
+  }
   
   // Get array of all DS.Node instances.
   function getAllNodes() view public returns(DS.Node[] memory) {
