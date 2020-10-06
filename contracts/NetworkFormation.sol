@@ -82,9 +82,9 @@ contract NetworkFormation {
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return (nodes[nIdx].nodeAddress, // 0
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
-        nodes[nIdx].nodeType, nodes[nIdx].ev.nodeRole, // 3, 4
-        nodes[nIdx].isActive, nodes[nIdx].ev.isTriggeringExternalService, // 5, 6
-        nodes[nIdx].ev.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
+        nodes[nIdx].nodeType, nodes[nIdx].rv.nodeRole, // 3, 4
+        nodes[nIdx].isActive, nodes[nIdx].rv.isTriggeringExternalService, // 5, 6
+        nodes[nIdx].rv.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
         );
   }
   

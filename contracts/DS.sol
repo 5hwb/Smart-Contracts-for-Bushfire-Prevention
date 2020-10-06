@@ -17,6 +17,7 @@ library DS {
     uint256[] withinRangeNodes; // Addresses of nodes within range of the beacon-sending node
   }
   
+  // DS.Links struct represents all parameters related to connections with other nodes in the WSN
   struct Links {
     uint256 parentNode;         // parent (cluster head) of this node
     uint256[] childNodes;       // children of this node (if cluster head)
@@ -28,22 +29,17 @@ library DS {
   enum NodeType { Unassigned, MemberNode, ClusterHead }
   enum NodeRole { Default, Sensor, Controller, Actuator }
 
-  struct ExtraVars {
-    // Put extra variables here when the 'YulException: Stack too deep when compiling inline assembly' issue turns up.
-    
+  // DS.RoleVariables struct represents all role-related parameters for a single node in the WSN 
+  struct RoleVariables {    
     NodeRole nodeRole;
     
     // Indicate whether this node is triggering the execution of an external service
     bool isTriggeringExternalService;
     // The message to show when this node has triggered the external service
     string triggerMessage;
-    
-    // bool arrtemp1;
-    // uint256 arrtemp2;    
-    // uint256 arrtemp3;
-    // ...
   }
 
+  // DS.Node struct represents the parameters associated with a single node in the WSN 
   struct Node {
     uint256 nodeAddress; // Address of the node
     // TODO eventually: Make the energy level based on the battery current and voltage available 
@@ -67,6 +63,6 @@ library DS {
     // Indicate if node is active and ready to transfer data
     bool isActive;
         
-    ExtraVars ev;
+    RoleVariables rv;
   }
 }
