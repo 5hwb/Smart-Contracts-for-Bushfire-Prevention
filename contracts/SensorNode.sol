@@ -192,8 +192,7 @@ library SensorNode {
       if (_daNode.sensorReadings[i].reading > 37000 || _conditionsAreMatching) {
         
         // If this node is a controller, go thru each of its children nodes
-        // and call this function on each of them   
-        // TODO: make this work later!
+        // and call this function on each of them
         if (nodeRoleStuff.nodeRole == DS.NodeRole.Controller) {
           for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
             DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
@@ -205,10 +204,9 @@ library SensorNode {
     }
     
     // Otherwise, if this node is an actuator, simulate triggering the device
-    // TODO: make this work later!   
     if (_conditionsAreMatching && nodeRoleStuff.nodeRole == DS.NodeRole.Actuator) {
-      nodeRoleStuff.isTriggeringExternalService = true;
-    }    
+      _networkFormation2.setAsTriggered(_daNode.nodeAddress);
+    }
   }
   
   /**
@@ -270,23 +268,19 @@ library SensorNode {
   }
     
   /**
-   * @notice Set the given node as a cluster head. By default, cluster heads are
-   *         also Controllers, hence they are assigned to the Controller role.
+   * @notice Set the given node as a cluster head.
    * @param _daNode The node to set
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.ClusterHead;
-    //_daNode.rv.nodeRole = DS.NodeRole.Controller;
   }
   
   /**
-   * @notice Set the given node as a member node. Since it is not known what
-   *         role it would take, it also assigns it to the Default role.
+   * @notice Set the given node as a member node.
    * @param _daNode The node to set
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.MemberNode;
-    //_daNode.rv.nodeRole = DS.NodeRole.Default;
   }
   
   /**

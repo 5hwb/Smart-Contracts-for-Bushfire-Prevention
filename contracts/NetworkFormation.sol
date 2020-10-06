@@ -25,13 +25,10 @@ contract NetworkFormation {
   // Events
   event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
-  
+
+  // Set the deployed NetworkFormation2 contract instance to use. 
   function setNetworkFormation2(NetworkFormation2 _nf2) public {
     networkFormation2 = _nf2;
-  }
-  
-  function addressOfNF2() public returns(address) {
-    return address(networkFormation2);
   }
   
   // Get array of all DS.Node instances.
@@ -178,7 +175,10 @@ contract NetworkFormation {
     uint parentIndex = getNodeIndex(_parentAddr);
     assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
     
+    // By default, cluster heads are also Controllers,
+    // hence they are assigned to the Controller role.
     SensorNode.setAsClusterHead(nodes[nodeIndex]);
+    networkFormation2.assignAsController(nodes[nodeIndex].nodeAddress);
     
     // Set the parent node (only if valid address!) and add this node as the child node of the parent
     if (_parentAddr != 0) {

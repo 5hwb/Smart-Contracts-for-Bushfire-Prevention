@@ -16,6 +16,11 @@ contract NetworkFormation2 {
 
   uint public numOfNodeRoleEntries; // Number of node role entries in this network
 
+  // Get array of all DS.NodeRoleStuff instances.
+  function getAllNodeRoleStuffs() view public returns(DS.NodeRoleStuff[] memory) {
+    return allNodes2;
+  }
+
   // Add a node to the list of all sensor nodes.
   function addNode(uint _addr) public {
     // Push a new DS.NodeRoleStuff instance onto the array of nodes
@@ -58,5 +63,15 @@ contract NetworkFormation2 {
     SensorNode2.setAsActuatorRole(allNodes2[nodeIndex], _triggerMessage);
   }
   
-
+  // Set the given actuator node as triggered.
+  function setAsTriggered(uint _nodeAddr) public {
+    uint nodeIndex = getNodeRoleStuffIndex(_nodeAddr);
+    SensorNode2.setTriggered(allNodes2[nodeIndex], true);
+  }
+  
+  // Set the given actuator node as not triggered.
+  function setAsNotTriggered(uint _nodeAddr) public {
+    uint nodeIndex = getNodeRoleStuffIndex(_nodeAddr);
+    SensorNode2.setTriggered(allNodes2[nodeIndex], false);
+  }
 }

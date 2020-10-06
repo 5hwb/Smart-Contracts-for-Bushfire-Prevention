@@ -636,15 +636,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     let nodeRoleStuff222014 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222014));
     let nodeRoleStuff222015 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222015));
 
-    //assert.equal(nodeRoleStuff111000.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleStuff111000.nodeRole, NodeRole.Controller);
     assert.equal(nodeRoleStuff222001.nodeRole, NodeRole.Sensor);
-    //assert.equal(nodeRoleStuff222002.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleStuff222002.nodeRole, NodeRole.Controller);
     assert.equal(nodeRoleStuff222003.nodeRole, NodeRole.Sensor);
-    //assert.equal(nodeRoleStuff222004.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleStuff222004.nodeRole, NodeRole.Controller);
     assert.equal(nodeRoleStuff222005.nodeRole, NodeRole.Actuator);
-    //assert.equal(nodeRoleStuff222006.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleStuff222006.nodeRole, NodeRole.Controller);
     assert.equal(nodeRoleStuff222007.nodeRole, NodeRole.Actuator);
-    //assert.equal(nodeRoleStuff222008.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleStuff222008.nodeRole, NodeRole.Controller);
     assert.equal(nodeRoleStuff222009.nodeRole, NodeRole.Sensor);
     assert.equal(nodeRoleStuff222010.nodeRole, NodeRole.Actuator);
     assert.equal(nodeRoleStuff222011.nodeRole, NodeRole.Actuator);
@@ -658,16 +658,16 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
   it("should be able to respond to sensor input", async () => {
     await networkFormation.respondToSensorInput(111000);
 
-    let node222005 = toStruct(await networkFormation.getNodeAsMemory(222005));
-    let node222007 = toStruct(await networkFormation.getNodeAsMemory(222007));
-    let node222010 = toStruct(await networkFormation.getNodeAsMemory(222010));
-    let node222011 = toStruct(await networkFormation.getNodeAsMemory(222011));
+    let nodeRoleStuff222005 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222005));
+    let nodeRoleStuff222007 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222007));
+    let nodeRoleStuff222010 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222010));
+    let nodeRoleStuff222011 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222011));
 
     // These actuators should be triggering an external service (in this simulation, just set isTriggeringExternalService to true)
-    assert.equal(node222005.ev.isTriggeringExternalService, true);
-    assert.equal(node222007.ev.isTriggeringExternalService, true);
-    assert.equal(node222010.ev.isTriggeringExternalService, true);
-    assert.equal(node222011.ev.isTriggeringExternalService, true);
+    assert.equal(nodeRoleStuff222005.isTriggeringExternalService, true);
+    assert.equal(nodeRoleStuff222007.isTriggeringExternalService, true);
+    assert.equal(nodeRoleStuff222010.isTriggeringExternalService, true);
+    assert.equal(nodeRoleStuff222011.isTriggeringExternalService, true);
     
     console.log(toReadableString(await networkFormation.getNodeAsMemory(222005)));
     
@@ -677,15 +677,15 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     //   }
     // );
     
-    console.log((await networkFormation.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
-      return {
-        nodeAddress: nodeStruct.nodeAddress, 
-        sensorReadings: nodeStruct.sensorReadings.map(x => x.reading),
-        nodeRole: nodeStruct.ev.nodeRole,
-        isTriggeringExternalService: nodeStruct.ev.isTriggeringExternalService,
-        triggerMessage: nodeStruct.ev.triggerMessage
-      };
-    }));
+    // console.log((await networkFormation2.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+    //   return {
+    //     nodeAddress: nodeStruct.nodeAddress, 
+    //     sensorReadings: nodeStruct.sensorReadings.map(x => x.reading),
+    //     nodeRole: nodeStruct.ev.nodeRole,
+    //     isTriggeringExternalService: nodeStruct.ev.isTriggeringExternalService,
+    //     triggerMessage: nodeStruct.ev.triggerMessage
+    //   };
+    // }));
 
 
   });

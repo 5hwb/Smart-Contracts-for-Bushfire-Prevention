@@ -58,4 +58,13 @@ library SensorNode2 {
     _daNodeRoleStuff.nodeRole = DS.NodeRole.Actuator;
     _daNodeRoleStuff.triggerMessage = _triggerMessage;
   }
+
+  /**
+   * @notice Set the given node's triggered flag.
+   * @param _daNodeRoleStuff The node to set
+   * @param _isTriggeringExternalServise The desired flag status
+   */
+  function setTriggered(DS.NodeRoleStuff storage _daNodeRoleStuff, bool _isTriggeringExternalServise) public {
+    _daNodeRoleStuff.isTriggeringExternalService = _isTriggeringExternalServise;
+  }
 }
