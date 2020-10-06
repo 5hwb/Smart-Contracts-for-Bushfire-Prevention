@@ -19,7 +19,7 @@ contract NetworkFormation {
   uint public numOfNodes; // Number of nodes in this network
   uint public numOfLevels; // How many levels the network is consisted of
   
-  // Smart contract for the node role stuff
+  // Smart contract for the node role entries
   NetworkFormation2 networkFormation2;
   
   // Events
@@ -82,24 +82,24 @@ contract NetworkFormation {
     return nodes[_index];
   }
   
-  // TODO: make this work later!
-  // // Get node information
-  // function getNodeInfo(uint _nodeAddr) public view returns (
-  //   uint256,
-  //   uint, uint,
-  //   DS.NodeType, DS.NodeRole,
-  //   bool, bool, 
-  //   string memory, uint256[] memory
-  //   ) {
-  // 
-  //   uint nIdx = addrToNodeIndex[_nodeAddr];
-  //   return (nodes[nIdx].nodeAddress, // 0
-  //       nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
-  //       nodes[nIdx].nodeType, nodes[nIdx].rv.nodeRole, // 3, 4
-  //       nodes[nIdx].isActive, nodes[nIdx].rv.isTriggeringExternalService, // 5, 6
-  //       nodes[nIdx].rv.triggerMessage,  SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
-  //       );
-  // }
+  // Get node information
+  function getNodeInfo(uint _nodeAddr) public view returns (
+    uint256,
+    uint, uint,
+    DS.NodeType, DS.NodeRole,
+    bool, bool, 
+    string memory, uint256[] memory
+    ) {
+    uint nIdx = addrToNodeIndex[_nodeAddr];
+    DS.NodeRoleStuff memory nodeRoleStuff = networkFormation2.getNodeRoleStuffAsMemory(nodes[nIdx].nodeAddress);
+    
+    return (nodes[nIdx].nodeAddress, // 0
+        nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
+        nodes[nIdx].nodeType, nodeRoleStuff.nodeRole, // 3, 4
+        nodes[nIdx].isActive, nodeRoleStuff.isTriggeringExternalService, // 5, 6
+        nodeRoleStuff.triggerMessage, SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
+        );
+  }
   
   // Get a node's beacon data
   function getNodeBeaconData(uint _nodeAddr) public view returns (

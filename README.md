@@ -14,6 +14,7 @@ This project uses the OpenZeppelin Contracts library. Run this first:
 
 ## TODO
 
+* Rename 'NetworkFormation2' and 'SensorNode2' to something else that makes more sense. e.g. 'NodeRoleEntries' and 'NodeRoleEntry'.
 * [SEE IF I CAN DO THIS] Idea: Each actuator behaves differently to the sensor readings - e.g. 1 would trigger at 37000 while another would trigger at 5000.
 * [ONGOING] Clean up the code and add comments to make it more presentable.
 * [TODO] Seriously consider using IPFS to store node information and readings.

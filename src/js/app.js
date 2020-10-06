@@ -105,7 +105,7 @@ export const App = {
   initContract: function() {
     console.log("FLOW: initContract()");
 
-    // change 'NetworkFormation' to the name of the future contract
+    // Initialise the NetworkFormation smart contract variable
     $.getJSON('NetworkFormation.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with @truffle/contract
       var ContractArtifact = data;
@@ -113,10 +113,21 @@ export const App = {
 
       // Set the provider for the contract
       App.contracts.NetworkFormation.setProvider(App.web3Provider);
-
+      
       // Use our contract to initialise the data of this page
       return App.initialiseData();
     });
+
+    // Initialise the NetworkFormation smart contract variable
+    $.getJSON('NetworkFormation2.json', function(data) {
+      // Get the necessary contract artifact file and instantiate it with @truffle/contract
+      var ContractArtifact = data;
+      App.contracts.NetworkFormation2 = TruffleContract(ContractArtifact);
+
+      // Set the provider for the contract
+      App.contracts.NetworkFormation2.setProvider(App.web3Provider);
+    });
+
   },
   
   /**
@@ -490,7 +501,7 @@ export const App = {
   assignNodeAsSensor: function(nodeAddr) {
 
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NetworkFormation2.deployed().then(function(instance) {
       instance.assignAsSensor(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsSensor() "+nodeAddr+" success");
       });
@@ -504,7 +515,7 @@ export const App = {
    */
   assignNodeAsController: function(nodeAddr) {
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NetworkFormation2.deployed().then(function(instance) {
       instance.assignAsController(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsController() "+nodeAddr+" success");
       });
@@ -518,7 +529,7 @@ export const App = {
    */
   assignNodeAsActuator: function(nodeAddr, actuatorMsg) {
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NetworkFormation2.deployed().then(function(instance) {
       instance.assignAsActuator(nodeAddr, actuatorMsg).then(function(result) {
         console.log("FLOW: assignNodeAsActuator("+nodeAddr+" '"+actuatorMsg+"' success");
       });
