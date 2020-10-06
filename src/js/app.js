@@ -125,7 +125,7 @@ export const App = {
   addNode: function(instance, nodeAddr, nodeELevel, nodesWithinRange) {
     instance.addNode(nodeAddr, nodeELevel, nodesWithinRange).then(function(result) {
       console.log("FLOW: adding more nodes - nodeAddr="+nodeAddr+" nodeELevel="+nodeELevel+" nodesWithinRange="+nodesWithinRange);
-      $(".sensornode-box").append(`<div>
+      $("#row-wsn-nodes").append(`<div class="col-md-4">
         <h2>Node with address ${result.logs[0].args.addr}</h2>
         <p>Energy level: ${result.logs[0].args.energyLevel}</p>
         <p>Network level: ${result.logs[0].args.networkLevel}</p>
@@ -165,77 +165,81 @@ export const App = {
    */
   loadNodeData: function(instance) {
     instance.getAllNodeAddresses().then(function(result) {
-      for (var i = 0; i < result.length; i++) {
+      for (var i = 0; i < result.length; i += 3) {
         console.log("==================================================");
         console.log(i);
         console.log(result[i]);
+                
+        var result3entries = result.slice(i, i+3);
         
-        var currentAddr = result[i];
-        
-        // gets all nodes and displays them
-        instance.getNodeInfo(currentAddr).then(function(data) {
-          console.log("currentAddr in gni: " + currentAddr);
-          // Add colour coding to node background.
-          // Cyan = cluster head.
-          // Yellow = member node.
-          // Red = unassigned node.
-          var isClusterHead = (data[3] == NodeType.ClusterHead);
-          var isMemberNode = (data[3] == NodeType.MemberNode);
-          var chosenStyle = (isClusterHead) ? "node-clusterhead" :
-              (isMemberNode) ? "node-membernode" : 
-              "node-unassigned";
+        for (var j = 0; j < result3entries.length; j++) {
+          var currentAddr = result3entries[j];
           
-          var isActive = data[5];
-          var chosenTextStyle = (isActive) ? "node-active" :
-              "node-inactive";
-          var buttonLabel = (isActive) ? "Deactivate" :
-              "Activate";
-          var buttonFunc = (isActive) ? "deactivateNode" :
-              "activateNode";            
+          // gets all nodes and displays them
+          instance.getNodeInfo(currentAddr).then(function(data) {
+            console.log("currentAddr in gni: " + currentAddr);
+            // Add colour coding to node background.
+            // Cyan = cluster head.
+            // Yellow = member node.
+            // Red = unassigned node.
+            var isClusterHead = (data[3] == NodeType.ClusterHead);
+            var isMemberNode = (data[3] == NodeType.MemberNode);
+            var chosenStyle = (isClusterHead) ? "node-clusterhead" :
+                (isMemberNode) ? "node-membernode" : 
+                "node-unassigned";
+            
+            var isActive = data[5];
+            var chosenTextStyle = (isActive) ? "node-active" :
+                "node-inactive";
+            var buttonLabel = (isActive) ? "Deactivate" :
+                "Activate";
+            var buttonFunc = (isActive) ? "deactivateNode" :
+                "activateNode";            
 
-          var isTriggeringExternalService = data[6];
-          var chosenBorderStyle = (isTriggeringExternalService) ? "node-triggeredactuator" : "";
-          var actuatorMsgStyle = (isTriggeringExternalService) ? "node-msg-triggeredactuator" : "";            
+            var isTriggeringExternalService = data[6];
+            var chosenBorderStyle = (isTriggeringExternalService) ? "node-triggeredactuator" : "";
+            var actuatorMsgStyle = (isTriggeringExternalService) ? "node-msg-triggeredactuator" : "";            
 
-          $(".sensornode-box").append(`<div class="node-description ${chosenStyle} ${chosenTextStyle} ${chosenBorderStyle}">
-            <h2>Node with address ${data[0]}</h2>
-            <p>Energy level: ${data[1]}</p>
-            <p>Network level: ${data[2]}</p>
-            <p>Node type: ${toNodeType(data[3])}</p>
-            <p>Node role: ${toNodeRole(data[4])}</p>
+            $("#row-wsn-nodes").append(`<div class="col-md-4 node-description ${chosenStyle} ${chosenTextStyle} ${chosenBorderStyle}">
+              <h2>Node with address ${data[0]}</h2>
+              <p>Energy level: ${data[1]}</p>
+              <p>Network level: ${data[2]}</p>
+              <p>Node type: ${toNodeType(data[3])}</p>
+              <p>Node role: ${toNodeRole(data[4])}</p>
 
-            <div class="input-group">
-              <label for="id-input-setactive">Is currently active: ${data[5]}</label>
-              <button class="btn btn-primary" id="btn-${buttonFunc}-${data[0]}" id="btn2-${data[1]}">${buttonLabel}</button>
-            </div>
+              <div class="input-group">
+                <label for="id-input-setactive">Is currently active: ${data[5]}</label>
+                <button class="btn btn-primary" id="btn-${buttonFunc}-${data[0]}" id="btn2-${data[1]}">${buttonLabel}</button>
+              </div>
 
-            <p>Is triggering an external service: ${data[6]}</p>
-            <p class="${actuatorMsgStyle}">Message: ${data[7]}</p>
+              <p>Is triggering an external service: ${data[6]}</p>
+              <p class="${actuatorMsgStyle}">Message: ${data[7]}</p>
 
-            <p>Sensor readings: [${data[8]}]</p>
-            <div class="input-group">
-              <label for="id-input-sreading">Add sensor reading: </label>
-              <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
-            </div>
-            <button class="btn btn-primary" id="btn-readSensorInput-${data[0]}">Simulate sensor reading</button>
-            </div>`);
+              <p>Sensor readings: [${data[8]}]</p>
+              <div class="input-group">
+                <label for="id-input-sreading">Add sensor reading: </label>
+                <input type="string" class="form-control" id="id-input-sreading-${data[0]}" placeholder="">
+              </div>
+              <button class="btn btn-primary" id="btn-readSensorInput-${data[0]}">Simulate sensor reading</button>
+              </div>`);
 
-          // Set event listener for 'De/Activate' button
-          if (isActive) {
-            console.log("Set deactivate node");
-            document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.deactivateNode.bind(null, data[0]));              
-          } else {
-            console.log("Set ACTivate node");
-            document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.activateNode.bind(null, data[1]));
-          }
-          
-          // Set event listener for sensor reading simulation button
-          document.querySelector("#btn-readSensorInput-"+data[0]).addEventListener('click', App.readSensorInput.bind(null, data[0]));              
+            // Set event listener for 'De/Activate' button
+            if (isActive) {
+              console.log("Set deactivate node");
+              document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.deactivateNode.bind(null, data[0]));              
+            } else {
+              console.log("Set ACTivate node");
+              document.querySelector("#btn-"+buttonFunc+"-"+data[0]).addEventListener('click', App.activateNode.bind(null, data[1]));
+            }
+            
+            // Set event listener for sensor reading simulation button
+            document.querySelector("#btn-readSensorInput-"+data[0]).addEventListener('click', App.readSensorInput.bind(null, data[0]));              
 
 
-        }).catch(function(err) {
-          console.error("getNodeInfo ERROR! " + err.message);
-        });
+          }).catch(function(err) {
+            console.error("getNodeInfo ERROR! " + err.message);
+          });
+        }
         
       }
     }).catch(function(err) {

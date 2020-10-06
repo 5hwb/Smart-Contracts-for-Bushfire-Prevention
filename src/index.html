@@ -16,6 +16,7 @@
   </head>
   <body>
     <div class="container">
+      <!-- Heading row -->
       <div class="row">
         <div>
           <h1 class="text-center">Bushfire Prevention Simulation</h1>
@@ -23,6 +24,7 @@
           <br/>
         </div>
       </div>
+      <!-- Settings row - shows all useful functions of the smart contracts -->
       <div class="row">
         <!-- 1st column -->
         <div class="col-md-4">
@@ -41,9 +43,6 @@
           </div>
           <button class="btn btn-primary" id="btn-addNewNode">Add node</button>
           <div class="msg"></div>
-
-          <h1>Existing nodes</h1>
-          <div class="sensornode-box"></div>
         </div>
 
         <!-- 2nd column -->
@@ -105,6 +104,15 @@
           <div id="thing-box"></div>
         </div>
       </div>
+      
+      <!-- Last row - for showing all WSN node info -->
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Existing nodes</h1>
+          <!-- The row within which the nodes will be placed -->
+          <div class="row" id="row-wsn-nodes"></div>
+        </div>
+      </div>  
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
