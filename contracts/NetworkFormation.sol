@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./DS.sol";
 import "./QuickSort.sol";
 import "./SensorNode.sol";
-import "./NetworkFormation2.sol";
+import "./NodeRoleEntries.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 
 contract NetworkFormation {
@@ -20,15 +20,15 @@ contract NetworkFormation {
   uint public numOfLevels; // How many levels the network is consisted of
   
   // Smart contract for the node role entries
-  NetworkFormation2 networkFormation2;
+  NodeRoleEntries nodeRoleEntries;
   
   // Events
   event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
 
-  // Set the deployed NetworkFormation2 contract instance to use. 
-  function setNetworkFormation2(NetworkFormation2 _nf2) public {
-    networkFormation2 = _nf2;
+  // Set the deployed NodeRoleEntries contract instance to use. 
+  function setNodeRoleEntries(NodeRoleEntries _nf2) public {
+    nodeRoleEntries = _nf2;
   }
   
   // Get array of all DS.Node instances.
@@ -62,8 +62,8 @@ contract NetworkFormation {
 
     emit AddedNode(_addr, _energyLevel, node.networkLevel, node.nodeType);
     
-    // Call NetworkFormation2 - add an entry as well
-    networkFormation2.addNode(_addr);
+    // Call NodeRoleEntries - add an entry as well
+    nodeRoleEntries.addNode(_addr);
   }
   
   // Get the index of the node with the given address
@@ -91,13 +91,13 @@ contract NetworkFormation {
     string memory, uint256[] memory
     ) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    DS.NodeRoleStuff memory nodeRoleStuff = networkFormation2.getNodeRoleStuffAsMemory(nodes[nIdx].nodeAddress);
+    DS.NodeRoleEntry memory nodeRoleEntry = nodeRoleEntries.getNodeRoleEntryAsMemory(nodes[nIdx].nodeAddress);
     
     return (nodes[nIdx].nodeAddress, // 0
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
-        nodes[nIdx].nodeType, nodeRoleStuff.nodeRole, // 3, 4
-        nodes[nIdx].isActive, nodeRoleStuff.isTriggeringExternalService, // 5, 6
-        nodeRoleStuff.triggerMessage, SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
+        nodes[nIdx].nodeType, nodeRoleEntry.nodeRole, // 3, 4
+        nodes[nIdx].isActive, nodeRoleEntry.isTriggeringExternalService, // 5, 6
+        nodeRoleEntry.triggerMessage, SensorNode.getSensorReadings(nodes[nIdx]) // 7, 8
         );
   }
   
@@ -178,7 +178,7 @@ contract NetworkFormation {
     // By default, cluster heads are also Controllers,
     // hence they are assigned to the Controller role.
     SensorNode.setAsClusterHead(nodes[nodeIndex]);
-    networkFormation2.assignAsController(nodes[nodeIndex].nodeAddress);
+    nodeRoleEntries.assignAsController(nodes[nodeIndex].nodeAddress);
     
     // Set the parent node (only if valid address!) and add this node as the child node of the parent
     if (_parentAddr != 0) {
@@ -260,7 +260,7 @@ contract NetworkFormation {
   // Respond to sensor readings from all children of this node 
   function respondToSensorInput(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, networkFormation2, false);
+    SensorNode.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, nodeRoleEntries, false);
   }
 
   // Mark the node with the given address as inactive

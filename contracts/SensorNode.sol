@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./DS.sol";
 import "./IA.sol";
 import "./QuickSort.sol";
-import "./NetworkFormation2.sol";
+import "./NodeRoleEntries.sol";
 
 library SensorNode {
 
@@ -180,11 +180,11 @@ library SensorNode {
       DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex,
-      NetworkFormation2 _networkFormation2,
+      NodeRoleEntries _nodeRoleEntries,
       bool _conditionsAreMatching) public {
 
-    // Get the corresponding NodeRoleStuff instance
-    DS.NodeRoleStuff memory nodeRoleStuff = _networkFormation2.getNodeRoleStuffAsMemory(_daNode.nodeAddress);
+    // Get the corresponding NodeRoleEntry instance
+    DS.NodeRoleEntry memory nodeRoleEntry = _nodeRoleEntries.getNodeRoleEntryAsMemory(_daNode.nodeAddress);
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible
@@ -193,19 +193,19 @@ library SensorNode {
         
         // If this node is a controller, go thru each of its children nodes
         // and call this function on each of them
-        if (nodeRoleStuff.nodeRole == DS.NodeRole.Controller) {
+        if (nodeRoleEntry.nodeRole == DS.NodeRole.Controller) {
           for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
             DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
             respondToSensorInput(childNode, _allNodes, _addrToNodeIndex,
-                _networkFormation2, true);
+                _nodeRoleEntries, true);
           }
         }
       }
     }
     
     // Otherwise, if this node is an actuator, simulate triggering the device
-    if (_conditionsAreMatching && nodeRoleStuff.nodeRole == DS.NodeRole.Actuator) {
-      _networkFormation2.setAsTriggered(_daNode.nodeAddress);
+    if (_conditionsAreMatching && nodeRoleEntry.nodeRole == DS.NodeRole.Actuator) {
+      _nodeRoleEntries.setAsTriggered(_daNode.nodeAddress);
     }
   }
   

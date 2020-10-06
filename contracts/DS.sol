@@ -30,7 +30,7 @@ library DS {
   enum NodeRole { Default, Sensor, Controller, Actuator }
   enum TriggerCondition { Default, LessThan, LessEqual, Equal, GreaterEqual, GreaterThan }
 
-  // DS.Node struct represents the parameters associated with a single node in the WSN 
+  // DS.Node struct represents most parameters associated with a single node in the WSN 
   struct Node {
     uint256 nodeAddress; // Address of the node
     // TODO eventually: Make the energy level based on the battery current and voltage available 
@@ -57,8 +57,8 @@ library DS {
     //RoleVariables rv;
   }
 
-  // DS.Node struct represents the parameters associated with a single node in the WSN 
-  struct NodeRoleStuff {
+  // DS.NodeRoleEntry struct represents the role-related parameters associated with a single node in the WSN 
+  struct NodeRoleEntry {
     uint256 nodeAddress; // Address of the node
 
     NodeRole nodeRole;

@@ -6,7 +6,7 @@
 // Contract abstractions provided by Truffle
 // (TruffleContract instances)
 const NetworkFormation = artifacts.require("NetworkFormation");
-const NetworkFormation2 = artifacts.require("NetworkFormation2");
+const NodeRoleEntries = artifacts.require("NodeRoleEntries");
 const SensorNode = artifacts.require("SensorNode");
 const QuickSortContract = artifacts.require("QuickSortContract");
 
@@ -66,19 +66,17 @@ function toStruct(val) {
     numOfReadings: parseInt(val[8]),
     backupCHeads: val[9].map(i => parseInt(i)),
     isActive: val[10]
-    
-    // TODO: add a new version for the NetworkFormation2 data
   };
 }
 
 contract("NetworkFormation test cases", async accounts => {
   let networkFormation;
-  let networkFormation2;
+  let nodeRoleEntries;
   let sensorNode;
   
   beforeEach(async () => {
     networkFormation = await NetworkFormation.deployed();
-    networkFormation2 = await NetworkFormation2.deployed();
+    nodeRoleEntries = await NodeRoleEntries.deployed();
     sensorNode = await SensorNode.deployed();
   });
 
@@ -219,8 +217,8 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node111000.sensorReadings[5].reading, 9005);
   });
 
-  it("networkFormation2 should have 6 entries", async () => {
-    assert.equal(await networkFormation2.numOfNodeRoleEntries.call(), 6);
+  it("nodeRoleEntries should have 6 entries", async () => {
+    assert.equal(await nodeRoleEntries.numOfNodeRoleEntries.call(), 6);
   });
   
   /***********************************************

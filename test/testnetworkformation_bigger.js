@@ -6,7 +6,7 @@
 // Contract abstractions provided by Truffle
 // (TruffleContract instances)
 const NetworkFormation = artifacts.require("NetworkFormation");
-const NetworkFormation2 = artifacts.require("NetworkFormation2");
+const NodeRoleEntries = artifacts.require("NodeRoleEntries");
 const SensorNode = artifacts.require("SensorNode");
 
 // Required for some test cases
@@ -74,7 +74,7 @@ function toStruct(val) {
     backupCHeads: val[9].map(i => parseInt(i)),
     isActive: val[10]
 
-    // TODO: add a new version for the NetworkFormation2 data
+    // TODO: add a new version for the NodeRoleEntries data
   };
 }
 
@@ -131,8 +131,8 @@ function toReadableString(val) {
   return result;
 }
 
-// Convert the raw array returned by NetworkFormation2 into a NodeRoleStuff struct format
-function nodeRoleStuffToStruct(val) {
+// Convert the raw array returned by NodeRoleEntries into a NodeRoleEntry struct format
+function nodeRoleEntryToStruct(val) {
   return {
     nodeAddress: parseInt(val[0]),
     nodeRole: parseInt(val[1]),
@@ -145,11 +145,11 @@ function nodeRoleStuffToStruct(val) {
 
 contract("NetworkFormation - 3-layer network test case", async accounts => {
   let networkFormation;
-  let networkFormation2;
+  let nodeRoleEntries;
   
   beforeEach(async () => {
     networkFormation = await NetworkFormation.deployed();
-    networkFormation2 = await NetworkFormation2.deployed();
+    nodeRoleEntries = await NodeRoleEntries.deployed();
   });
 
   /***********************************************
@@ -603,71 +603,71 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     // Commented out the assignAsController() calls since cluster heads
     // should already be assigned as Controllers
     //await networkFormation.assignAsController(111000);
-    await networkFormation2.assignAsSensor(222001);
+    await nodeRoleEntries.assignAsSensor(222001);
     //await networkFormation.assignAsController(222002);
-    await networkFormation2.assignAsSensor(222003);
+    await nodeRoleEntries.assignAsSensor(222003);
     //await networkFormation.assignAsController(222004);
-    await networkFormation2.assignAsActuator(222005, "Activating sprinklers!");
+    await nodeRoleEntries.assignAsActuator(222005, "Activating sprinklers!");
     //await networkFormation.assignAsController(222006);
-    await networkFormation2.assignAsActuator(222007, "Contacting the RFS.");
+    await nodeRoleEntries.assignAsActuator(222007, "Contacting the RFS.");
     //await networkFormation.assignAsController(222008);
-    await networkFormation2.assignAsSensor(222009);
-    await networkFormation2.assignAsActuator(222010, "Activating emergency sirens!");
-    await networkFormation2.assignAsActuator(222011, "Send evacuation SMS to all phones");
-    await networkFormation2.assignAsSensor(222012);
-    await networkFormation2.assignAsSensor(222013);
-    await networkFormation2.assignAsSensor(222014);
-    await networkFormation2.assignAsSensor(222015);
+    await nodeRoleEntries.assignAsSensor(222009);
+    await nodeRoleEntries.assignAsActuator(222010, "Activating emergency sirens!");
+    await nodeRoleEntries.assignAsActuator(222011, "Send evacuation SMS to all phones");
+    await nodeRoleEntries.assignAsSensor(222012);
+    await nodeRoleEntries.assignAsSensor(222013);
+    await nodeRoleEntries.assignAsSensor(222014);
+    await nodeRoleEntries.assignAsSensor(222015);
 
-    let nodeRoleStuff111000 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(111000));
-    let nodeRoleStuff222001 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222001));
-    let nodeRoleStuff222002 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222002));
-    let nodeRoleStuff222003 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222003));
-    let nodeRoleStuff222004 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222004));
-    let nodeRoleStuff222005 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222005));
-    let nodeRoleStuff222006 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222006));
-    let nodeRoleStuff222007 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222007));
-    let nodeRoleStuff222008 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222008));
-    let nodeRoleStuff222009 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222009));
-    let nodeRoleStuff222010 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222010));
-    let nodeRoleStuff222011 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222011));
-    let nodeRoleStuff222012 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222012));
-    let nodeRoleStuff222013 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222013));
-    let nodeRoleStuff222014 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222014));
-    let nodeRoleStuff222015 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222015));
+    let nodeRoleEntry111000 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(111000));
+    let nodeRoleEntry222001 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222001));
+    let nodeRoleEntry222002 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222002));
+    let nodeRoleEntry222003 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222003));
+    let nodeRoleEntry222004 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222004));
+    let nodeRoleEntry222005 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222005));
+    let nodeRoleEntry222006 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222006));
+    let nodeRoleEntry222007 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222007));
+    let nodeRoleEntry222008 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222008));
+    let nodeRoleEntry222009 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222009));
+    let nodeRoleEntry222010 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222010));
+    let nodeRoleEntry222011 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222011));
+    let nodeRoleEntry222012 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222012));
+    let nodeRoleEntry222013 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222013));
+    let nodeRoleEntry222014 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222014));
+    let nodeRoleEntry222015 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222015));
 
-    assert.equal(nodeRoleStuff111000.nodeRole, NodeRole.Controller);
-    assert.equal(nodeRoleStuff222001.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222002.nodeRole, NodeRole.Controller);
-    assert.equal(nodeRoleStuff222003.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222004.nodeRole, NodeRole.Controller);
-    assert.equal(nodeRoleStuff222005.nodeRole, NodeRole.Actuator);
-    assert.equal(nodeRoleStuff222006.nodeRole, NodeRole.Controller);
-    assert.equal(nodeRoleStuff222007.nodeRole, NodeRole.Actuator);
-    assert.equal(nodeRoleStuff222008.nodeRole, NodeRole.Controller);
-    assert.equal(nodeRoleStuff222009.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222010.nodeRole, NodeRole.Actuator);
-    assert.equal(nodeRoleStuff222011.nodeRole, NodeRole.Actuator);
-    assert.equal(nodeRoleStuff222012.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222013.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222014.nodeRole, NodeRole.Sensor);
-    assert.equal(nodeRoleStuff222015.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry111000.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleEntry222001.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222002.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleEntry222003.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222004.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleEntry222005.nodeRole, NodeRole.Actuator);
+    assert.equal(nodeRoleEntry222006.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleEntry222007.nodeRole, NodeRole.Actuator);
+    assert.equal(nodeRoleEntry222008.nodeRole, NodeRole.Controller);
+    assert.equal(nodeRoleEntry222009.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222010.nodeRole, NodeRole.Actuator);
+    assert.equal(nodeRoleEntry222011.nodeRole, NodeRole.Actuator);
+    assert.equal(nodeRoleEntry222012.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222013.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222014.nodeRole, NodeRole.Sensor);
+    assert.equal(nodeRoleEntry222015.nodeRole, NodeRole.Sensor);
     
   });
   
   it("should be able to respond to sensor input", async () => {
     await networkFormation.respondToSensorInput(111000);
 
-    let nodeRoleStuff222005 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222005));
-    let nodeRoleStuff222007 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222007));
-    let nodeRoleStuff222010 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222010));
-    let nodeRoleStuff222011 = nodeRoleStuffToStruct(await networkFormation2.getNodeRoleStuffAsMemory(222011));
+    let nodeRoleEntry222005 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222005));
+    let nodeRoleEntry222007 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222007));
+    let nodeRoleEntry222010 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222010));
+    let nodeRoleEntry222011 = nodeRoleEntryToStruct(await nodeRoleEntries.getNodeRoleEntryAsMemory(222011));
 
     // These actuators should be triggering an external service (in this simulation, just set isTriggeringExternalService to true)
-    assert.equal(nodeRoleStuff222005.isTriggeringExternalService, true);
-    assert.equal(nodeRoleStuff222007.isTriggeringExternalService, true);
-    assert.equal(nodeRoleStuff222010.isTriggeringExternalService, true);
-    assert.equal(nodeRoleStuff222011.isTriggeringExternalService, true);
+    assert.equal(nodeRoleEntry222005.isTriggeringExternalService, true);
+    assert.equal(nodeRoleEntry222007.isTriggeringExternalService, true);
+    assert.equal(nodeRoleEntry222010.isTriggeringExternalService, true);
+    assert.equal(nodeRoleEntry222011.isTriggeringExternalService, true);
     
     console.log(toReadableString(await networkFormation.getNodeAsMemory(222005)));
     
@@ -677,7 +677,7 @@ contract("NetworkFormation - 3-layer network test case", async accounts => {
     //   }
     // );
     
-    // console.log((await networkFormation2.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
+    // console.log((await nodeRoleEntries.getAllNodes()).map(node => toStruct(node)).map(function(nodeStruct) {
     //   return {
     //     nodeAddress: nodeStruct.nodeAddress, 
     //     sensorReadings: nodeStruct.sensorReadings.map(x => x.reading),
