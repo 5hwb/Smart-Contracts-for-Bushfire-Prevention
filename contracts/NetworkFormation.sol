@@ -260,7 +260,7 @@ contract NetworkFormation {
   // Respond to sensor readings from all children of this node 
   function respondToSensorInput(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    SensorNode.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, false);
+    SensorNode.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, networkFormation2, false);
   }
 
   // Mark the node with the given address as inactive

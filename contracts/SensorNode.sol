@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./DS.sol";
 import "./IA.sol";
 import "./QuickSort.sol";
-// import "./SomeLib.sol";
+import "./NetworkFormation2.sol";
 
 library SensorNode {
 
@@ -180,30 +180,35 @@ library SensorNode {
       DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex,
-      bool conditionsAreMatching) public {
+      NetworkFormation2 _networkFormation2,
+      bool _conditionsAreMatching) public {
+
+    // Get the corresponding NodeRoleStuff instance
+    DS.NodeRoleStuff memory nodeRoleStuff = _networkFormation2.getNodeRoleStuffAsMemory(_daNode.nodeAddress);
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible
     for (uint i = 1; i < _daNode.sensorReadings.length; i++) {
-      if (_daNode.sensorReadings[i].reading > 37000 || conditionsAreMatching) {
+      if (_daNode.sensorReadings[i].reading > 37000 || _conditionsAreMatching) {
         
         // If this node is a controller, go thru each of its children nodes
         // and call this function on each of them   
         // TODO: make this work later!
-        // if (_daNode.rv.nodeRole == DS.NodeRole.Controller) {
-        //   for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
-        //     DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
-        //     respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
-        //   }
-        // }
+        if (nodeRoleStuff.nodeRole == DS.NodeRole.Controller) {
+          for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
+            DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
+            respondToSensorInput(childNode, _allNodes, _addrToNodeIndex,
+                _networkFormation2, true);
+          }
+        }
       }
     }
     
     // Otherwise, if this node is an actuator, simulate triggering the device
     // TODO: make this work later!   
-    // if (conditionsAreMatching && _daNode.rv.nodeRole == DS.NodeRole.Actuator) {
-    //   _daNode.rv.isTriggeringExternalService = true;
-    // }    
+    if (_conditionsAreMatching && nodeRoleStuff.nodeRole == DS.NodeRole.Actuator) {
+      nodeRoleStuff.isTriggeringExternalService = true;
+    }    
   }
   
   /**

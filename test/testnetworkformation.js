@@ -219,13 +219,8 @@ contract("NetworkFormation test cases", async accounts => {
     assert.equal(node111000.sensorReadings[5].reading, 9005);
   });
 
-  it("should send sensor readings to sink node", async () => {
-    console.log("addressOfNF2() = ");
-    console.log(await networkFormation.addressOfNF2.call());
-    
+  it("networkFormation2 should have 6 entries", async () => {
     assert.equal(await networkFormation2.numOfNodeRoleEntries.call(), 6);
-    console.log("networkFormation2.getNodeRoleStuffAsMemory(111000) = ");
-    console.log(await networkFormation2.getNodeRoleStuffAsMemory(111000));    
   });
   
   /***********************************************
