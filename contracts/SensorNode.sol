@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import "./DS.sol";
 import "./IA.sol";
 import "./QuickSort.sol";
-// import "./SomeLib.sol";
+import "./NetworkFormation2.sol";
 
 library SensorNode {
 
@@ -180,28 +180,33 @@ library SensorNode {
       DS.Node storage _daNode, 
       DS.Node[] storage _allNodes, 
       mapping(uint => uint) storage _addrToNodeIndex,
-      bool conditionsAreMatching) public {
+      NetworkFormation2 _networkFormation2,
+      bool _conditionsAreMatching) public {
+
+    // Get the corresponding NodeRoleStuff instance
+    DS.NodeRoleStuff memory nodeRoleStuff = _networkFormation2.getNodeRoleStuffAsMemory(_daNode.nodeAddress);
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible
     for (uint i = 1; i < _daNode.sensorReadings.length; i++) {
-      if (_daNode.sensorReadings[i].reading > 37000 || conditionsAreMatching) {
+      if (_daNode.sensorReadings[i].reading > 37000 || _conditionsAreMatching) {
         
         // If this node is a controller, go thru each of its children nodes
-        // and call this function on each of them      
-        if (_daNode.rv.nodeRole == DS.NodeRole.Controller) {
+        // and call this function on each of them
+        if (nodeRoleStuff.nodeRole == DS.NodeRole.Controller) {
           for (uint j = 0; j < _daNode.links.childNodes.length; j++) {
             DS.Node storage childNode = getNode(_allNodes, _addrToNodeIndex, _daNode.links.childNodes[j]);
-            respondToSensorInput(childNode, _allNodes, _addrToNodeIndex, true);
+            respondToSensorInput(childNode, _allNodes, _addrToNodeIndex,
+                _networkFormation2, true);
           }
         }
       }
     }
     
     // Otherwise, if this node is an actuator, simulate triggering the device
-    if (conditionsAreMatching && _daNode.rv.nodeRole == DS.NodeRole.Actuator) {
-      _daNode.rv.isTriggeringExternalService = true;
-    }    
+    if (_conditionsAreMatching && nodeRoleStuff.nodeRole == DS.NodeRole.Actuator) {
+      _networkFormation2.setAsTriggered(_daNode.nodeAddress);
+    }
   }
   
   /**
@@ -263,23 +268,19 @@ library SensorNode {
   }
     
   /**
-   * @notice Set the given node as a cluster head. By default, cluster heads are
-   *         also Controllers, hence they are assigned to the Controller role.
+   * @notice Set the given node as a cluster head.
    * @param _daNode The node to set
    */
   function setAsClusterHead(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.ClusterHead;
-    _daNode.rv.nodeRole = DS.NodeRole.Controller;
   }
   
   /**
-   * @notice Set the given node as a member node. Since it is not known what
-   *         role it would take, it also assigns it to the Default role.
+   * @notice Set the given node as a member node.
    * @param _daNode The node to set
    */
   function setAsMemberNode(DS.Node storage _daNode) public {
     _daNode.nodeType = DS.NodeType.MemberNode;
-    _daNode.rv.nodeRole = DS.NodeRole.Default;
   }
   
   /**
@@ -336,35 +337,7 @@ library SensorNode {
     require(_daNode.isActive == false);
     _daNode.isActive = true;
   }
-    
-  /**
-   * @notice Set the given node's role as a Sensor.
-   * @param _daNode The node to set
-   */
-  function setAsSensorRole(DS.Node storage _daNode) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Sensor;
-    _daNode.rv.triggerMessage = ""; // remove the actuator trigger message
-  }
-  
-  /**
-   * @notice Set the given node's role as a Controller.
-   * @param _daNode The node to set
-   */
-  function setAsControllerRole(DS.Node storage _daNode) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Controller;
-    _daNode.rv.triggerMessage = ""; // remove the actuator trigger message
-  }
-  
-  /**
-   * @notice Set the given node's role as an Actuator.
-   * @param _daNode The node to set
-   * @param _triggerMessage The message to show when the actuator is triggered
-   */
-  function setAsActuatorRole(DS.Node storage _daNode, string memory _triggerMessage) public {
-    _daNode.rv.nodeRole = DS.NodeRole.Actuator;
-    _daNode.rv.triggerMessage = _triggerMessage;
-  }
-  
+      
   ////////////////////////////////////////
   // links.childNodes GETTER FUNCTIONS
   ////////////////////////////////////////

@@ -30,20 +30,6 @@ library DS {
   enum NodeRole { Default, Sensor, Controller, Actuator }
   enum TriggerCondition { Default, LessThan, LessEqual, Equal, GreaterEqual, GreaterThan }
 
-  // DS.RoleVariables struct represents all role-related parameters for a single node in the WSN 
-  struct RoleVariables {    
-    NodeRole nodeRole;
-    
-    // Indicate whether this node is triggering the execution of an external service
-    bool isTriggeringExternalService;
-
-    // The message to show when this node has triggered the external service
-    string triggerMessage;
-    
-    uint triggerThreshold;
-    //bool triggerCondition;
-  }
-
   // DS.Node struct represents the parameters associated with a single node in the WSN 
   struct Node {
     uint256 nodeAddress; // Address of the node
@@ -68,6 +54,23 @@ library DS {
     // Indicate if node is active and ready to transfer data
     bool isActive;
         
-    RoleVariables rv;
+    //RoleVariables rv;
   }
+
+  // DS.Node struct represents the parameters associated with a single node in the WSN 
+  struct NodeRoleStuff {
+    uint256 nodeAddress; // Address of the node
+
+    NodeRole nodeRole;
+    
+    // Indicate whether this node is triggering the execution of an external service
+    bool isTriggeringExternalService;
+
+    // The message to show when this node has triggered the external service
+    string triggerMessage;
+    
+    uint triggerThreshold;
+    TriggerCondition triggerCondition;
+  }
+
 }
