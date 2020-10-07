@@ -47,9 +47,9 @@ library NodeEntryLib {
     return _allNodes[nIdx];
   }
   
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // Simulate receiving beacon from cluster head!
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Add a beacon to the given node.
@@ -94,10 +94,16 @@ library NodeEntryLib {
     return _daNode.beacons;
   }
   
-  ////////////////////////////////////////
-  // Redundancy fuinctions
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
+  // Redundancy functions
+  //////////////////////////////////////////////////
 
+  /**
+   * @notice Select a node entry from the list of backups and install it as the new cluster head of this node.
+   * @param _daNode The node to modify
+   * @param _allNodes List of all DS.Node instances
+   * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
+   */
   function setBackupAsClusterHead(
       DS.Node storage _daNode,
       DS.Node[] storage _allNodes, 
@@ -119,9 +125,9 @@ library NodeEntryLib {
     }
   }
 
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // Simulate receiving input from sensors!
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
 
   /**
    * @notice Read sensor input.
@@ -224,9 +230,9 @@ library NodeEntryLib {
     return sensorReadingsUint;
   }
 
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // Get backup cluster heads from beacons
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Identify the nodes which can serve as a backup in case the current cluster head fails by going through the list of links.withinRangeNodes on all received beacons and then saving the results to the list of backup cluster head addresses for that node.
@@ -245,9 +251,9 @@ library NodeEntryLib {
     }
   }
     
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // SETTER FUNCTIONS
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Set the energy level of this node.
@@ -338,9 +344,9 @@ library NodeEntryLib {
     _daNode.isActive = true;
   }
       
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // links.childNodes GETTER FUNCTIONS
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Get the number of child nodes of the given node.
@@ -351,9 +357,9 @@ library NodeEntryLib {
     return _daNode.links.childNodes.length;
   }
   
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // links.joinRequestNodes GETTER FUNCTIONS
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
    /**
     * @notice Get the addresses of all nodes that sent join requests to this node.
@@ -364,9 +370,9 @@ library NodeEntryLib {
     return _daNode.links.joinRequestNodes;
   }
   
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // links.withinRangeNodes GETTER FUNCTIONS
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Get the addresses of all nodes within range to this node.
@@ -386,9 +392,9 @@ library NodeEntryLib {
     return _daNode.links.withinRangeNodes.length;
   }
   
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   // Conversion functions
-  ////////////////////////////////////////
+  //////////////////////////////////////////////////
   
   /**
    * @notice Convert an array of uint256 addresses into an array of their corresponding DS.Node instances. 

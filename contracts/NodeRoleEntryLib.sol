@@ -31,6 +31,10 @@ library NodeRoleEntryLib {
     return _allNodes2[nIdx];
   }
   
+  //////////////////////////////////////////////////
+  // SETTER FUNCTIONS
+  //////////////////////////////////////////////////
+
   /**
    * @notice Set the given node's role as a Sensor.
    * @param _daEntry The node to set
