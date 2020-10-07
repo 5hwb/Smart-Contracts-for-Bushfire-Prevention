@@ -10,68 +10,71 @@ import "./NodeRoleEntryLib.sol";
 // 24KB Ethereum contract size limit.
 contract NodeRoleEntries {
   
-  // Array of all node role entries in the network
-  DS.NodeRoleEntry[] public allNodes2;
-  mapping (uint => uint) addrToNodeIndex2; // node addresses -> node array index
+  /** Array of all node role entries in the network */
+  DS.NodeRoleEntry[] public allRoleEntries;
 
-  uint public numOfNodeRoleEntries; // Number of node role entries in this network
+  /** Mapping from node addresses to the corresponding array index in allRoleEntries */
+  mapping (uint => uint) addrToRoleEntryIndex;
+
+  /** Number of node role entries in this network */
+  uint public numOfNodeRoleEntries;
 
   // Get array of all DS.NodeRoleEntry instances.
   function getAllNodeRoleEntries() view public returns(DS.NodeRoleEntry[] memory) {
-    return allNodes2;
+    return allRoleEntries;
   }
 
-  // Add a node to the list of all sensor nodes.
+  // Add a node to the list of all node entries.
   function addNode(uint _addr) public {
     // Push a new DS.NodeRoleEntry instance onto the array of nodes
-    DS.NodeRoleEntry storage nodeRoleEntry = allNodes2.push();
+    DS.NodeRoleEntry storage nodeRoleEntry = allRoleEntries.push();
 
     // Initialise the empty node's values
     NodeRoleEntryLib.initNodeStruct(nodeRoleEntry, _addr);
         
     // Add mapping of address to node array index 
-    addrToNodeIndex2[_addr] = numOfNodeRoleEntries;
+    addrToRoleEntryIndex[_addr] = numOfNodeRoleEntries;
     numOfNodeRoleEntries++;
   }
 
   // Get the index of the node with the given address
   function getNREntryIndex(uint _nodeAddr) view public returns(uint) {
-    return addrToNodeIndex2[_nodeAddr];
+    return addrToRoleEntryIndex[_nodeAddr];
   }
   
   // Get the node with the given address
   function getNREntry(uint _nodeAddr) view public returns(DS.NodeRoleEntry memory) {
-    uint nIdx = addrToNodeIndex2[_nodeAddr];
-    return allNodes2[nIdx];
+    uint nIdx = addrToRoleEntryIndex[_nodeAddr];
+    return allRoleEntries[nIdx];
   }
   
   // Assign the sensor role to the given node.
   function assignAsSensor(uint _nodeAddr) public {
     uint nodeIndex = getNREntryIndex(_nodeAddr);
-    NodeRoleEntryLib.setAsSensorRole(allNodes2[nodeIndex]);
+    NodeRoleEntryLib.setAsSensorRole(allRoleEntries[nodeIndex]);
   }
   
   // Assign the controller role to the given node.
   function assignAsController(uint _nodeAddr) public {
     uint nodeIndex = getNREntryIndex(_nodeAddr);
-    NodeRoleEntryLib.setAsControllerRole(allNodes2[nodeIndex]);
+    NodeRoleEntryLib.setAsControllerRole(allRoleEntries[nodeIndex]);
   }
   
   // Assign the actuator role to the given node.
   function assignAsActuator(uint _nodeAddr, string memory _triggerMessage) public {
     uint nodeIndex = getNREntryIndex(_nodeAddr);
-    NodeRoleEntryLib.setAsActuatorRole(allNodes2[nodeIndex], _triggerMessage);
+    NodeRoleEntryLib.setAsActuatorRole(allRoleEntries[nodeIndex], _triggerMessage);
   }
   
   // Set the given actuator node as triggered.
   function setAsTriggered(uint _nodeAddr) public {
     uint nodeIndex = getNREntryIndex(_nodeAddr);
-    NodeRoleEntryLib.setTriggered(allNodes2[nodeIndex], true);
+    NodeRoleEntryLib.setTriggered(allRoleEntries[nodeIndex], true);
   }
   
   // Set the given actuator node as not triggered.
   function setAsNotTriggered(uint _nodeAddr) public {
     uint nodeIndex = getNREntryIndex(_nodeAddr);
-    NodeRoleEntryLib.setTriggered(allNodes2[nodeIndex], false);
+    NodeRoleEntryLib.setTriggered(allRoleEntries[nodeIndex], false);
   }
 }

@@ -21,14 +21,14 @@ library NodeRoleEntryLib {
   
   /**
    * @notice Get a node from the given DS.NodeRoleEntry[] array and mapping with the given address.
-   * @param _allNodes2 Array of node structs
-   * @param _addrToNodeIndex2 Mapping from node address to array index
+   * @param _allRoleEntries Array of node structs
+   * @param _addrToRoleEntryIndex Mapping from node address to array index
    * @param _nodeAddr The address of the node to get
    * @return The node with the given node address
    */
-  function getNodeRoleEntry(DS.NodeRoleEntry[] storage _allNodes2, mapping(uint => uint) storage _addrToNodeIndex2, uint _nodeAddr) view public returns(DS.NodeRoleEntry storage) {
-    uint nIdx = _addrToNodeIndex2[_nodeAddr];
-    return _allNodes2[nIdx];
+  function getNodeRoleEntry(DS.NodeRoleEntry[] storage _allRoleEntries, mapping(uint => uint) storage _addrToRoleEntryIndex, uint _nodeAddr) view public returns(DS.NodeRoleEntry storage) {
+    uint nIdx = _addrToRoleEntryIndex[_nodeAddr];
+    return _allRoleEntries[nIdx];
   }
   
   //////////////////////////////////////////////////

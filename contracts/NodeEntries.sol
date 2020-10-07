@@ -7,36 +7,50 @@ import "./QuickSort.sol";
 import "./NodeEntryLib.sol";
 import "./NodeRoleEntries.sol";
 
-// A smart contract hosted by each sensor node that forms the clustered network. 
+// A smart contract that contains all node entries in the wireless sensor network (WSN).
 contract NodeEntries {
   
-  uint numOfClusterHeads; // N_CH
+  /** The number of cluster heads in the WSN */
+  uint numOfClusterHeads;
   
-  // Array of all nodes in the network
+  /** Array of all nodes in the network */
   DS.Node[] public allNodes;
-  mapping (uint => uint) addrToNodeIndex; // node addresses -> node array index
-
-  uint public numOfNodes; // Number of nodes in this network
-  uint public numOfLevels; // How many levels the network is consisted of
   
-  // Smart contract for the node role entries
+  /** Mapping from node addresses to the corresponding array index in allNodes */
+  mapping (uint => uint) addrToNodeIndex;
+
+  /** Number of nodes in this network */
+  uint public numOfNodes;
+  /** How many levels the network is consisted of */
+  uint public numOfLevels;
+  
+  /** Smart contract for the node role entries */
   NodeRoleEntries nodeRoleEntries;
   
   // Events
   event AddedNode(uint256 addr, uint energyLevel, uint networkLevel, DS.NodeType nodeType);
   event SomethingHappened(uint i, uint cHeadAddr, uint nodeAddr, uint numOfWithinRangeNodes, string msg);
 
-  // Set the deployed NodeRoleEntries contract instance to use. 
-  function setNodeRoleEntries(NodeRoleEntries _nf2) public {
-    nodeRoleEntries = _nf2;
+  /**
+   * @notice Set the deployed NodeRoleEntries contract instance to use. 
+   * @param _nre The NodeRoleEntries instance to set
+   */
+  function setNodeRoleEntries(NodeRoleEntries _nre) public {
+    nodeRoleEntries = _nre;
   }
   
-  // Get array of all DS.Node instances.
+  /**
+   * @notice Get array of all DS.Node instances. Note: this is for reading only!
+   * @return The array of DS.Node structs
+   */
   function getAllNodes() view public returns(DS.Node[] memory) {
     return allNodes;
   }
   
-  // Get array of addresses of all DS.Node instances.
+  /**
+   * @notice Get array of addresses of all DS.Node instances.
+   * @return The array of node addresses
+   */
   function getAllNodeAddresses() view public returns(uint[] memory) {
     uint[] memory nodeAddresses = new uint[](numOfNodes);
     for (uint i = 0; i < numOfNodes; i++) {
@@ -45,7 +59,12 @@ contract NodeEntries {
     return nodeAddresses;
   }
   
-  // Add a node to the list of all sensor nodes.
+  /**
+   * @notice Add a node to the list of all node entries.
+   * @param _addr The node address
+   * @param _energyLevel The node energy level
+   * @param _withinRangeNodes The array of addresses of nodes within range of this node
+   */
   function addNode(uint _addr, uint _energyLevel, uint[] memory _withinRangeNodes) public {
     // Push a new DS.Node instance onto the array of nodes
     DS.Node storage node = allNodes.push();
@@ -66,23 +85,42 @@ contract NodeEntries {
     nodeRoleEntries.addNode(_addr);
   }
   
-  // Get the index of the node with the given address
+  /**
+   * @notice Get the index of the node with the given address.
+   * @param _nodeAddr Address of node to get
+   * @return The array index of the node entry 
+   */
   function getNodeIndex(uint _nodeAddr) view public returns(uint) {
     return addrToNodeIndex[_nodeAddr];
   }
   
-  // Get the node with the given address
+  /**
+   * @notice Get the node with the given address.
+   * @param _nodeAddr Address of node to get
+   * @return The node entry 
+   */
   function getNodeEntry(uint _nodeAddr) view public returns(DS.Node memory) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return allNodes[nIdx];
   }
   
-  // Get the node with the given index
+  /**
+   * @notice Get the node at the given array index.
+   * @param _index Array index of node to get
+   * @return The node entry 
+   */
   function getNodeAt(uint _index) view public returns(DS.Node memory) {
     return allNodes[_index];
   }
   
-  // Get node information
+  /**
+   * @notice Get node information. Use this for external apps (as directly using
+             functions returning structs in Web3 doesn't work).
+   * @param _nodeAddr Address of node to get info from
+   * @return A tuple containing: the node address, energy level, network level,
+             node type, node role, active flag, trigger flag, trigger message
+             and sensor readings 
+   */
   function getNodeInfo(uint _nodeAddr) public view returns (
     uint256,
     uint, uint,
@@ -101,7 +139,13 @@ contract NodeEntries {
         );
   }
   
-  // Get a node's beacon data
+  /**
+   * @notice Get a node's beacon data.
+   * @param _nodeAddr Address of node to get info from
+   * @return A tuple containing: the beacon flag, next network level,
+             address of node that sent this beacon, and 
+             the number of beacons this node has received
+   */
   function getNodeBeaconData(uint _nodeAddr) public view returns (
     bool, uint, uint256, uint) {      
     DS.Node storage node = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _nodeAddr);
@@ -109,7 +153,10 @@ contract NodeEntries {
     return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.numOfBeacons);
   }
 
-  // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
+  /**
+   * @notice Send beacon to prospective child nodes.
+   * @param _cHeadAddr Address of cluster head to send the beacons from
+   */
   function sendBeacon(uint _cHeadAddr) public {
     uint chIndex = getNodeIndex(_cHeadAddr);
     require(allNodes[chIndex].nodeType == DS.NodeType.ClusterHead, "Given node is not cluster head");
@@ -138,7 +185,11 @@ contract NodeEntries {
     }
   }
   
-  // Send a join request to the given cluster head.
+  /**
+   * @notice Send a join request to the given cluster head.
+   * @param _sensorAddr Address of node entry to send the join requests from
+   * @param _cHeadAddr Address of cluster head to send the join requests to
+   */
   function sendJoinRequest(uint _sensorAddr, uint _cHeadAddr) public {
     uint nodeIndex = getNodeIndex(_sensorAddr);
     DS.Node storage cHeadNode = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _cHeadAddr);
@@ -150,7 +201,10 @@ contract NodeEntries {
   
   event SentJoinRequest(uint256 _addr, uint _i);
   
-  // Go thru all nodes to see if they have received a beacon from a cluster head and need to send a join request back.
+  /**
+   * @notice Go thru all nodes to see if they have received a beacon from
+             a cluster head and need to send a join request back.
+   */
   function sendJoinRequests() public {
     for (uint i = 0; i < numOfNodes; i++) {
       emit SentJoinRequest(allNodes[i].nodeAddress, i);
@@ -162,14 +216,20 @@ contract NodeEntries {
     }
   }
   
-  // Identify the backup cluster heads for each node
+  /**
+   * @notice Identify the backup cluster heads for each node.
+   */
   function identifyBackupClusterHeads() public {
     for (uint i = 0; i < numOfNodes; i++) {
       NodeEntryLib.identifyBackupClusterHeads(allNodes[i]);
     }
   }
   
-  // Register the given node as a cluster head.
+  /**
+   * @notice Register the given node as a cluster head.
+   * @param _parentAddr Address of parent node of the would-be cluster head
+   * @param _nodeAddr Address of node to set as cluster head
+   */
   function registerAsClusterHead(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint parentIndex = getNodeIndex(_parentAddr);
@@ -187,7 +247,11 @@ contract NodeEntries {
     }
   }
   
-  // Register the given node as a member node of the given cluster head.
+  /**
+   * @notice Register the given node as a member node of the given cluster head.
+   * @param _parentAddr Address of parent node of the would-be member node
+   * @param _nodeAddr Address of node to set as member node
+   */
   function registerAsMemberNode(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint parentIndex = getNodeIndex(_parentAddr);
@@ -202,15 +266,24 @@ contract NodeEntries {
     }
   }
   
-  // Get the sorted nodes 
+  /**
+   * @notice Get a sorted array of node entries.
+   * @return The sorted nodes
+   */
   function getSortedNodes() public returns(DS.Node[] memory) {
     return QuickSort.sort(allNodes);
   }
-    
-  // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011) with the given probability.
+  
+  /**
+   * @notice Elect the next cluster heads for the next layer using the GCA algorithm
+             as described in Lee et al. (2011) with the given probability.
+   * @param _currCHeadAddr Address of cluster head to elect child nodes
+   * @param _probability The probability of a child node becoming a cluster head,
+            indicated as a number between 0 (0%) and 100 (100%)
+   */
   function electClusterHeads(uint _currCHeadAddr, uint _probability) public {
   
-    // Get the sensor node with the given address
+    // Get the node entry with the given address
     DS.Node storage currClusterHead = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _currCHeadAddr);
     
     // Get the list of addresses of nodes that sent join requests
@@ -223,7 +296,7 @@ contract NodeEntries {
     // Convert list of addresses into their corresponding nodes
     DS.Node[] memory nodesWithJoinRequests = NodeEntryLib.nodeAddrsToNodes(allNodes, addrToNodeIndex, nodesWithJoinRequestAddrs);
     
-    // Sort the sensor nodes that sent join requests by energy level in descending order
+    // Sort the node entries that sent join requests by energy level in descending order
     nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
 
     // N_CH calculation:
@@ -249,7 +322,11 @@ contract NodeEntries {
     }
   }
   
-  // Simulate getting data from the sensors of the given node
+  /**
+   * @notice Simulate getting data from the sensors of the given node.
+   * @param _sReading The reading to add 
+   * @param _nodeAddr The address of the node to get the sensor readings from
+   */
   function readSensorInput(uint256 _sReading, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
@@ -257,19 +334,30 @@ contract NodeEntries {
     NodeEntryLib.readSensorInput(allNodes[nodeIndex], allNodes, addrToNodeIndex, sReadings);
   }
   
-  // Respond to sensor readings from all children of this node 
+  /**
+   * @notice Respond to sensor readings from all children of this node to
+             trigger certain actuators. If an actuator's threshold is reached,
+             mark the actuator as triggered.
+   * @param _nodeAddr Address of node 
+   */
   function respondToSensorInput(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     NodeEntryLib.respondToSensorInput(allNodes[nodeIndex], allNodes, addrToNodeIndex, nodeRoleEntries, false);
   }
 
-  // Mark the node with the given address as inactive
+  /**
+   * @notice Mark the node with the given address as inactive.
+   * @param _nodeAddr Address of node 
+   */
   function deactivateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     NodeEntryLib.deactivateNode(allNodes[nodeIndex]);
   }
   
-  // Mark the node with the given address as active
+  /**
+   * @notice Mark the node with the given address as active.
+   * @param _nodeAddr Address of node 
+   */
   function activateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     NodeEntryLib.activateNode(allNodes[nodeIndex]);

@@ -130,8 +130,8 @@ library NodeEntryLib {
   //////////////////////////////////////////////////
 
   /**
-   * @notice Read sensor input.
-   * @param _daNode Node to read readings from 
+   * @notice Read sensor input from the given node, then send them to the sink node.
+   * @param _daNode Node to get sensor readings from
    * @param _allNodes List of all DS.Node instances
    * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
    * @param _sReadings List of sensor readings to input 
