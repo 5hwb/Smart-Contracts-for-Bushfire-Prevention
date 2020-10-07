@@ -105,27 +105,27 @@ export const App = {
   initContract: function() {
     console.log("FLOW: initContract()");
 
-    // Initialise the NetworkFormation smart contract variable
-    $.getJSON('NetworkFormation.json', function(data) {
+    // Initialise the NodeEntries smart contract variable
+    $.getJSON('NodeEntries.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with @truffle/contract
       var ContractArtifact = data;
-      App.contracts.NetworkFormation = TruffleContract(ContractArtifact);
+      App.contracts.NodeEntries = TruffleContract(ContractArtifact);
 
       // Set the provider for the contract
-      App.contracts.NetworkFormation.setProvider(App.web3Provider);
+      App.contracts.NodeEntries.setProvider(App.web3Provider);
       
       // Use our contract to initialise the data of this page
       return App.initialiseData();
     });
 
-    // Initialise the NetworkFormation smart contract variable
-    $.getJSON('NetworkFormation2.json', function(data) {
+    // Initialise the NodeEntries smart contract variable
+    $.getJSON('NodeRoleEntries.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with @truffle/contract
       var ContractArtifact = data;
-      App.contracts.NetworkFormation2 = TruffleContract(ContractArtifact);
+      App.contracts.NodeRoleEntries = TruffleContract(ContractArtifact);
 
       // Set the provider for the contract
-      App.contracts.NetworkFormation2.setProvider(App.web3Provider);
+      App.contracts.NodeRoleEntries.setProvider(App.web3Provider);
     });
 
   },
@@ -265,7 +265,7 @@ export const App = {
   initialiseData: function() {
     console.log("FLOW: initialiseData()");
     
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.numOfNodes().then(function(numOfNodes) {
         
         // Add a bunch of sample nodes if the number of nodes is 0
@@ -297,7 +297,7 @@ export const App = {
   registerAsClusterHead: function() {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.registerAsClusterHead(0, 111000).then(function(result) {
         console.log("FLOW: registerAsClusterHead()");
       });
@@ -312,7 +312,7 @@ export const App = {
   sendBeacon: function() {
     console.log("FLOW: sendBeacon()");
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.sendBeacon(111000).then(function(result) {
         console.log("FLOW: sendBeacon()");
       });
@@ -327,7 +327,7 @@ export const App = {
   sendJoinRequests: function() {
     console.log("FLOW: sendJoinRequests()");
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.sendJoinRequests().then(function(result) {
         console.log("FLOW: sendJoinRequests()");
       });
@@ -343,7 +343,7 @@ export const App = {
   electClusterHeads: function() {
     console.log("FLOW: electClusterHeads()");
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.electClusterHeads(111000, 50).then(function(result) {
         console.log("FLOW: electClusterHeads() success");
       });
@@ -360,14 +360,14 @@ export const App = {
     var nodeAddr = $("#id-input-runClusterHeadElection").val();
     
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.electClusterHeads(nodeAddr, 50).then(function(result) {
         console.log("FLOW: runClusterHeadElection() success");
       }).catch(function(err) {
         console.error("runClusterHeadElection ERROR! " + err.message);
       });
     }).catch(function(err) {
-      console.error("NetworkFormation.deployed() ERROR! " + err.message);
+      console.error("NodeEntries.deployed() ERROR! " + err.message);
     });
   },
   
@@ -378,7 +378,7 @@ export const App = {
     console.log("FLOW: identifyBackupClusterHeads()");
 
     // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.identifyBackupClusterHeads().then(function(result) {
         console.log("Backup cluster heads for all nodes were identified.");
       });
@@ -424,7 +424,7 @@ export const App = {
     // }
     
     // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.addNode(nodeAddr, nodeELevel, nodeWRNodes).then(function(result) {
         $(".msg").html("<p>Node added successfully.</p>");
       })
@@ -453,7 +453,7 @@ export const App = {
     }
     
     // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.readSensorInput(sReading, nodeAddr).then(function(result) {
         $(".msg").html("<p>Sensor reading simulated successfully.</p>");
       });
@@ -470,7 +470,7 @@ export const App = {
     console.log(nodeAddr);
 
     // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.deactivateNode(nodeAddr).then(function(result) {
         console.log("Node " + nodeAddr + " was deactivated.");
       });
@@ -486,7 +486,7 @@ export const App = {
     console.log("FLOW: activateNode(" + nodeAddr + ")");
 
     // Call the smart contract function
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.activateNode(nodeAddr).then(function(result) {
         console.log("Node " + nodeAddr + " was REactivated.");
       });
@@ -501,7 +501,7 @@ export const App = {
   assignNodeAsSensor: function(nodeAddr) {
 
     // Call the smart contract functions
-    App.contracts.NetworkFormation2.deployed().then(function(instance) {
+    App.contracts.NodeRoleEntries.deployed().then(function(instance) {
       instance.assignAsSensor(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsSensor() "+nodeAddr+" success");
       });
@@ -515,7 +515,7 @@ export const App = {
    */
   assignNodeAsController: function(nodeAddr) {
     // Call the smart contract functions
-    App.contracts.NetworkFormation2.deployed().then(function(instance) {
+    App.contracts.NodeRoleEntries.deployed().then(function(instance) {
       instance.assignAsController(nodeAddr).then(function(result) {
         console.log("FLOW: assignNodeAsController() "+nodeAddr+" success");
       });
@@ -529,7 +529,7 @@ export const App = {
    */
   assignNodeAsActuator: function(nodeAddr, actuatorMsg) {
     // Call the smart contract functions
-    App.contracts.NetworkFormation2.deployed().then(function(instance) {
+    App.contracts.NodeRoleEntries.deployed().then(function(instance) {
       instance.assignAsActuator(nodeAddr, actuatorMsg).then(function(result) {
         console.log("FLOW: assignNodeAsActuator("+nodeAddr+" '"+actuatorMsg+"' success");
       });
@@ -543,7 +543,7 @@ export const App = {
    */
   respondToSensorInput: function(nodeAddr) {
     // Call the smart contract functions
-    App.contracts.NetworkFormation.deployed().then(function(instance) {
+    App.contracts.NodeEntries.deployed().then(function(instance) {
       instance.respondToSensorInput(nodeAddr).then(function(result) {
         console.log("FLOW: respondToSensorInput() "+nodeAddr+" success");
       });

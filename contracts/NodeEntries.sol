@@ -8,7 +8,7 @@ import "./SensorNode.sol";
 import "./NodeRoleEntries.sol";
 
 // A smart contract hosted by each sensor node that forms the clustered network. 
-contract NetworkFormation {
+contract NodeEntries {
   
   uint numOfClusterHeads; // N_CH
   
@@ -72,12 +72,12 @@ contract NetworkFormation {
   }
   
   // Get the node with the given address
-  function getNodeAsMemory(uint _nodeAddr) view public returns(DS.Node memory) {
+  function getNodeEntry(uint _nodeAddr) view public returns(DS.Node memory) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
     return nodes[nIdx];
   }
   
-  // Get the node with the given address
+  // Get the node with the given index
   function getNodeAt(uint _index) view public returns(DS.Node memory) {
     return nodes[_index];
   }
@@ -91,7 +91,7 @@ contract NetworkFormation {
     string memory, uint256[] memory
     ) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    DS.NodeRoleEntry memory nodeRoleEntry = nodeRoleEntries.getNodeRoleEntryAsMemory(nodes[nIdx].nodeAddress);
+    DS.NodeRoleEntry memory nodeRoleEntry = nodeRoleEntries.getNREntry(nodes[nIdx].nodeAddress);
     
     return (nodes[nIdx].nodeAddress, // 0
         nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2

@@ -4,18 +4,18 @@ pragma experimental ABIEncoderV2;
 
 import "./DS.sol";
 
-library SensorNode2 {
+library NodeRoleEntryLib {
 
   // Events
   event LogString(string str);
 
   /**
    * @notice Initialise the given node struct with the given values.
-   * @param _daNodeRoleEntry The node to modify
+   * @param _daEntry The node to modify
    * @param _addr Node address
    */
-  function initNodeStruct(DS.NodeRoleEntry storage _daNodeRoleEntry, uint256 _addr) public {
-    _daNodeRoleEntry.nodeAddress = _addr;
+  function initNodeStruct(DS.NodeRoleEntry storage _daEntry, uint256 _addr) public {
+    _daEntry.nodeAddress = _addr;
 
   }
   
@@ -33,38 +33,38 @@ library SensorNode2 {
   
   /**
    * @notice Set the given node's role as a Sensor.
-   * @param _daNodeRoleEntry The node to set
+   * @param _daEntry The node to set
    */
-  function setAsSensorRole(DS.NodeRoleEntry storage _daNodeRoleEntry) public {
-    _daNodeRoleEntry.nodeRole = DS.NodeRole.Sensor;
-    _daNodeRoleEntry.triggerMessage = ""; // remove the actuator trigger message
+  function setAsSensorRole(DS.NodeRoleEntry storage _daEntry) public {
+    _daEntry.nodeRole = DS.NodeRole.Sensor;
+    _daEntry.triggerMessage = ""; // remove the actuator trigger message
   }
   
   /**
    * @notice Set the given node's role as a Controller.
-   * @param _daNodeRoleEntry The node to set
+   * @param _daEntry The node to set
    */
-  function setAsControllerRole(DS.NodeRoleEntry storage _daNodeRoleEntry) public {
-    _daNodeRoleEntry.nodeRole = DS.NodeRole.Controller;
-    _daNodeRoleEntry.triggerMessage = ""; // remove the actuator trigger message
+  function setAsControllerRole(DS.NodeRoleEntry storage _daEntry) public {
+    _daEntry.nodeRole = DS.NodeRole.Controller;
+    _daEntry.triggerMessage = ""; // remove the actuator trigger message
   }
   
   /**
    * @notice Set the given node's role as an Actuator.
-   * @param _daNodeRoleEntry The node to set
+   * @param _daEntry The node to set
    * @param _triggerMessage The message to show when the actuator is triggered
    */
-  function setAsActuatorRole(DS.NodeRoleEntry storage _daNodeRoleEntry, string memory _triggerMessage) public {
-    _daNodeRoleEntry.nodeRole = DS.NodeRole.Actuator;
-    _daNodeRoleEntry.triggerMessage = _triggerMessage;
+  function setAsActuatorRole(DS.NodeRoleEntry storage _daEntry, string memory _triggerMessage) public {
+    _daEntry.nodeRole = DS.NodeRole.Actuator;
+    _daEntry.triggerMessage = _triggerMessage;
   }
 
   /**
    * @notice Set the given node's triggered flag.
-   * @param _daNodeRoleEntry The node to set
+   * @param _daEntry The node to set
    * @param _isTriggeringExternalServise The desired flag status
    */
-  function setTriggered(DS.NodeRoleEntry storage _daNodeRoleEntry, bool _isTriggeringExternalServise) public {
-    _daNodeRoleEntry.isTriggeringExternalService = _isTriggeringExternalServise;
+  function setTriggered(DS.NodeRoleEntry storage _daEntry, bool _isTriggeringExternalServise) public {
+    _daEntry.isTriggeringExternalService = _isTriggeringExternalServise;
   }
 }

@@ -5,7 +5,7 @@
 
 // Contract abstractions provided by Truffle
 // (TruffleContract instances)
-const NetworkFormation = artifacts.require("NetworkFormation");
+const NodeEntries = artifacts.require("NodeEntries");
 const NodeRoleEntries = artifacts.require("NodeRoleEntries");
 const SensorNode = artifacts.require("SensorNode");
 const QuickSortContract = artifacts.require("QuickSortContract");
@@ -20,7 +20,7 @@ const NodeType = {
   ClusterHead: 2
 };
 
-// Convert the raw array returned by NetworkFormation into a Node struct format
+// Convert the raw array returned by NodeEntries into a Node struct format
 function toStruct(val) {
   convertedBeacons = [];
   convertedSReadings = [];
@@ -69,13 +69,13 @@ function toStruct(val) {
   };
 }
 
-contract("NetworkFormation test cases", async accounts => {
-  let networkFormation;
+contract("NodeEntries test cases", async accounts => {
+  let nodeEntries;
   let nodeRoleEntries;
   let sensorNode;
   
   beforeEach(async () => {
-    networkFormation = await NetworkFormation.deployed();
+    nodeEntries = await NodeEntries.deployed();
     nodeRoleEntries = await NodeRoleEntries.deployed();
     sensorNode = await SensorNode.deployed();
   });
@@ -84,33 +84,33 @@ contract("NetworkFormation test cases", async accounts => {
    * TEST - ADD NODES
    ***********************************************/
   it("should initialise everything correctly", async () => {
-    //let numCandidates = await networkFormation.numCandidates();
+    //let numCandidates = await nodeEntries.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
-    let numOfNodes = await networkFormation.numOfNodes();
+    let numOfNodes = await nodeEntries.numOfNodes();
     assert.equal(numOfNodes, 0);
-    let numOfLevels = await networkFormation.numOfLevels();
+    let numOfLevels = await nodeEntries.numOfLevels();
     assert.equal(numOfLevels, 0);
 
   });
   
   it("should add SensorNode instances", async () => {
     // Add the 'sink node'
-    await networkFormation.addNode(111000, 100, [222001, 222002, 222003, 222004, 222005]);
+    await nodeEntries.addNode(111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
     // Add neighbouring nodes
-    await networkFormation.addNode(222001, 35, [111000, 222002]);
-    await networkFormation.addNode(222002, 66, [111000, 222001, 222003]);
-    await networkFormation.addNode(222003, 53, [111000, 222002, 222004]);
-    await networkFormation.addNode(222004, 82, [111000, 222003, 222005]);
-    await networkFormation.addNode(222005, 65, [111000, 222004]);
+    await nodeEntries.addNode(222001, 35, [111000, 222002]);
+    await nodeEntries.addNode(222002, 66, [111000, 222001, 222003]);
+    await nodeEntries.addNode(222003, 53, [111000, 222002, 222004]);
+    await nodeEntries.addNode(222004, 82, [111000, 222003, 222005]);
+    await nodeEntries.addNode(222005, 65, [111000, 222004]);
     
     // Ensure there are 6 nodes
-    assert.equal(await networkFormation.numOfNodes.call(), 6, "Num of nodes is not 6!");
+    assert.equal(await nodeEntries.numOfNodes.call(), 6, "Num of nodes is not 6!");
     
-    //console.log(toStruct(await networkFormation.getNodeAsMemory(111000)));
+    //console.log(toStruct(await nodeEntries.getNodeEntry(111000)));
     
     // Ensure the values within the first DS.Node are as expected
-    let firstNode = toStruct(await networkFormation.getNodeAt.call(0));
+    let firstNode = toStruct(await nodeEntries.getNodeAt.call(0));
     let firstNodeAddr = firstNode.nodeAddress;
     let firstNodeEnergyLevel = firstNode.energyLevel;
     assert.equal(firstNodeAddr, 111000);
@@ -119,23 +119,23 @@ contract("NetworkFormation test cases", async accounts => {
 
   it("should send beacon", async () => {
     // Set sink node as the 1st cluster head
-    await networkFormation.registerAsClusterHead(0, 111000);
+    await nodeEntries.registerAsClusterHead(0, 111000);
   
     // Set its network level to be 0 (because sink node!)
-    let sinkNode = await networkFormation.getNodeAsMemory(111000);
+    let sinkNode = await nodeEntries.getNodeEntry(111000);
 
-    // TODO move this to NetworkFormation - might add argument indicating if sink node or not
-    //await networkFormation.setNetworkLevel(sinkNode, 0);
+    // TODO move this to NodeEntries - might add argument indicating if sink node or not
+    //await nodeEntries.setNetworkLevel(sinkNode, 0);
   
     // Send beacon from cluster head
-    await networkFormation.sendBeacon(111000);
+    await nodeEntries.sendBeacon(111000);
   
     // Get the prospective child nodes
-    let node1 = toStruct(await networkFormation.getNodeAsMemory(222001));
-    let node2 = toStruct(await networkFormation.getNodeAsMemory(222002));
-    let node3 = toStruct(await networkFormation.getNodeAsMemory(222003));
-    let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
-    let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    let node1 = toStruct(await nodeEntries.getNodeEntry(222001));
+    let node2 = toStruct(await nodeEntries.getNodeEntry(222002));
+    let node3 = toStruct(await nodeEntries.getNodeEntry(222003));
+    let node4 = toStruct(await nodeEntries.getNodeEntry(222004));
+    let node5 = toStruct(await nodeEntries.getNodeEntry(222005));
   
     // Ensure network level is correct
     assert.equal(node1.networkLevel, 1);
@@ -147,18 +147,18 @@ contract("NetworkFormation test cases", async accounts => {
   
   it("should send join requests", async () => {
     // Make all nodes within range send a join request
-    await networkFormation.sendJoinRequests();
-    let sinkNode = toStruct(await networkFormation.getNodeAsMemory(111000));
+    await nodeEntries.sendJoinRequests();
+    let sinkNode = toStruct(await nodeEntries.getNodeEntry(111000));
   
     console.log("sinkNode = ");
     console.log(sinkNode);
   
     // Ensure the node addresses were added to list of join request nodes
-    let node0 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[0]));
-    let node1 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[1]));
-    let node2 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[2]));
-    let node3 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[3]));
-    let node4 = toStruct(await networkFormation.getNodeAsMemory(sinkNode.links.joinRequestNodes[4]));
+    let node0 = toStruct(await nodeEntries.getNodeEntry(sinkNode.links.joinRequestNodes[0]));
+    let node1 = toStruct(await nodeEntries.getNodeEntry(sinkNode.links.joinRequestNodes[1]));
+    let node2 = toStruct(await nodeEntries.getNodeEntry(sinkNode.links.joinRequestNodes[2]));
+    let node3 = toStruct(await nodeEntries.getNodeEntry(sinkNode.links.joinRequestNodes[3]));
+    let node4 = toStruct(await nodeEntries.getNodeEntry(sinkNode.links.joinRequestNodes[4]));
     assert.equal(node0.nodeAddress, 222001);
     assert.equal(node1.nodeAddress, 222002);
     assert.equal(node2.nodeAddress, 222003);
@@ -168,14 +168,14 @@ contract("NetworkFormation test cases", async accounts => {
   
   it("should elect cluster heads", async () => {
     // 40% chance of being elected?
-    await networkFormation.electClusterHeads(111000, 40);
+    await nodeEntries.electClusterHeads(111000, 40);
   
     // Get the prospective child nodes
-    let node1 = toStruct(await networkFormation.getNodeAsMemory(222001));
-    let node2 = toStruct(await networkFormation.getNodeAsMemory(222002));
-    let node3 = toStruct(await networkFormation.getNodeAsMemory(222003));
-    let node4 = toStruct(await networkFormation.getNodeAsMemory(222004));
-    let node5 = toStruct(await networkFormation.getNodeAsMemory(222005));
+    let node1 = toStruct(await nodeEntries.getNodeEntry(222001));
+    let node2 = toStruct(await nodeEntries.getNodeEntry(222002));
+    let node3 = toStruct(await nodeEntries.getNodeEntry(222003));
+    let node4 = toStruct(await nodeEntries.getNodeEntry(222004));
+    let node5 = toStruct(await nodeEntries.getNodeEntry(222005));
     
     assert.equal(node2.nodeType, NodeType.ClusterHead);
     assert.equal(node4.nodeType, NodeType.ClusterHead);
@@ -187,18 +187,18 @@ contract("NetworkFormation test cases", async accounts => {
   
   it("should send sensor readings to sink node", async () => {
     // Simulate reading values from each sensor node
-    await networkFormation.readSensorInput(9001, 222001);
-    await networkFormation.readSensorInput(9002, 222002);
-    await networkFormation.readSensorInput(9003, 222003);
-    await networkFormation.readSensorInput(9004, 222004);
-    await networkFormation.readSensorInput(9005, 222005);
+    await nodeEntries.readSensorInput(9001, 222001);
+    await nodeEntries.readSensorInput(9002, 222002);
+    await nodeEntries.readSensorInput(9003, 222003);
+    await nodeEntries.readSensorInput(9004, 222004);
+    await nodeEntries.readSensorInput(9005, 222005);
   
-    let node222001 = toStruct(await networkFormation.getNodeAsMemory(222001));
-    let node222002 = toStruct(await networkFormation.getNodeAsMemory(222002));
-    let node222003 = toStruct(await networkFormation.getNodeAsMemory(222003));
-    let node222004 = toStruct(await networkFormation.getNodeAsMemory(222004));
-    let node222005 = toStruct(await networkFormation.getNodeAsMemory(222005));
-    let node111000 = toStruct(await networkFormation.getNodeAsMemory(111000));
+    let node222001 = toStruct(await nodeEntries.getNodeEntry(222001));
+    let node222002 = toStruct(await nodeEntries.getNodeEntry(222002));
+    let node222003 = toStruct(await nodeEntries.getNodeEntry(222003));
+    let node222004 = toStruct(await nodeEntries.getNodeEntry(222004));
+    let node222005 = toStruct(await nodeEntries.getNodeEntry(222005));
+    let node111000 = toStruct(await nodeEntries.getNodeEntry(111000));
   
     // Check that the sensor nodes got their readings
     // node: sensorReadings[0] is a dummy reading to help detect null values,
@@ -227,7 +227,7 @@ contract("NetworkFormation test cases", async accounts => {
   it("should sort a SensorNode array", async () => {
   
     // sort to [89, 71, 62, 53]
-    let sortedThingo = await networkFormation.getSortedNodes.call();
+    let sortedThingo = await nodeEntries.getSortedNodes.call();
     let node0 = sortedThingo[0];
     let node1 = sortedThingo[1];
     let node2 = sortedThingo[2];
@@ -255,7 +255,7 @@ contract("NetworkFormation test cases", async accounts => {
    * TEST - Sorting integers
    ***********************************************/
   it("should sort an int array", async () => {
-    //let numCandidates = await networkFormation.numCandidates();
+    //let numCandidates = await nodeEntries.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
     let sortInstance = await QuickSortContract.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];
@@ -276,7 +276,7 @@ contract("NetworkFormation test cases", async accounts => {
    * TEST - Sorting backwards
    ***********************************************/
   it("should sort an int array backwards", async () => {
-    //let numCandidates = await networkFormation.numCandidates();
+    //let numCandidates = await nodeEntries.numCandidates();
     //assert.equal(numVoters.toNumber(), 0);
     let sortInstance = await QuickSortContract.deployed();
     let thingo = [9, 2, 73, 3, 6, 2, 29];

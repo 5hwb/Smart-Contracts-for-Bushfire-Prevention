@@ -4,13 +4,13 @@ pragma experimental ABIEncoderV2;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "../contracts/NetworkFormation.sol";
+import "../contracts/NodeEntries.sol";
 import "../contracts/DS.sol";
 import "../contracts/SensorNode.sol";
 
-contract TestNetworkFormation {
+contract TestNodeEntries {
   // The address of the contract to be tested
-  NetworkFormation contAddr = NetworkFormation(DeployedAddresses.NetworkFormation());
+  NodeEntries contAddr = NodeEntries(DeployedAddresses.NodeEntries());
 
   // Address of this contract
   address contractAddress = address(this);
@@ -31,11 +31,11 @@ contract TestNetworkFormation {
     contAddr.addNode(dummyAddr1, 50, dummyAddrs1);
     contAddr.addNode(dummyAddr2, 35, dummyAddrs2);
 
-    DS.Node memory node100 = contAddr.getNodeAsMemory(dummyAddr1);
+    DS.Node memory node100 = contAddr.getNodeEntry(dummyAddr1);
     Assert.equal(node100.nodeAddress, dummyAddr1, "Retrieval error");
     Assert.equal(node100.energyLevel, 50, "Retrieval error");
 
-    DS.Node memory node101 = contAddr.getNodeAsMemory(dummyAddr2);
+    DS.Node memory node101 = contAddr.getNodeEntry(dummyAddr2);
     Assert.equal(node101.nodeAddress, dummyAddr2, "Retrieval error");
     Assert.equal(node101.energyLevel, 35, "Retrieval error");
   }
@@ -45,19 +45,19 @@ contract TestNetworkFormation {
    ***********************************************/
   function testNodeRegistration() public {
     // Register dummyAddr1 node as cluster head
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.ClusterHead, false, "Cluster head has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr1).nodeType == DS.NodeType.ClusterHead, false, "Cluster head has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head has issues");
     contAddr.registerAsClusterHead(0, dummyAddr1);
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.ClusterHead, true, "Cluster head registration has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head registration has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr1).nodeType == DS.NodeType.ClusterHead, true, "Cluster head registration has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr1).nodeType == DS.NodeType.MemberNode, false, "Cluster head registration has issues");
     // this should fail: contAddr.registerAsMemberNode(dummyAddr2, dummyAddr1);
   
     // Register dummyAddr2 node as member node of cluster with dummyAddr1 as cluster head
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Node has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.MemberNode, false, "Node has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Node has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr2).nodeType == DS.NodeType.MemberNode, false, "Node has issues");
     contAddr.registerAsMemberNode(dummyAddr1, dummyAddr2);
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Member node registration has issues");
-    Assert.equal(contAddr.getNodeAsMemory(dummyAddr2).nodeType == DS.NodeType.MemberNode, true, "Member node registration has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr2).nodeType == DS.NodeType.ClusterHead, false, "Member node registration has issues");
+    Assert.equal(contAddr.getNodeEntry(dummyAddr2).nodeType == DS.NodeType.MemberNode, true, "Member node registration has issues");
     // this should fail: contAddr.registerAsClusterHead(dummyAddr2);
   }
 

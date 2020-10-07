@@ -184,7 +184,7 @@ library SensorNode {
       bool _conditionsAreMatching) public {
 
     // Get the corresponding NodeRoleEntry instance
-    DS.NodeRoleEntry memory nodeRoleEntry = _nodeRoleEntries.getNodeRoleEntryAsMemory(_daNode.nodeAddress);
+    DS.NodeRoleEntry memory nodeRoleEntry = _nodeRoleEntries.getNREntry(_daNode.nodeAddress);
 
     // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
     // TODO make this more flexible

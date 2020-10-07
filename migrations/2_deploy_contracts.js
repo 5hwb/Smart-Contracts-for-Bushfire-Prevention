@@ -1,39 +1,39 @@
 //var Structs = artifacts.require("Structs");
-var NetworkFormation = artifacts.require("NetworkFormation");
+var NodeEntries = artifacts.require("NodeEntries");
 var NodeRoleEntries = artifacts.require("NodeRoleEntries");
 var IA = artifacts.require("IA");
 var SensorNode = artifacts.require("SensorNode");
-var SensorNode2 = artifacts.require("SensorNode2");
+var NodeRoleEntryLib = artifacts.require("NodeRoleEntryLib");
 var QuickSort = artifacts.require("QuickSort");
 var QuickSortContract = artifacts.require("QuickSortContract");
 
 module.exports = function(deployer) {
   deployer.deploy(IA);
   deployer.link(IA, SensorNode);
-  deployer.link(IA, NetworkFormation);
+  deployer.link(IA, NodeEntries);
 
   deployer.deploy(QuickSort);
   deployer.link(QuickSort, SensorNode);
-  deployer.link(QuickSort, NetworkFormation);
+  deployer.link(QuickSort, NodeEntries);
   deployer.link(QuickSort, QuickSortContract);
 
   deployer.deploy(SensorNode);
-  deployer.link(SensorNode, NetworkFormation);
+  deployer.link(SensorNode, NodeEntries);
 
-  deployer.deploy(SensorNode2);
-  deployer.link(SensorNode2, NodeRoleEntries);
+  deployer.deploy(NodeRoleEntryLib);
+  deployer.link(NodeRoleEntryLib, NodeRoleEntries);
 
-  deployer.deploy(NetworkFormation);
+  deployer.deploy(NodeEntries);
   deployer.deploy(NodeRoleEntries);
   deployer.deploy(QuickSortContract);
   
-  var networkFormation, nodeRoleEntries;
+  var nodeEntries, nodeRoleEntries;
   deployer.then(function() {
-    // Get the deployed instance of NetworkFormation
-    console.log("getting deployed instance of NetworkFormation...");
-    return NetworkFormation.deployed();
+    // Get the deployed instance of NodeEntries
+    console.log("getting deployed instance of NodeEntries...");
+    return NodeEntries.deployed();
   }).then(function(instance) {
-    networkFormation = instance;
+    nodeEntries = instance;
     // Get the deployed instance of NodeRoleEntries
     console.log("getting deployed instance of NodeRoleEntries...");
     return NodeRoleEntries.deployed();
@@ -41,6 +41,6 @@ module.exports = function(deployer) {
     nodeRoleEntries = instance;
     // Set NodeRoleEntries instance
     console.log("setting NodeRoleEntries instance...");
-    return networkFormation.setNodeRoleEntries(nodeRoleEntries.address);
+    return nodeEntries.setNodeRoleEntries(nodeRoleEntries.address);
   });
 };
