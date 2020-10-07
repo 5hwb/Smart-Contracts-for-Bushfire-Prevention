@@ -1,16 +1,12 @@
 # Bushfire Prevention Simulation
 
-This is an Ethereum dapp that simulates the proposed wireless sensor network architecture to help prevent bushfires.
+This is an Ethereum dapp that simulates a wireless sensor network architecture which aims to help prevent bushfires.
+
+**[Setup guide](SETUP.md)**
 
 ## Note on contract size
 
 It cannot exceed 24KB in size!
-
-## Dependency
-
-This project uses the OpenZeppelin Contracts library. Run this first:
-
-`npm install @openzeppelin/contracts`
 
 ## TODO
 
