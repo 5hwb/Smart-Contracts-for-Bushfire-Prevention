@@ -7,7 +7,7 @@
 // (TruffleContract instances)
 const NodeEntries = artifacts.require("NodeEntries");
 const NodeRoleEntries = artifacts.require("NodeRoleEntries");
-const SensorNode = artifacts.require("SensorNode");
+const NodeEntryLib = artifacts.require("NodeEntryLib");
 const QuickSortContract = artifacts.require("QuickSortContract");
 
 // Required for some test cases
@@ -77,7 +77,7 @@ contract("NodeEntries test cases", async accounts => {
   beforeEach(async () => {
     nodeEntries = await NodeEntries.deployed();
     nodeRoleEntries = await NodeRoleEntries.deployed();
-    sensorNode = await SensorNode.deployed();
+    sensorNode = await NodeEntryLib.deployed();
   });
 
   /***********************************************
@@ -93,7 +93,7 @@ contract("NodeEntries test cases", async accounts => {
 
   });
   
-  it("should add SensorNode instances", async () => {
+  it("should add DS.NodeEntry instances", async () => {
     // Add the 'sink node'
     await nodeEntries.addNode(111000, 100, [222001, 222002, 222003, 222004, 222005]);
 
@@ -222,9 +222,9 @@ contract("NodeEntries test cases", async accounts => {
   });
   
   /***********************************************
-   * TEST - Sorting SensorNode instances
+   * TEST - Sorting DS.NodeEntry instances
    ***********************************************/
-  it("should sort a SensorNode array", async () => {
+  it("should sort a DS.NodeEntry array", async () => {
   
     // sort to [89, 71, 62, 53]
     let sortedThingo = await nodeEntries.getSortedNodes.call();

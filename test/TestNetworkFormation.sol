@@ -6,7 +6,7 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/NodeEntries.sol";
 import "../contracts/DS.sol";
-import "../contracts/SensorNode.sol";
+import "../contracts/NodeEntryLib.sol";
 
 contract TestNodeEntries {
   // The address of the contract to be tested

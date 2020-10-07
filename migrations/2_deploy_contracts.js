@@ -2,23 +2,23 @@
 var NodeEntries = artifacts.require("NodeEntries");
 var NodeRoleEntries = artifacts.require("NodeRoleEntries");
 var IA = artifacts.require("IA");
-var SensorNode = artifacts.require("SensorNode");
+var NodeEntryLib = artifacts.require("NodeEntryLib");
 var NodeRoleEntryLib = artifacts.require("NodeRoleEntryLib");
 var QuickSort = artifacts.require("QuickSort");
 var QuickSortContract = artifacts.require("QuickSortContract");
 
 module.exports = function(deployer) {
   deployer.deploy(IA);
-  deployer.link(IA, SensorNode);
+  deployer.link(IA, NodeEntryLib);
   deployer.link(IA, NodeEntries);
 
   deployer.deploy(QuickSort);
-  deployer.link(QuickSort, SensorNode);
+  deployer.link(QuickSort, NodeEntryLib);
   deployer.link(QuickSort, NodeEntries);
   deployer.link(QuickSort, QuickSortContract);
 
-  deployer.deploy(SensorNode);
-  deployer.link(SensorNode, NodeEntries);
+  deployer.deploy(NodeEntryLib);
+  deployer.link(NodeEntryLib, NodeEntries);
 
   deployer.deploy(NodeRoleEntryLib);
   deployer.link(NodeRoleEntryLib, NodeRoleEntries);

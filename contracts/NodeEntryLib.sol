@@ -7,7 +7,7 @@ import "./IA.sol";
 import "./QuickSort.sol";
 import "./NodeRoleEntries.sol";
 
-library SensorNode {
+library NodeEntryLib {
 
   // Events
   event LogString(string str);

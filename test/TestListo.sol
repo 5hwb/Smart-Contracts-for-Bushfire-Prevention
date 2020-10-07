@@ -204,7 +204,7 @@ contract TestListo {
     arr5789023.push(12);
     arr5789023.push(13);
   
-    // TODO implement this setup (as an iterative function) in SensorNode!
+    // TODO implement this setup (as an iterative function) in NodeEntryLib!
     uint256[] memory interResult1 = IA.inter(arr1245679, arr2345780);
     Assert.equal(interResult1[0], 2, "It should be 2");
     Assert.equal(interResult1[1], 4, "It should be 4");

@@ -7,7 +7,7 @@
 // (TruffleContract instances)
 const NodeEntries = artifacts.require("NodeEntries");
 const NodeRoleEntries = artifacts.require("NodeRoleEntries");
-const SensorNode = artifacts.require("SensorNode");
+const NodeEntryLib = artifacts.require("NodeEntryLib");
 
 // Required for some test cases
 const truffleAssert = require('truffle-assertions');
@@ -166,7 +166,7 @@ contract("NodeEntries - 3-layer network test case", async accounts => {
   });
 
   
-  it("should add SensorNode instances", async () => {
+  it("should add DS.NodeEntry instances", async () => {
     /*
     LAYOUT (Mxx = member node num xx, Cxx = cluster head num xx):
     _______   _______   _______   _______
@@ -214,7 +214,7 @@ contract("NodeEntries - 3-layer network test case", async accounts => {
     await nodeEntries.addNode(222014, 78, [222013, 222015, 222007, 222008, 222009]);
     await nodeEntries.addNode(222015, 80, [222014, 222008, 222009]);
   
-    // Ensure the values within this SensorNode are as expected
+    // Ensure the values within this NodeEntryLib are as expected
     let firstNode = toStruct(await nodeEntries.getNodeAt.call(0));
     let firstNodeAddr = firstNode.nodeAddress;
     let firstNodeEnergyLevel = firstNode.energyLevel;
