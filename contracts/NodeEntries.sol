@@ -13,7 +13,7 @@ contract NodeEntries {
   uint numOfClusterHeads; // N_CH
   
   // Array of all nodes in the network
-  DS.Node[] public nodes;
+  DS.Node[] public allNodes;
   mapping (uint => uint) addrToNodeIndex; // node addresses -> node array index
 
   uint public numOfNodes; // Number of nodes in this network
@@ -33,14 +33,14 @@ contract NodeEntries {
   
   // Get array of all DS.Node instances.
   function getAllNodes() view public returns(DS.Node[] memory) {
-    return nodes;
+    return allNodes;
   }
   
   // Get array of addresses of all DS.Node instances.
   function getAllNodeAddresses() view public returns(uint[] memory) {
     uint[] memory nodeAddresses = new uint[](numOfNodes);
     for (uint i = 0; i < numOfNodes; i++) {
-      nodeAddresses[i] = nodes[i].nodeAddress;
+      nodeAddresses[i] = allNodes[i].nodeAddress;
     }
     return nodeAddresses;
   }
@@ -48,7 +48,7 @@ contract NodeEntries {
   // Add a node to the list of all sensor nodes.
   function addNode(uint _addr, uint _energyLevel, uint[] memory _withinRangeNodes) public {
     // Push a new DS.Node instance onto the array of nodes
-    DS.Node storage node = nodes.push();
+    DS.Node storage node = allNodes.push();
 
     // Initialise the empty node's values
     NodeEntryLib.initNodeStruct(node, _addr, _energyLevel);
@@ -74,12 +74,12 @@ contract NodeEntries {
   // Get the node with the given address
   function getNodeEntry(uint _nodeAddr) view public returns(DS.Node memory) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    return nodes[nIdx];
+    return allNodes[nIdx];
   }
   
   // Get the node with the given index
   function getNodeAt(uint _index) view public returns(DS.Node memory) {
-    return nodes[_index];
+    return allNodes[_index];
   }
   
   // Get node information
@@ -91,20 +91,20 @@ contract NodeEntries {
     string memory, uint256[] memory
     ) {
     uint nIdx = addrToNodeIndex[_nodeAddr];
-    DS.NodeRoleEntry memory nodeRoleEntry = nodeRoleEntries.getNREntry(nodes[nIdx].nodeAddress);
+    DS.NodeRoleEntry memory nodeRoleEntry = nodeRoleEntries.getNREntry(allNodes[nIdx].nodeAddress);
     
-    return (nodes[nIdx].nodeAddress, // 0
-        nodes[nIdx].energyLevel, nodes[nIdx].networkLevel, // 1, 2
-        nodes[nIdx].nodeType, nodeRoleEntry.nodeRole, // 3, 4
-        nodes[nIdx].isActive, nodeRoleEntry.isTriggeringExternalService, // 5, 6
-        nodeRoleEntry.triggerMessage, NodeEntryLib.getSensorReadings(nodes[nIdx]) // 7, 8
+    return (allNodes[nIdx].nodeAddress, // 0
+        allNodes[nIdx].energyLevel, allNodes[nIdx].networkLevel, // 1, 2
+        allNodes[nIdx].nodeType, nodeRoleEntry.nodeRole, // 3, 4
+        allNodes[nIdx].isActive, nodeRoleEntry.isTriggeringExternalService, // 5, 6
+        nodeRoleEntry.triggerMessage, NodeEntryLib.getSensorReadings(allNodes[nIdx]) // 7, 8
         );
   }
   
   // Get a node's beacon data
   function getNodeBeaconData(uint _nodeAddr) public view returns (
     bool, uint, uint256, uint) {      
-    DS.Node storage node = NodeEntryLib.getNode(nodes, addrToNodeIndex, _nodeAddr);
+    DS.Node storage node = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _nodeAddr);
     DS.Beacon memory beacon = NodeEntryLib.getBeacon(node);
     return (beacon.isSent, beacon.nextNetLevel, beacon.senderNodeAddr, node.numOfBeacons);
   }
@@ -112,28 +112,28 @@ contract NodeEntries {
   // CLUSTER HEAD ONLY - Send beacon to prospective child nodes
   function sendBeacon(uint _cHeadAddr) public {
     uint chIndex = getNodeIndex(_cHeadAddr);
-    require(nodes[chIndex].nodeType == DS.NodeType.ClusterHead, "Given node is not cluster head");
+    require(allNodes[chIndex].nodeType == DS.NodeType.ClusterHead, "Given node is not cluster head");
 
     // Get network level of this cluster head to calculate next level
-    uint nextNetLevel = nodes[chIndex].networkLevel;
+    uint nextNetLevel = allNodes[chIndex].networkLevel;
     nextNetLevel++;
     
     // Go thru all nodes within range of the cluster head
-    for (uint i = 0; i < NodeEntryLib.numOfWithinRangeNodes(nodes[chIndex]); i++) {
-      DS.Node storage currNode = NodeEntryLib.getNode(nodes, addrToNodeIndex, nodes[chIndex].links.withinRangeNodes[i]);
+    for (uint i = 0; i < NodeEntryLib.numOfWithinRangeNodes(allNodes[chIndex]); i++) {
+      DS.Node storage currNode = NodeEntryLib.getNode(allNodes, addrToNodeIndex, allNodes[chIndex].links.withinRangeNodes[i]);
       
       // Ignore this node if it's a cluster head or if the network level is 
       // already set between 1 and the current cluster head's network level 
       if (currNode.nodeType == DS.NodeType.ClusterHead || (currNode.networkLevel > 0
-          && currNode.networkLevel <= nodes[chIndex].networkLevel)) {
-        emit SomethingHappened(i, nodes[chIndex].nodeAddress, currNode.nodeAddress, NodeEntryLib.numOfWithinRangeNodes(nodes[chIndex]), "Node was ignored");
+          && currNode.networkLevel <= allNodes[chIndex].networkLevel)) {
+        emit SomethingHappened(i, allNodes[chIndex].nodeAddress, currNode.nodeAddress, NodeEntryLib.numOfWithinRangeNodes(allNodes[chIndex]), "Node was ignored");
         continue;
       }
 
       // Send the beacon!
-      emit SomethingHappened(i, nodes[chIndex].nodeAddress, currNode.nodeAddress, NodeEntryLib.numOfWithinRangeNodes(nodes[chIndex]), "Gonna set...");
+      emit SomethingHappened(i, allNodes[chIndex].nodeAddress, currNode.nodeAddress, NodeEntryLib.numOfWithinRangeNodes(allNodes[chIndex]), "Gonna set...");
       NodeEntryLib.setNetworkLevel(currNode, nextNetLevel);
-      DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, nodes[chIndex].nodeAddress, NodeEntryLib.getWithinRangeNodes(nodes[chIndex]));
+      DS.Beacon memory beacon = DS.Beacon(true, nextNetLevel, allNodes[chIndex].nodeAddress, NodeEntryLib.getWithinRangeNodes(allNodes[chIndex]));
       NodeEntryLib.addBeacon(currNode, beacon);
     }
   }
@@ -141,11 +141,11 @@ contract NodeEntries {
   // Send a join request to the given cluster head.
   function sendJoinRequest(uint _sensorAddr, uint _cHeadAddr) public {
     uint nodeIndex = getNodeIndex(_sensorAddr);
-    DS.Node storage cHeadNode = NodeEntryLib.getNode(nodes, addrToNodeIndex, _cHeadAddr);
+    DS.Node storage cHeadNode = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _cHeadAddr);
     
     // Add this node to cluster head's list of nodes that sent join requests
     assert(cHeadNode.nodeAddress != 0); // make sure the cluster head node exists
-    NodeEntryLib.addJoinRequestNode(cHeadNode, nodes[nodeIndex].nodeAddress);
+    NodeEntryLib.addJoinRequestNode(cHeadNode, allNodes[nodeIndex].nodeAddress);
   }
   
   event SentJoinRequest(uint256 _addr, uint _i);
@@ -153,11 +153,11 @@ contract NodeEntries {
   // Go thru all nodes to see if they have received a beacon from a cluster head and need to send a join request back.
   function sendJoinRequests() public {
     for (uint i = 0; i < numOfNodes; i++) {
-      emit SentJoinRequest(nodes[i].nodeAddress, i);
+      emit SentJoinRequest(allNodes[i].nodeAddress, i);
       // Send join request to cluster head iff a beacon has been received from that node
-      require(nodes[i].beacons.length > 0, "NO BEACONS!??");
-      if (NodeEntryLib.getBeacon(nodes[i]).isSent) {
-        sendJoinRequest(nodes[i].nodeAddress, NodeEntryLib.getBeacon(nodes[i]).senderNodeAddr);
+      require(allNodes[i].beacons.length > 0, "NO BEACONS!??");
+      if (NodeEntryLib.getBeacon(allNodes[i]).isSent) {
+        sendJoinRequest(allNodes[i].nodeAddress, NodeEntryLib.getBeacon(allNodes[i]).senderNodeAddr);
       }
     }
   }
@@ -165,7 +165,7 @@ contract NodeEntries {
   // Identify the backup cluster heads for each node
   function identifyBackupClusterHeads() public {
     for (uint i = 0; i < numOfNodes; i++) {
-      NodeEntryLib.identifyBackupClusterHeads(nodes[i]);
+      NodeEntryLib.identifyBackupClusterHeads(allNodes[i]);
     }
   }
   
@@ -173,17 +173,17 @@ contract NodeEntries {
   function registerAsClusterHead(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint parentIndex = getNodeIndex(_parentAddr);
-    assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
+    assert(allNodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
     
     // By default, cluster heads are also Controllers,
     // hence they are assigned to the Controller role.
-    NodeEntryLib.setAsClusterHead(nodes[nodeIndex]);
-    nodeRoleEntries.assignAsController(nodes[nodeIndex].nodeAddress);
+    NodeEntryLib.setAsClusterHead(allNodes[nodeIndex]);
+    nodeRoleEntries.assignAsController(allNodes[nodeIndex].nodeAddress);
     
     // Set the parent node (only if valid address!) and add this node as the child node of the parent
     if (_parentAddr != 0) {
-      NodeEntryLib.setParentNode(nodes[nodeIndex], nodes[parentIndex].nodeAddress);
-      NodeEntryLib.addChildNode(nodes[parentIndex], nodes[nodeIndex].nodeAddress);
+      NodeEntryLib.setParentNode(allNodes[nodeIndex], allNodes[parentIndex].nodeAddress);
+      NodeEntryLib.addChildNode(allNodes[parentIndex], allNodes[nodeIndex].nodeAddress);
     }
   }
   
@@ -191,27 +191,27 @@ contract NodeEntries {
   function registerAsMemberNode(uint _parentAddr, uint _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     uint parentIndex = getNodeIndex(_parentAddr);
-    assert(nodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
+    assert(allNodes[nodeIndex].nodeType == DS.NodeType.Unassigned);
 
-    NodeEntryLib.setAsMemberNode(nodes[nodeIndex]);
+    NodeEntryLib.setAsMemberNode(allNodes[nodeIndex]);
 
     // Set the parent node (only if valid address!) and add this node as the child node of the parent
     if (_parentAddr != 0) {
-      NodeEntryLib.setParentNode(nodes[nodeIndex], nodes[parentIndex].nodeAddress);
-      NodeEntryLib.addChildNode(nodes[parentIndex], nodes[nodeIndex].nodeAddress);
+      NodeEntryLib.setParentNode(allNodes[nodeIndex], allNodes[parentIndex].nodeAddress);
+      NodeEntryLib.addChildNode(allNodes[parentIndex], allNodes[nodeIndex].nodeAddress);
     }
   }
   
   // Get the sorted nodes 
   function getSortedNodes() public returns(DS.Node[] memory) {
-    return QuickSort.sort(nodes);
+    return QuickSort.sort(allNodes);
   }
     
   // Elect the next cluster heads for the next layer using the GCA algorithm as described in Lee et al. (2011) with the given probability.
   function electClusterHeads(uint _currCHeadAddr, uint _probability) public {
   
     // Get the sensor node with the given address
-    DS.Node storage currClusterHead = NodeEntryLib.getNode(nodes, addrToNodeIndex, _currCHeadAddr);
+    DS.Node storage currClusterHead = NodeEntryLib.getNode(allNodes, addrToNodeIndex, _currCHeadAddr);
     
     // Get the list of addresses of nodes that sent join requests
     // (if its empty, exit the function)
@@ -221,7 +221,7 @@ contract NodeEntries {
     }
     
     // Convert list of addresses into their corresponding nodes
-    DS.Node[] memory nodesWithJoinRequests = NodeEntryLib.nodeAddrsToNodes(nodes, addrToNodeIndex, nodesWithJoinRequestAddrs);
+    DS.Node[] memory nodesWithJoinRequests = NodeEntryLib.nodeAddrsToNodes(allNodes, addrToNodeIndex, nodesWithJoinRequestAddrs);
     
     // Sort the sensor nodes that sent join requests by energy level in descending order
     nodesWithJoinRequests = QuickSort.sort(nodesWithJoinRequests);
@@ -254,24 +254,24 @@ contract NodeEntries {
     uint nodeIndex = getNodeIndex(_nodeAddr);
     DS.SensorReading[] memory sReadings = new DS.SensorReading[](1);
     sReadings[0] = DS.SensorReading(_sReading, true);
-    NodeEntryLib.readSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, sReadings);
+    NodeEntryLib.readSensorInput(allNodes[nodeIndex], allNodes, addrToNodeIndex, sReadings);
   }
   
   // Respond to sensor readings from all children of this node 
   function respondToSensorInput(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    NodeEntryLib.respondToSensorInput(nodes[nodeIndex], nodes, addrToNodeIndex, nodeRoleEntries, false);
+    NodeEntryLib.respondToSensorInput(allNodes[nodeIndex], allNodes, addrToNodeIndex, nodeRoleEntries, false);
   }
 
   // Mark the node with the given address as inactive
   function deactivateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    NodeEntryLib.deactivateNode(nodes[nodeIndex]);
+    NodeEntryLib.deactivateNode(allNodes[nodeIndex]);
   }
   
   // Mark the node with the given address as active
   function activateNode(uint256 _nodeAddr) public {
     uint nodeIndex = getNodeIndex(_nodeAddr);
-    NodeEntryLib.activateNode(nodes[nodeIndex]);
+    NodeEntryLib.activateNode(allNodes[nodeIndex]);
   }
 }
