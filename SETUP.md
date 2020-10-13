@@ -4,13 +4,22 @@
 
 * Ganache (one-click Ethereum test blockchain)
 * Node.js
+* Git
 * Truffle (Node.js package)
 * MetaMask (Firefox plugin to allow the Node.js app to communicate with the blockchain)
 
 ## Steps
 
+1. Install Node.js and Git if not present on your system.
+2. Open a terminal (Linux) or command prompt/Powershell (Windows) with administrator privileges (so that Truffle will run).
+
 1. Install Truffle as a global npm package: `sudo npm install -g --unsafe-perm=true --allow-root truffle`
-2. Download the Ganache Ethereum client and create a new workspace.
+
+11. Run `npm install` to install all dependencies.
+    * If you get a `ENOENT: no such file or directory` error, delete the 'node_modules' folder and 'package-lock.json', then run `npm install` again. 
+    * If the terminal freezes, press any key to get it to do something again.
+
+2. Download the Ganache Ethereum client and create a new workspace - leave it running in the background.
 3. Check `truffle-config.js` and ensure that the development **host** and **port** are set correctly. (for Ganache, host = '127.0.0.1' and port = '7545')
 
 e.g.
@@ -35,10 +44,12 @@ module.exports = {
 4. `truffle compile` - Compile the Solidity smart contract.
 5. `truffle migrate` - Migrate the contract to blockchain.
     * If changes have been made since last deployment, delete the `build` folder and re-run `truffle migrate` again
-6. `truffle test` - Run the smart contract test cases.
+6. `truffle test` - Run the smart contract test cases. (Make sure that Ganache is running!)
 7. Install the MetaMask browser plugin in the browser - this will help the web app to interact with the blockchain.
-8. Import the account by copying Ganache's 'mnemonic' (e.g. `compute base weird unknown main dignity license muffin evil cancel write same`) into the wallet seed field. Set a simple password (e.g. 'asdfnation').
-    * In MetaMask, set the network to Ganache by creating a new network (if not created already) at http://127.0.0.1:7545
+8. In MetaMask, click 'Import Wallet' and copying Ganache's 'mnemonic' (e.g. `compute base weird unknown main dignity license muffin evil cancel write same`) into the wallet seed field. Set a simple password (e.g. 'asdfnation').
+9. In MetaMask, set the network from 'Main Ethereum Network' to Ganache by creating a new network.
+    * Go to the MetaMask settings, then Networks.
+    * Click 'Add Network', set the Network Name to 'Ganache' and the 'New RPC URL' to http://127.0.0.1:7545
 9. Check `bs-config.js`, the config for the 'lite-server' web server that will host the web app. It should look like this:
 
 ```js
@@ -58,8 +69,8 @@ module.exports = {
 },
 ```
 
-11. Run `npm install` to install all dependencies.
 12. Run `npm run dev` to start the web app.
+    * MetaMask will give a notification asking to connect the Ganache wallet with MetaMask. Follow the steps.
 13. Optional - Install the Solidity compiler by running the following:
 
 ```
