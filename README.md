@@ -2,15 +2,73 @@
 
 This is an Ethereum dapp that simulates a wireless sensor network architecture which aims to help prevent bushfires.
 
-**[Setup guide](SETUP.md)**
+## Software used
 
-## Note on contract size
+Front-end:
+* Node.js web app
+
+Back-end:
+* Ganache
+* Node.js
+* Truffle
+* Ethereum blockchain
+
+Text editor:
+* Atom
+
+## [Guide to setting up and running the dapp](SETUP.md)
+
+## Directory information
+
+* `contracts` - Ethereum smart contracts written in the Solidity language
+* `migrations` - Migration scripts (run when migrating the compiled smart contracts onto the blockchain)
+* `src` - Source code for Node.js web app GUI frontend
+* `test` - Test cases for smart contracts written in Javascript and Solidity
+
+## Tips
+
+### Note on contract size
 
 It cannot exceed 24KB in size!
 
+### Difference between 'instance.myMethod()' and 'instance.myMethod.call()'
+
+Truffle normally can auto-detect method calls as transactions (which modify the state and cost gas) or calls (which only reads the state and won't cost gas). To avoid gas costs, use the `.call()` method.
+
+https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts
+
+### Number format of uint256 var in JavaScript
+
+A 'BN' instance.
+
+https://ethereum.stackexchange.com/questions/79349/what-is-words-in-uint256
+
+## Preventing errors
+
+### 'Error: ENOSPC: System limit for number of file watchers reached'
+
+Temporary fix: `sudo sysctl fs.inotify.max_user_watches=524288 && sudo sysctl -p`
+
+Don't make it permanent as it can lead to memory issues.
+
+https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
+
+### A node.js dependency refuses to install
+
+```
+npm ERR! code ENOLOCAL
+npm ERR! Could not install from "node_modules/truffle-blockchain-utils/node_modules/web3/bignumber.js@git+https:/github.com/frozeman/bignumber.js-nolookahead.git#57692b3ecfc98bbdd6b3a516cb2353652ea49934" as it does not contain a package.json file.
+```
+
+Delete the `package-lock.json` file and run `npm install` again!
+
+### Force update of smart contract
+
+Delete the `build` folder before compiling.
+
 ## TODO
 
-* Rename 'NetworkFormation2' and 'SensorNode2' to something else that makes more sense. e.g. 'NodeRoleEntries' and 'NodeRoleEntry'.
+* [DONE] Rename 'NetworkFormation2' and 'SensorNode2' to something else that makes more sense. e.g. 'NodeRoleEntries' and 'NodeRoleEntry'.
 * [SEE IF I CAN DO THIS] Idea: Each actuator behaves differently to the sensor readings - e.g. 1 would trigger at 37000 while another would trigger at 5000.
 * [ONGOING] Clean up the code and add comments to make it more presentable.
 * [TODO] Seriously consider using IPFS to store node information and readings.
