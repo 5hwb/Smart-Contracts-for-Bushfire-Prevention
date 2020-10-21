@@ -8,7 +8,7 @@ The dapp can be run on either Windows 10 or a Linux distribution such as Ubuntu 
 * Node.js
 * Git (for fetching some of the Node.js packages)
 * Truffle (Development environment for Ethereum, installed as a Node.js package)
-* MetaMask (Firefox plugin to allow the Node.js app to communicate with the blockchain)
+* MetaMask (Firefox/Chrome plugin to allow the Node.js app to communicate with the blockchain)
 
 ## Installation steps (Windows and Linux)
 
