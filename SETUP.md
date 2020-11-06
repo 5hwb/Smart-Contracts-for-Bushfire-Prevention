@@ -52,7 +52,7 @@ module.exports = {
 11. Open the web browser where you installed MetaMask earlier. In MetaMask, click 'Import Wallet' and copy Ganache's 12-word 'mnemonic' (e.g. `compute base weird unknown main dignity license muffin evil cancel write same`) into the wallet seed field. Set a simple password (e.g. 'asdfnation').
 12. In MetaMask, change the network from 'Main Ethereum Network' to Ganache by creating a new network.
     * Go to the MetaMask settings, then Networks.
-    * Click 'Add Network', set the Network Name to 'Ganache' and the 'New RPC URL' to http://127.0.0.1:7545
+    * Click 'Add Network', set the Network Name to 'Ganache', the 'New RPC URL' to http://127.0.0.1:7545 and the Chain ID to 0x539 (might need to check this).
 13. Check `bs-config.js`, the config for the 'lite-server' web server that will host the web app. It should look like this:
 
 ```js
