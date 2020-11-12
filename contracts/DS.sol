@@ -33,7 +33,6 @@ library DS {
   // DS.Node struct represents most parameters associated with a single node in the WSN 
   struct Node {
     uint256 nodeAddress; // Address of the node
-    // TODO eventually: Make the energy level based on the battery current and voltage available 
     uint energyLevel;    // give it when initialising.
     uint networkLevel;          // Tree level this node is located at
     NodeType nodeType;

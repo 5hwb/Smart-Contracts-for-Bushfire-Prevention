@@ -111,18 +111,20 @@ library NodeEntryLib {
     
     // Convert list of backup node addresses into their corresponding nodes
     DS.Node[] memory backupCHeadNodes = nodeAddrsToNodes(_allNodes, _addrToNodeIndex, _daNode.backupCHeads);
-    
-    // Sort the backup cluster head candidates by their current energy level in descending order
-    // NOTE: doesn't work - 1st element is null (?)
+
+    // Currently, the first backup encountered is selected as the new cluster head.
+    // TODO: Sort the backup cluster head candidates by their current energy level in descending order
+    // (doesn't work - 1st element is null?)
     //backupCHeadNodes = QuickSort.sort(backupCHeadNodes);
 
-    // TODO: find out way to re-instate the original cluster head if it is active again (?)
     // Set the backup candidate with highest energy level as the new cluster head
     if (backupCHeadNodes[0].nodeAddress != 0) {
       DS.Node storage backupCHead = getNode(_allNodes, _addrToNodeIndex, backupCHeadNodes[0].nodeAddress);
       setAsClusterHead(backupCHead);
       setParentNode(_daNode, backupCHead.nodeAddress);
     }
+
+    // TODO: find out way to re-instate the original cluster head if it is active again (?)
   }
 
   //////////////////////////////////////////////////
@@ -181,6 +183,8 @@ library NodeEntryLib {
    * @param _daNode Node to read readings from 
    * @param _allNodes List of all DS.Node instances
    * @param _addrToNodeIndex Mapping from DS.Node addresses to their index in the array
+   * @param _nodeRoleEntries NodeRoleEntry instance
+   * @param _conditionsAreMatching True if the sensor readings exceed the given threshold
    */
   function respondToSensorInput(
       DS.Node storage _daNode, 
@@ -192,8 +196,9 @@ library NodeEntryLib {
     // Get the corresponding NodeRoleEntry instance
     DS.NodeRoleEntry memory nodeRoleEntry = _nodeRoleEntries.getNREntry(_daNode.nodeAddress);
 
-    // Suppose we want to check if sensor reading > 37000 (= 37 degrees).
-    // TODO make this more flexible
+    // Check if 1 or more sensor readings have reached a given threshold.
+    // At the moment, the threshold is hard-coded at > 37000 (= 37 degrees).
+    // TODO Add new variables in DS.NodeRole to store the threshold and its trigger conditions
     for (uint i = 1; i < _daNode.sensorReadings.length; i++) {
       if (_daNode.sensorReadings[i].reading > 37000 || _conditionsAreMatching) {
         
