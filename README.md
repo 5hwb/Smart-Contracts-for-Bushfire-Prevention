@@ -25,6 +25,17 @@ Text editor:
 * `src` - Source code for Node.js web app GUI frontend
 * `test` - Test cases for smart contracts written in Javascript and Solidity
 
+## Note on smart contract naming
+
+During much of the initial development phase, some of the smart contracts had very different names. They are shown in the table below.
+
+| Current name | Old name |
+|:---:|:---:|
+| NodeEntries | NetworkFormation |
+| NodeEntryLib | SensorNode |
+| NodeRoleEntries | NetworkFormation2 |
+| NodeRoleEntryLib | SensorNode2 |
+
 ## Tips
 
 ### Note on contract size
